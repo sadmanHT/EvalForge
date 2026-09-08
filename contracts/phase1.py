@@ -85,17 +85,34 @@ def validate_study_config(
     validate_label_taxonomy(taxonomy)
     if study.get("study_id") != model.get("study_id"):
         raise ContractError("study/model study_id mismatch")
+    if study.get("label_taxonomy_version") != taxonomy.get("taxonomy_version"):
+        raise ContractError("study/taxonomy version mismatch")
     if set(study.get("pipelines", [])) != PIPELINES:
         raise ContractError("primary study must define exactly four canonical pipelines")
     if study.get("primary_metric") != "exact_root_cause_code_accuracy":
         raise ContractError("primary metric must be exact root-cause-code accuracy")
     if study.get("locked_test") is not True:
         raise ContractError("primary test must be locked")
+
     fields = study.get("required_experiment_fields")
+    non_null = study.get("required_non_null_run_fields")
     if not isinstance(fields, list) or not fields:
         raise ContractError("required_experiment_fields must be non-empty")
     if len(fields) != len(set(fields)):
         raise ContractError("required_experiment_fields contains duplicates")
+    if not isinstance(non_null, list) or not non_null:
+        raise ContractError("required_non_null_run_fields must be non-empty")
+    if len(non_null) != len(set(non_null)):
+        raise ContractError("required_non_null_run_fields contains duplicates")
+    unknown_non_null = set(non_null) - set(fields)
+    if unknown_non_null:
+        raise ContractError(
+            f"required_non_null_run_fields are not declared experiment fields: {sorted(unknown_non_null)}"
+        )
+
+
+def _is_blank(value: Any) -> bool:
+    return value is None or (isinstance(value, str) and not value.strip())
 
 
 def validate_experiment_can_run(
@@ -108,10 +125,19 @@ def validate_experiment_can_run(
     if missing:
         raise ContractError(f"experiment cannot RUN; missing fields: {missing}")
 
+    required_non_null = study["required_non_null_run_fields"]
+    blank = [key for key in required_non_null if _is_blank(experiment.get(key))]
+    if blank:
+        raise ContractError(f"experiment cannot RUN; blank required fields: {blank}")
+
     if experiment["study_id"] != study["study_id"]:
         raise ContractError("experiment study_id does not match primary study")
     if experiment["pipeline_type"] not in PIPELINES:
         raise ContractError("invalid pipeline_type")
+    if experiment["label_taxonomy_version"] != study["label_taxonomy_version"]:
+        raise ContractError("experiment uses wrong label_taxonomy_version")
+    if experiment["confidence_method"] != study["confidence_method"]:
+        raise ContractError("experiment uses wrong confidence_method")
     if experiment["base_model_id"] != model["base_model_id"]:
         raise ContractError("primary experiment uses wrong base_model_id")
     if experiment["base_model_revision"] != model["base_model_revision"]:
