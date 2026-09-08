@@ -73,9 +73,39 @@ class Phase01ContractTests(unittest.TestCase):
     def test_study_contract_is_valid(self) -> None:
         validate_study_config(self.study, self.model, self.taxonomy)
 
+    def test_study_rejects_taxonomy_version_mismatch(self) -> None:
+        bad_study = copy.deepcopy(self.study)
+        bad_study["label_taxonomy_version"] = "999.0.0"
+        with self.assertRaises(ContractError):
+            validate_study_config(bad_study, self.model, self.taxonomy)
+
     def test_experiment_missing_reproducibility_field_cannot_run(self) -> None:
         experiment = self.valid_experiment()
         del experiment["hardware_runtime_descriptor"]
+        with self.assertRaises(ContractError):
+            validate_experiment_can_run(experiment, self.study, self.model)
+
+    def test_required_reproducibility_field_cannot_be_null(self) -> None:
+        experiment = self.valid_experiment()
+        experiment["hardware_runtime_descriptor"] = None
+        with self.assertRaises(ContractError):
+            validate_experiment_can_run(experiment, self.study, self.model)
+
+    def test_required_reproducibility_string_cannot_be_blank(self) -> None:
+        experiment = self.valid_experiment()
+        experiment["dataset_version"] = "   "
+        with self.assertRaises(ContractError):
+            validate_experiment_can_run(experiment, self.study, self.model)
+
+    def test_wrong_taxonomy_version_cannot_run(self) -> None:
+        experiment = self.valid_experiment()
+        experiment["label_taxonomy_version"] = "999.0.0"
+        with self.assertRaises(ContractError):
+            validate_experiment_can_run(experiment, self.study, self.model)
+
+    def test_wrong_confidence_method_cannot_run(self) -> None:
+        experiment = self.valid_experiment()
+        experiment["confidence_method"] = "self_reported"
         with self.assertRaises(ContractError):
             validate_experiment_can_run(experiment, self.study, self.model)
 
