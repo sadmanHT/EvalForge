@@ -1,66 +1,90 @@
-# EvalForge Architecture — Phase 01 Baseline
+# EvalForge Architecture — Phase 01 Contract
 
-## System intent
+## Purpose
 
-EvalForge is a reproducible research-and-product system. The benchmark and evaluation contract are the core assets; the product and MLOps layers make the evidence reproducible, inspectable, and usable.
+This document freezes architectural boundaries and decision ownership before implementation. Later phases may refine internals, but material changes require an ADR.
 
-## Target architecture
+## Target system
 
 ```text
 React + TypeScript UI
         | REST + SSE
         v
-FastAPI application -------------------- OpenTelemetry
-        |
-        | enqueue
-        v
+FastAPI application ---------------------- OpenTelemetry
+        |                                      |
+        | enqueue                              v
+        v                                  service traces
 Redis broker/progress <----> Worker(s) ---- Langfuse LLM traces
-                              |
-                              +--> base inference
-                              +--> RAG inference
-                              +--> fine-tuned inference
-                              +--> combined inference
-                              +--> evaluation harness
-                              +--> training orchestration
-                              |
-                              v
-                      PostgreSQL + pgvector
-                      - dataset/family versions
-                      - model/adapter versions
-                      - KB documents/chunks
-                      - experiments/runs/predictions
-                      - retrieval traces/metrics/failures
-                      - jobs/artifacts/cost ledger
+                                |
+                                +--> Base inference
+                                +--> RAG inference
+                                +--> Fine-tuned inference
+                                +--> Combined inference
+                                +--> Evaluation harness
+                                +--> Training orchestration
+                                |
+                                v
+                         PostgreSQL + pgvector
+                         - datasets / incident families
+                         - model and adapter versions
+                         - KB versions / documents / chunks
+                         - experiments / runs / predictions
+                         - retrieval traces / metrics / failures
+                         - jobs / artifacts / cost ledger
 
-External evidence:
-- Weights & Biases: ML/evaluation run metadata and artifacts
+External evidence systems:
+- Weights & Biases: training/evaluation experiment tracking and artifacts
 - Hugging Face Hub: released adapter/model card
-- deployment platform: public read-only evidence and controlled execution
+- Deployment platform: public application/API and read-only experiment evidence
 ```
 
-## Canonical boundaries
+## Architectural invariants
 
-- **FastAPI** owns HTTP orchestration and validation, not long-running evaluation loops.
-- **Workers** own long-running evaluation/training orchestration.
-- **PostgreSQL + pgvector** is the system of record. W&B/Langfuse are complementary evidence systems.
-- **Redis** is transient queue/progress infrastructure, not authoritative experiment storage.
-- **Reusable backend libraries** own evaluation, retrieval, training, and inference logic. CLI scripts/notebooks call those libraries rather than duplicating logic.
-- **Frontend** consumes versioned API contracts and never hard-codes research metrics.
-- **Alembic** owns every database schema migration.
-- **Model/data/KB/config versions** are explicit and immutable after completed primary experiments use them.
+- Python 3.11+ for backend/evaluation/retrieval/training code.
+- React + TypeScript for the frontend.
+- PostgreSQL + pgvector is the durable system of record.
+- Redis plus a real worker process owns long-running evaluation/training jobs; HTTP request handlers never execute large loops synchronously.
+- Database schema changes are migration-backed by Alembic and must migrate from an empty database.
+- All four primary pipelines use the same frozen base-model ID/revision.
+- Exact structured root-cause labels are primary ground truth.
+- Every published metric is derived from stored experiment evidence; no hard-coded result values.
+- RAGAS/LLM judges remain supporting evaluators only when deterministic ground truth exists.
+- W&B, Langfuse, and OpenTelemetry have separate responsibilities and are not interchangeable.
 
-## Research boundary
+## Component responsibility boundaries
 
-OpsSentinel is an external upstream project. EvalForge may import/version benchmark material through a later adapter, but it must not rely on undocumented mutable state in that repository. Any imported upstream snapshot records source repository and commit/version. EvalForge development never writes to OpsSentinel.
+### FastAPI
+Owns REST/SSE contracts, validation, authentication/rate-limit boundaries when introduced, read/write orchestration, and job submission. It must not own long-running model loops.
+
+### Worker
+Owns training/evaluation/retrieval-heavy execution, progress events, retries, and durable result writes.
+
+### PostgreSQL + pgvector
+Owns canonical relational experiment state and vector retrieval data. Later phases define normalized entities and migration history.
+
+### Redis
+Owns queue/broker/progress/cache responsibilities only; it is not the durable source of research truth.
+
+### Evaluation library
+Owns common prediction/evaluation contracts and metrics. All four pipelines plug into the same evaluator.
+
+### Observability
+- W&B: ML training/evaluation run evidence and artifacts.
+- Langfuse: LLM/prompt/retrieval/token/cost traces.
+- OpenTelemetry: service/API/worker infrastructure traces.
 
 ## ADR index
 
-- ADR-001: FastAPI and service boundary
-- ADR-002: React + TypeScript frontend
-- ADR-003: PostgreSQL + pgvector and Alembic
-- ADR-004: Redis-backed asynchronous workers
-- ADR-005: Frozen primary model
-- ADR-006: RAG/evaluation integrity
-- ADR-007: W&B and Hugging Face evidence
-- ADR-008: Langfuse + OpenTelemetry observability
-- ADR-009: Docker Compose, CI/CD, provider-independent deployment
+- [ADR-001](adrs/ADR-001-fastapi-boundary.md) — FastAPI service boundary
+- [ADR-002](adrs/ADR-002-react-typescript.md) — React + TypeScript frontend
+- [ADR-003](adrs/ADR-003-postgres-pgvector-alembic.md) — PostgreSQL, pgvector, Alembic
+- [ADR-004](adrs/ADR-004-redis-worker.md) — Redis and worker architecture
+- [ADR-005](adrs/ADR-005-primary-model.md) — Primary base model
+- [ADR-006](adrs/ADR-006-rag-evaluation-integrity.md) — RAG/evaluation integrity
+- [ADR-007](adrs/ADR-007-mlops-evidence.md) — W&B and Hugging Face evidence
+- [ADR-008](adrs/ADR-008-observability.md) — Langfuse and OpenTelemetry
+- [ADR-009](adrs/ADR-009-containers-cicd-deployment.md) — Docker Compose, CI/CD, deployment
+
+## Phase boundary
+
+Phase 01 freezes these decisions. Repository scaffolding, service implementation, containers, Makefile targets, and CI workflows belong to Phase 02 unless a minimal file is required solely to validate a Phase 01 contract.
