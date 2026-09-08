@@ -24,10 +24,12 @@ class Phase01ArtifactTests(unittest.TestCase):
     def test_nine_adrs_exist(self) -> None:
         self.assertGreaterEqual(len(list((ROOT / "docs/adrs").glob("ADR-*.md"))), 9)
 
-    def test_phase_handoff_does_not_claim_completion_before_model_smoke(self) -> None:
+    def test_phase_handoff_records_completed_model_smoke(self) -> None:
         text = (ROOT / "docs/phase-01-handoff.md").read_text(encoding="utf-8")
-        self.assertIn("NOT COMPLETE", text)
+        self.assertIn("**COMPLETE**", text)
+        self.assertNotIn("**NOT COMPLETE**", text)
         self.assertIn("model-smoke.json", text)
+        self.assertIn("PHASE01_EXIT_GATE=PASS", text)
 
 
 if __name__ == "__main__":
