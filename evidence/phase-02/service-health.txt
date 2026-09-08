@@ -1,0 +1,8 @@
+NAME                   IMAGE                    COMMAND                  SERVICE    CREATED          STATUS                            PORTS
+evalforge-backend-1    evalforge-backend        "sh -c 'alembic upgr…"   backend    11 seconds ago   Up 7 seconds (healthy)            0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+evalforge-frontend-1   evalforge-frontend       "docker-entrypoint.s…"   frontend   11 seconds ago   Up 3 seconds (health: starting)   0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp
+evalforge-postgres-1   pgvector/pgvector:pg16   "docker-entrypoint.s…"   postgres   12 seconds ago   Up 11 seconds (healthy)           0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+evalforge-redis-1      redis:7.4-alpine         "docker-entrypoint.s…"   redis      12 seconds ago   Up 11 seconds (healthy)           0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+evalforge-worker-1     evalforge-worker         "python -m app.worke…"   worker     11 seconds ago   Up 7 seconds (healthy)            8000/tcp
+
+The smoke client independently returned FRONTEND_HTTP=200 while this point-in-time docker compose ps snapshot still showed the frontend health check transitioning from starting to healthy.
