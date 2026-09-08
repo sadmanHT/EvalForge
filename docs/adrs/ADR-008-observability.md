@@ -1,5 +1,9 @@
-# ADR-008 — Langfuse + OpenTelemetry
+# ADR-008 — Langfuse + OpenTelemetry Observability Split
 
 **Status:** Accepted
 
-Use Langfuse for LLM/retrieval trace-level observability and OpenTelemetry for service/infrastructure traces. Trace IDs must correlate with experiment, run, and prediction IDs. Telemetry outages must not corrupt or falsely fail valid experiment execution; observability adapters degrade explicitly and record their own failure.
+## Decision
+Use Langfuse for LLM-centric traces (prompts, retrieval context, token/cost information) and OpenTelemetry for service/API/worker infrastructure traces.
+
+## Consequences
+The two systems have distinct ownership. Duplicate telemetry should be minimized, and neither system is the canonical metric database.
