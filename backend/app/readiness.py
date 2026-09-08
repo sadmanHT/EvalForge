@@ -32,10 +32,12 @@ class SystemReadinessProbe:
         redis_ok = False
 
         try:
-            with psycopg.connect(self._settings.database_url, connect_timeout=2) as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute("SELECT 1")
-                    database_ok = cursor.fetchone() == (1,)
+            with (
+                psycopg.connect(self._settings.database_url, connect_timeout=2) as connection,
+                connection.cursor() as cursor,
+            ):
+                cursor.execute("SELECT 1")
+                database_ok = cursor.fetchone() == (1,)
         except Exception:
             database_ok = False
 

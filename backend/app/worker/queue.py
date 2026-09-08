@@ -89,7 +89,9 @@ def _execute(task: str, payload: dict[str, Any]) -> Any:
         return payload
     if task == "add":
         values = payload.get("values")
-        if not isinstance(values, list) or not all(isinstance(value, (int, float)) for value in values):
+        if not isinstance(values, list) or not all(
+            isinstance(value, int | float) for value in values
+        ):
             raise ValueError("add task requires a numeric values list")
         return {"sum": sum(values)}
     if task == "fail":

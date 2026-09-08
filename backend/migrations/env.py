@@ -10,10 +10,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option(
-    "sqlalchemy.url",
-    os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url")),
-)
+sqlalchemy_url = os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+if sqlalchemy_url.startswith("postgresql://"):
+    sqlalchemy_url = sqlalchemy_url.replace("postgresql://", "postgresql+psycopg://", 1)
+config.set_main_option("sqlalchemy.url", sqlalchemy_url)
 target_metadata = None
 
 

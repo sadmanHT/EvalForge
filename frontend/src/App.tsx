@@ -7,8 +7,8 @@ function Shell() {
         <p className="eyebrow">EvalForge</p>
         <h1>Reproducible incident-diagnosis research</h1>
         <p>
-          Phase 02 establishes the application shell and engineering foundation. Benchmark results are
-          intentionally not rendered before real experiment evidence exists.
+          Phase 02 establishes the application shell and engineering foundation. Benchmark results are intentionally not
+          rendered before real experiment evidence exists.
         </p>
       </header>
       <nav aria-label="Primary navigation">

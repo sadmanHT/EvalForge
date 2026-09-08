@@ -15,7 +15,9 @@ function renderAt(path: string) {
 describe("application shell", () => {
   it("renders the Phase 02 shell without fake benchmark values", () => {
     renderAt("/");
-    expect(screen.getByRole("heading", { name: /reproducible incident-diagnosis research/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /reproducible incident-diagnosis research/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/engineering foundation only/i)).toBeInTheDocument();
   });
 

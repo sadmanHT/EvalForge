@@ -10,7 +10,7 @@ class Settings:
     redis_url: str
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         return cls(
             database_url=os.environ.get(
                 "DATABASE_URL",

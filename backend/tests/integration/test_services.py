@@ -14,10 +14,12 @@ pytestmark = pytest.mark.integration
 
 def test_postgres_connectivity() -> None:
     settings = Settings.from_env()
-    with psycopg.connect(settings.database_url, connect_timeout=3) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-            assert cursor.fetchone() == (1,)
+    with (
+        psycopg.connect(settings.database_url, connect_timeout=3) as connection,
+        connection.cursor() as cursor,
+    ):
+        cursor.execute("SELECT 1")
+        assert cursor.fetchone() == (1,)
 
 
 def test_redis_connectivity() -> None:
@@ -29,7 +31,11 @@ def test_redis_connectivity() -> None:
 def test_worker_success_and_failure_with_real_redis() -> None:
     settings = Settings.from_env()
     client: Any = Redis.from_url(settings.redis_url, decode_responses=True)
-    client.delete(QUEUE_KEY, "evalforge:job:integration-success", "evalforge:job:integration-failure")
+    client.delete(
+        QUEUE_KEY,
+        "evalforge:job:integration-success",
+        "evalforge:job:integration-failure",
+    )
 
     enqueue(client, "echo", {"value": "ok"}, job_id="integration-success")
     succeeded = process_one(client, timeout=1)

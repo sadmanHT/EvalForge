@@ -1,0 +1,17 @@
+EvalForge Phase 02 — CI failure preserved
+RUN_URL=https://github.com/sadmanHT/EvalForge/actions/runs/34246402363
+HEAD=0b0eff2fe0662f876cd9cd4e075fe6fa594c5af5
+JOB=verify-all
+STATUS=FAIL
+FAILED_STEP=Cumulative gate (make verify-all)
+FAILURE_LAYER=static quality / formatting-lint parity
+
+ruff stopped the cumulative gate before tests with six violations:
+- backend/app/config.py: UP037 quoted Settings return annotation
+- backend/app/readiness.py: SIM117 nested with statements
+- backend/app/worker/queue.py: UP038 union isinstance style
+- backend/app/worker/queue.py: E501 line > 100
+- backend/tests/integration/test_services.py: SIM117 nested with statements
+- backend/tests/integration/test_services.py: E501 line > 100
+
+No tests were disabled or assertions weakened. The repair updates source formatting/style and continues the full clean-runner gate.
