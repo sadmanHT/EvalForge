@@ -1,4 +1,4 @@
-name: phase3-source-diagnostic
+name: phase3-materialize-v2
 
 on:
   push:
@@ -6,61 +6,140 @@ on:
       - phase-03-dataset-engineering
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  diagnose-source:
+  materialize-and-verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: evalforge
+          POSTGRES_USER: evalforge
+          POSTGRES_PASSWORD: evalforge
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U evalforge -d evalforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
     env:
+      DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
+      REDIS_URL: redis://localhost:6379/0
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-      - name: Verify Phase 03 transport bundle
+
+      - name: Reconstruct verified Phase 03 bundle
         run: |
-          : > /tmp/phase3-bundle.tar.gz
+          : > /tmp/phase3-v2.tar.gz
           while read -r blob_sha expected_sha; do
             gh api "repos/${GITHUB_REPOSITORY}/git/blobs/${blob_sha}" --jq .content > /tmp/chunk.b64
             tr -d '\n' < /tmp/chunk.b64 | base64 -d > /tmp/chunk
             echo "${expected_sha}  /tmp/chunk" | sha256sum -c -
-            cat /tmp/chunk >> /tmp/phase3-bundle.tar.gz
+            cat /tmp/chunk >> /tmp/phase3-v2.tar.gz
           done <<'CHUNKS'
-          b32b6e7de31141140143dac34d2e832b8b57caed 7395062f9c1f8d544171af81e316c021441d1142817e0640c377fc31fd27b08d
-          beea832b3061b7e8af2ad7dc8300fe52920566c6 3ed906289d9f94f516163850a65cf47fb747d050957ef462d4f33aca92fef4ce
-          eaa263f65eedfe66f303f2899430d47afbc527bd 224df7c37be198f23dc1fdc7513519534a207d917d99499cfc03772beaf255d8
-          f15f2e4e652ab26014bdbc175bcf253c6e3c1031 af612a4ef5f2ea78022eacfd87d6dcac00b180567a5685a9f7f58bd0bf7c117b
-          e5bbb1b675da6298a75a804c52a86d7005e07a50 42d52cde36597adfc61ddac0f0e5a2bfc3c21237977d35e436cfa8845ea2931c
-          17c284dbe9c3e98b226aa7f3e48ec90873c731aa f995997f3429acd279357f509e2b9ac9e09a1d05b75646e314155139b7384f2d
-          ecf919efc95df2652c91cc83f1053e4a02a4d7db f2ef96f4c280e7b8f6f538120a0a6a09346428e52f18c6e6d0f3ce9f87e01bde
-          350bd12c8816fcece50ab6e07ddae66be510ed3a bb2bb4a2c0a39f7c3cbce6baccc1b24cacbd636fc3223bfa96b4d708b3bb6938
+          bb0c3ce680fc85f1e70f22c58ce641197a92f605 4ce503a1f08773724463297d636e6114c17a5782f05496010c7202f2f3799d2c
+          cb9d801fecb4488e78f852cc1830ed8f776f8977 9c95710a8d62a88d59f057b9bb875ffec815f0c3a3b9fa31a3da2275a7abfe1c
+          50979db25c1de39f71dca68e6b3451e37e28f09d 68c3c79fdab79ade4a2bf73dbb00ae8d2d4e298dd4233ffef3496661c4bcf520
+          043f5f5542443eb8bd4999d3fa3e8676c1fd77fd 9171870801e55f8041c84439754e20ce25b83887206728e5cf94ac8954c9f529
+          6d2cbcaa274301cd2c75e1163d0e9f689eb0fd59 805f1f8814029564eda28f01dbd6e2da6ed2abac1272bed6c8f2a3520f7c8ed8
+          6c1773752dd7ef2e58e9f05967c607f5b9a4c69b c6183baf9b2801f65ebb83203705f83489bfb451777d47f503003ffd46f3479c
+          e219e669df512634c35fd92653e80015836285b2 cc1b031c0f0c2568916d9e77c9db2522715e07dfa2e6fe76613e0acf434ae30a
+          08160aa1e97cafdcc97432432bbdff48f7c59e6c 578c335e5ee727384acc4c2229f6d2061a91d256d6ecbafb0a43086c35484124
+          ff3af411b067bd6d2b35e599bcd706fa6fa9b043 aab1883eb3f94cfb46fa755211cef0ecbdcd5b507337da35a896e63a2fc59005
+          451fb0e13720cc092d264541555295d5ebb1cc3d ec95eb842b24ce0b4d853f64866bfa176092e19e46eb4df430e2fc44625fcd55
           CHUNKS
-          echo "78d467ea9aeecaf3a875ebfeebd521ab258941c860ae5408b6498815de349748  /tmp/phase3-bundle.tar.gz" | sha256sum -c -
-      - name: Inspect current official UCI source bytes
+          echo "0e8ed8dc3d326c4255adb9400f078fea24867724f27278faded337dd3cf9353a  /tmp/phase3-v2.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/phase3-v2.tar.gz
+
+      - name: Pin official UCI ServiceNow archive and canonical payload
         run: |
+          target="datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip"
           curl --fail --location --retry 3 \
-            --output /tmp/uci498.zip \
+            --output "$target" \
             "https://archive.ics.uci.edu/static/public/498/incident+management+process+enriched+event+log.zip"
+          echo "6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6  ${target}" | sha256sum -c -
           python - <<'PY'
-          from __future__ import annotations
           import hashlib
           import zipfile
           from pathlib import Path
 
-          archive = Path('/tmp/uci498.zip')
-          archive_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
-          with zipfile.ZipFile(archive) as zf:
-              names = zf.namelist()
-              if len(names) != 1:
-                  raise SystemExit(f'UCI_SOURCE_DIAGNOSTIC=FAIL members={names!r}')
-              member = names[0]
-              payload = zf.read(member)
-          member_sha = hashlib.sha256(payload).hexdigest()
-          print(f'UCI_SOURCE_DIAGNOSTIC=PASS')
-          print(f'UCI_ARCHIVE_SHA256={archive_sha}')
-          print(f'UCI_MEMBER_FILENAME={member}')
-          print(f'UCI_MEMBER_BYTES={len(payload)}')
-          print(f'UCI_MEMBER_SHA256={member_sha}')
-          print('UPLOADED_ARCHIVE_SHA256=3ea92768cb2cfada908dd601b057d7066127fe75dc8fe19e4abaa1c6766a6c13')
-          print('UPLOADED_MEMBER_SHA256=fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef')
-          print(f'UCI_MEMBER_MATCHES_UPLOADED={str(member_sha == "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef").lower()}')
+          path = Path("datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip")
+          with zipfile.ZipFile(path) as archive:
+              names = archive.namelist()
+              assert names == ["incident_event_log.csv"], names
+              payload = archive.read(names[0])
+          digest = hashlib.sha256(payload).hexdigest()
+          expected = "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef"
+          assert digest == expected, (digest, expected)
+          print("SERVICENOW_CANONICAL_PAYLOAD=PASS")
+          print(f"SERVICENOW_CANONICAL_SHA256={digest}")
           PY
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install locked backend dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+
+      - name: Install locked frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify committed dependency locks
+        run: |
+          python -m pip freeze --exclude-editable | sort > /tmp/backend.freeze
+          diff -u backend/requirements.full.lock /tmp/backend.freeze
+          test -f frontend/package-lock.json
+
+      - name: Cumulative Phase 01-03 gate
+        run: make verify-all
+
+      - name: Verify exact Phase 03 scientific blocker
+        run: |
+          set +e
+          python scripts/check_phase3_exit.py | tee /tmp/phase03-exit.txt
+          code=${PIPESTATUS[0]}
+          set -e
+          test "$code" -eq 2
+          grep -q '^PHASE03_EXIT_GATE=BLOCKED$' /tmp/phase03-exit.txt
+          grep -q '^BLOCKER=independent_incident_family_corpus_required$' /tmp/phase03-exit.txt
+          grep -q '^SOURCE_CANDIDATES=50$' /tmp/phase03-exit.txt
+          grep -q '^AUXILIARY_REAL_INCIDENTS=24918$' /tmp/phase03-exit.txt
+          grep -q '^BLOCKER_DETAIL=human_readable_root_cause_labels_required$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_TEST=0$' /tmp/phase03-exit.txt
+
+      - name: Commit materialized Phase 03 tree
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "phase3: engineer leakage-safe datasets and pin real auxiliary provenance"
+          git push origin HEAD:phase-03-dataset-engineering
