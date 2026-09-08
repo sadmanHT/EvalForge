@@ -80,6 +80,15 @@ Reproducibility and contract checks:
 - CI smoke records: 7
 - CI smoke families: 6
 
+## Remote CI materialization history
+
+- Full Phase 03 implementation commit: `dfd5a59475fadd49ef51d06a23edfe1c8995f400`.
+- Exact-head GitHub Actions run `34270444416` passed source materialization, locked backend/frontend installs, and dependency-lock verification, then failed at the cumulative gate on eight Ruff findings before tests or clean Compose could run.
+- A guarded one-off helper workflow applied only the Ruff-reported repairs, required Ruff plus the focused **18-test** Phase 03 suite and an exact changed-file whitelist to pass, then pushed lint-only commit `1c92ed06bb26f9f4b2b77ed4d03ba04b64eb35a4` directly on top of the implementation commit.
+- The lint-only commit was produced by the GitHub Actions token, so GitHub did not recursively trigger the normal CI workflow from that push. This handoff update deliberately records the verified repair and provides a normal user-authored push so the safe read-only CI workflow can validate the resulting exact head end-to-end.
+
+No hard gate was weakened during this repair sequence.
+
 ## Hard exit status
 
 `python scripts/check_phase3_exit.py`
