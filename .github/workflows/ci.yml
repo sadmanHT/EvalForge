@@ -54,17 +54,11 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm install --no-audit --no-fund
-      - name: Frontend formatter diagnostic
-        working-directory: frontend
-        run: |
-          npm run format
-          git diff -- src/App.test.tsx eslint.config.js
-          git diff --exit-code -- src/App.test.tsx eslint.config.js
       - name: Cumulative gate
         run: make verify-all
       - name: Freeze resolved dependencies
         run: |
-          python -m pip freeze | sort > backend/requirements.full.lock
+          python -m pip freeze --exclude-editable | sort > backend/requirements.full.lock
           test -f frontend/package-lock.json
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4

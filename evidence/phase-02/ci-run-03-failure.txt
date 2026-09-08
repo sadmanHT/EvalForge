@@ -1,0 +1,13 @@
+EvalForge Phase 02 — CI diagnostic failure preserved
+RUN_URL=https://github.com/sadmanHT/EvalForge/actions/runs/34247289316
+HEAD=35988d8ee86a51c725c6f8404b4f561d5256c1a6
+JOB=verify-all
+STATUS=FAIL
+FAILED_STEP=Frontend formatter diagnostic
+FAILURE_LAYER=frontend formatting parity
+
+The runner executed the configured Prettier 3.5.3 formatter and printed the exact repository diff. Required changes were limited to:
+- frontend/eslint.config.js: compact the tseslint.config call to Prettier's canonical form.
+- frontend/src/App.test.tsx: keep the 115-character heading assertion on one line under printWidth=120.
+
+PostgreSQL/pgvector and Redis service containers were healthy. The cumulative gate was intentionally not allowed to continue after a dirty formatter diff. The exact formatter output is applied in the next repair commit; no test or assertion is weakened.
