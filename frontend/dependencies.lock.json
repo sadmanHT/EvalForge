@@ -1,0 +1,7 @@
+{
+  "lock_kind": "phase02-exact-top-level-pins",
+  "node_range": ">=20 <23",
+  "package_manager": "npm",
+  "note": "CI generates and preserves the complete package-lock.json before Phase 02 completion.",
+  "source": "frontend/package.json"
+}

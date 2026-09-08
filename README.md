@@ -1,37 +1,67 @@
 # EvalForge
 
-A domain-specific LLM evaluation, fine-tuning, and deployment platform for production incident diagnosis.
+EvalForge is a reproducible research-and-product system for production incident diagnosis and root-cause classification. The primary study compares zero-shot, RAG-only, fine-tuned-only, and fine-tuned+RAG pipelines under one frozen research contract.
 
-## Phase status
+## Current implementation status
 
-**Phase 01 — Research Contract, Benchmark Rules & Architecture Decisions: in progress**
+- Phase 01 — research contract, benchmark rules, model freeze, taxonomy, architecture decisions: **complete** on `phase-01-research-contract`.
+- Phase 02 — monorepo, local environments, containers, worker skeleton, frontend shell, and CI foundation: **in progress** on `phase-02-repository-foundation` until its clean Compose and CI hard gates are proven.
 
-Phase 01 establishes the contracts that every later experiment must obey: one frozen base-model revision, one locked benchmark protocol, deterministic root-cause labels, reproducibility metadata, research-validity rules, and hard quality gates.
+## Repository boundaries
 
-## Primary study
+- `backend/` — FastAPI application, reusable backend libraries, worker implementation, Alembic environment.
+- `frontend/` — React + TypeScript application shell and API-client foundation.
+- `training/` — training orchestration boundary; implementation intentionally deferred to later phases.
+- `evals/` — evaluation orchestration boundary; benchmark implementation intentionally deferred.
+- `datasets/` — dataset contracts and later versioned benchmark assets.
+- `configs/` — frozen/versioned study, taxonomy, and model contracts.
+- `contracts/` — executable scientific/reproducibility contracts.
+- `infrastructure/` — local/container/CI foundation notes.
+- `docs/` — research protocol, ADRs, architecture, phase handoffs.
+- `evidence/` — preserved phase-gate evidence.
 
-EvalForge compares four strategies under one common evaluator:
+Reusable implementation belongs in `backend/app/*`; scripts and later notebooks must call canonical libraries rather than duplicate their logic.
 
-1. zero-shot base model
-2. RAG-only
-3. LoRA/QLoRA fine-tuned only
-4. fine-tuned + RAG
+## Local foundation
 
-The primary outcome is exact root-cause-code accuracy on a leakage-safe locked held-out set. Supporting analysis covers hierarchical/top-3 accuracy, calibration, retrieval quality, latency, cost, uncertainty, and failure modes.
-
-## Phase 01 verification
-
-```bash
-python -m unittest discover -s tests -v
-python scripts/validate_phase1.py
-```
-
-The full 7B weight-load/generation smoke is intentionally a separate connected-hardware gate:
+Copy the example environment and start the development stack:
 
 ```bash
-python scripts/model_smoke.py
+cp .env.example .env
+docker compose up --build
 ```
 
-Do not mark Phase 01 complete until the model smoke succeeds on a machine capable of loading the frozen model revision.
+Services:
 
-See `docs/research-protocol.md`, `docs/architecture.md`, `docs/quality-gates.md`, and `docs/adrs/`.
+- backend: http://localhost:8000 (`/health`, `/ready`)
+- frontend: http://localhost:5173
+- PostgreSQL/pgvector: localhost:5432
+- Redis: localhost:6379
+
+Clean reset:
+
+```bash
+docker compose down -v --remove-orphans
+docker compose build --no-cache
+docker compose up -d
+```
+
+## Canonical verification targets
+
+```bash
+make format
+make lint
+make typecheck
+make test
+make test-integration
+make test-e2e
+make test-regression
+make db-migrate
+make smoke
+make eval-smoke
+make verify-all
+```
+
+`make verify-all` is the cumulative local gate once backend/frontend dependencies and local Postgres/Redis are available. `make fresh-smoke` performs the clean Compose rebuild path.
+
+No benchmark result displayed by EvalForge may be hard-coded; later published values must trace to stored experiment evidence.
