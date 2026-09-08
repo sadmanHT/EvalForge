@@ -85,7 +85,9 @@ Reproducibility and contract checks:
 - Full Phase 03 implementation commit: `dfd5a59475fadd49ef51d06a23edfe1c8995f400`.
 - Exact-head GitHub Actions run `34270444416` passed source materialization, locked backend/frontend installs, and dependency-lock verification, then failed at the cumulative gate on eight Ruff findings before tests or clean Compose could run.
 - A guarded one-off helper workflow applied only the Ruff-reported repairs, required Ruff plus the focused **18-test** Phase 03 suite and an exact changed-file whitelist to pass, then pushed lint-only commit `1c92ed06bb26f9f4b2b77ed4d03ba04b64eb35a4` directly on top of the implementation commit.
-- The lint-only commit was produced by the GitHub Actions token, so GitHub did not recursively trigger the normal CI workflow from that push. This handoff update deliberately records the verified repair and provides a normal user-authored push so the safe read-only CI workflow can validate the resulting exact head end-to-end.
+- Exact-head run `34276634516` then passed source materialization, both locked installs, dependency-lock verification, and Ruff lint, but `ruff format --check` identified six formatting-only files and stopped the cumulative gate before later tests or clean Compose.
+- Guarded formatter run `34276839484` required the complete Phase 03 Python Ruff lint and format scopes, the focused **18-test** suite, and an exact six-file whitelist to pass before pushing formatting-only commit `48321ebf57a6969754c36ae88fe78a71dad1a87a`.
+- The repair commits were produced by the GitHub Actions token, so GitHub did not recursively trigger the normal CI workflow from those pushes. This handoff update records the verified repair chain and provides a normal user-authored push so the safe read-only CI workflow can validate the resulting exact head end-to-end.
 
 No hard gate was weakened during this repair sequence.
 
