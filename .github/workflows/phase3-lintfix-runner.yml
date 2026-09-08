@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  lintfix:
+  formatfix:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out exact Phase 03 head
@@ -21,7 +21,7 @@ jobs:
       - name: Verify expected parent
         shell: bash
         run: |
-          test "$(git rev-parse HEAD)" = "dfd5a59475fadd49ef51d06a23edfe1c8995f400"
+          test "$(git rev-parse HEAD)" = "22ea3b2eae8486f531567bc0a2f7601a894860bb"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,41 +38,35 @@ jobs:
       - name: Materialize pinned Phase 03 sources
         run: python scripts/fetch_phase3_sources.py
 
-      - name: Apply only Ruff lint repairs
+      - name: Apply only Ruff formatting repairs
         shell: bash
         run: |
           cd backend
-          ruff check --fix --unsafe-fixes --exit-zero \
+          ruff format \
             app/data/audit.py \
-            app/data/hashing.py \
-            app/data/servicenow.py \
+            app/data/split.py \
             tests/data/test_phase3_data.py \
             ../scripts/build_phase3_candidate.py \
-            ../scripts/check_phase3_contract.py \
-            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/check_phase3_exit.py \
             ../scripts/fetch_phase3_sources.py
-          cd ..
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("scripts/fetch_phase3_sources.py")
-          text = path.read_text(encoding="utf-8")
-          old = '''            with urllib.request.urlopen(auxiliary["download_url"], timeout=60) as response:\n                with temp.open("wb") as output:\n                    shutil.copyfileobj(response, output)\n'''
-          new = '''            with (\n                urllib.request.urlopen(auxiliary["download_url"], timeout=60) as response,\n                temp.open("wb") as output,\n            ):\n                shutil.copyfileobj(response, output)\n'''
-          if text.count(old) != 1:
-              raise SystemExit("expected exactly one SIM117 source block")
-          path.write_text(text.replace(old, new), encoding="utf-8")
-          PY
-          cd backend
           ruff check \
-            app/data/audit.py \
-            app/data/hashing.py \
-            app/data/servicenow.py \
-            tests/data/test_phase3_data.py \
+            app tests \
+            ../scripts/audit_dataset.py \
             ../scripts/build_phase3_candidate.py \
             ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
             ../scripts/check_phase3_reproducibility.py \
-            ../scripts/fetch_phase3_sources.py
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
 
       - name: Run focused Phase 03 tests
         run: python -m pytest backend/tests/data/test_phase3_data.py -q
@@ -85,26 +79,25 @@ jobs:
           test -s /tmp/changed.txt
           while IFS= read -r path; do
             case "$path" in
-              backend/app/data/audit.py|backend/app/data/hashing.py|backend/app/data/servicenow.py|backend/tests/data/test_phase3_data.py|scripts/build_phase3_candidate.py|scripts/check_phase3_contract.py|scripts/check_phase3_reproducibility.py|scripts/fetch_phase3_sources.py) ;;
+              backend/app/data/audit.py|backend/app/data/split.py|backend/tests/data/test_phase3_data.py|scripts/build_phase3_candidate.py|scripts/check_phase3_exit.py|scripts/fetch_phase3_sources.py) ;;
               *) echo "unexpected changed path: $path"; exit 1 ;;
             esac
           done < /tmp/changed.txt
+          test "$(wc -l < /tmp/changed.txt)" -eq 6
           cat /tmp/changed.txt
 
-      - name: Commit verified lint-only repairs
+      - name: Commit verified formatting-only repairs
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             backend/app/data/audit.py \
-            backend/app/data/hashing.py \
-            backend/app/data/servicenow.py \
+            backend/app/data/split.py \
             backend/tests/data/test_phase3_data.py \
             scripts/build_phase3_candidate.py \
-            scripts/check_phase3_contract.py \
-            scripts/check_phase3_reproducibility.py \
+            scripts/check_phase3_exit.py \
             scripts/fetch_phase3_sources.py
           git diff --cached --check
-          git commit -m "phase3: fix lint gate"
+          git commit -m "phase3: format dataset engineering sources"
           git push origin HEAD:phase-03-dataset-engineering
