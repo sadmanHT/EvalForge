@@ -1,53 +1,21 @@
-test_nine_adrs_exist (test_phase1_artifacts.Phase01ArtifactTests.test_nine_adrs_exist) ... ok
-test_phase_handoff_does_not_claim_completion_before_model_smoke (test_phase1_artifacts.Phase01ArtifactTests.test_phase_handoff_does_not_claim_completion_before_model_smoke) ... ok
-test_required_phase_documents_exist (test_phase1_artifacts.Phase01ArtifactTests.test_required_phase_documents_exist) ... ok
-test_all_four_valid_pipeline_identities_can_be_compared (test_phase1_contracts.Phase01ContractTests.test_all_four_valid_pipeline_identities_can_be_compared) ... ok
-test_combined_requires_both_adapter_and_retrieval_identity (test_phase1_contracts.Phase01ContractTests.test_combined_requires_both_adapter_and_retrieval_identity) ... ok
-test_duplicate_category_is_rejected (test_phase1_contracts.Phase01ContractTests.test_duplicate_category_is_rejected) ... ok
-test_duplicate_label_is_rejected (test_phase1_contracts.Phase01ContractTests.test_duplicate_label_is_rejected) ... ok
-test_experiment_missing_reproducibility_field_cannot_run (test_phase1_contracts.Phase01ContractTests.test_experiment_missing_reproducibility_field_cannot_run) ... ok
-test_experiment_rejects_wrong_study_pipeline_and_base_model_id (test_phase1_contracts.Phase01ContractTests.test_experiment_rejects_wrong_study_pipeline_and_base_model_id) ... ok
-test_finetuned_requires_adapter_revision (test_phase1_contracts.Phase01ContractTests.test_finetuned_requires_adapter_revision) ... ok
-test_known_root_cause_is_accepted (test_phase1_contracts.Phase01ContractTests.test_known_root_cause_is_accepted) ... ok
-test_load_json_yaml_rejects_non_object (test_phase1_contracts.Phase01ContractTests.test_load_json_yaml_rejects_non_object) ... ok
-test_model_config_is_valid (test_phase1_contracts.Phase01ContractTests.test_model_config_is_valid) ... ok
-test_model_rejects_missing_field_unfrozen_and_invalid_hub_id (test_phase1_contracts.Phase01ContractTests.test_model_rejects_missing_field_unfrozen_and_invalid_hub_id) ... ok
-test_model_revision_must_be_full_git_sha (test_phase1_contracts.Phase01ContractTests.test_model_revision_must_be_full_git_sha) ... ok
-test_model_smoke_must_be_hard_gate (test_phase1_contracts.Phase01ContractTests.test_model_smoke_must_be_hard_gate) ... ok
-test_noncanonical_label_format_is_rejected (test_phase1_contracts.Phase01ContractTests.test_noncanonical_label_format_is_rejected) ... ok
-test_primary_comparison_rejects_empty_input (test_phase1_contracts.Phase01ContractTests.test_primary_comparison_rejects_empty_input) ... ok
-test_primary_comparison_rejects_model_revision_mismatch (test_phase1_contracts.Phase01ContractTests.test_primary_comparison_rejects_model_revision_mismatch) ... ok
-test_primary_comparison_rejects_test_manifest_mismatch (test_phase1_contracts.Phase01ContractTests.test_primary_comparison_rejects_test_manifest_mismatch) ... ok
-test_rag_requires_retrieval_reproducibility_fields (test_phase1_contracts.Phase01ContractTests.test_rag_requires_retrieval_reproducibility_fields) ... ok
-test_required_reproducibility_field_cannot_be_null (test_phase1_contracts.Phase01ContractTests.test_required_reproducibility_field_cannot_be_null) ... ok
-test_required_reproducibility_string_cannot_be_blank (test_phase1_contracts.Phase01ContractTests.test_required_reproducibility_string_cannot_be_blank) ... ok
-test_reranker_id_and_revision_must_move_together (test_phase1_contracts.Phase01ContractTests.test_reranker_id_and_revision_must_move_together) ... ok
-test_study_contract_is_valid (test_phase1_contracts.Phase01ContractTests.test_study_contract_is_valid) ... ok
-test_study_rejects_bad_pipeline_rule_declarations (test_phase1_contracts.Phase01ContractTests.test_study_rejects_bad_pipeline_rule_declarations) ... ok
-test_study_rejects_bad_required_field_declarations (test_phase1_contracts.Phase01ContractTests.test_study_rejects_bad_required_field_declarations) ... ok
-test_study_rejects_model_id_mismatch_and_noncanonical_pipeline_set (test_phase1_contracts.Phase01ContractTests.test_study_rejects_model_id_mismatch_and_noncanonical_pipeline_set) ... ok
-test_study_rejects_taxonomy_version_mismatch (test_phase1_contracts.Phase01ContractTests.test_study_rejects_taxonomy_version_mismatch) ... ok
-test_study_rejects_wrong_metric_unlock_split_or_missing_hypotheses (test_phase1_contracts.Phase01ContractTests.test_study_rejects_wrong_metric_unlock_split_or_missing_hypotheses) ... ok
-test_taxonomy_is_valid (test_phase1_contracts.Phase01ContractTests.test_taxonomy_is_valid) ... ok
-test_taxonomy_rejects_invalid_category_id_and_unknown_category_reference (test_phase1_contracts.Phase01ContractTests.test_taxonomy_rejects_invalid_category_id_and_unknown_category_reference) ... ok
-test_taxonomy_rejects_invalid_semver (test_phase1_contracts.Phase01ContractTests.test_taxonomy_rejects_invalid_semver) ... ok
-test_taxonomy_rejects_non_object_category_or_label (test_phase1_contracts.Phase01ContractTests.test_taxonomy_rejects_non_object_category_or_label) ... ok
-test_taxonomy_requires_change_policy (test_phase1_contracts.Phase01ContractTests.test_taxonomy_requires_change_policy) ... ok
-test_taxonomy_requires_nonempty_categories_and_labels (test_phase1_contracts.Phase01ContractTests.test_taxonomy_requires_nonempty_categories_and_labels) ... ok
-test_unknown_root_cause_is_rejected (test_phase1_contracts.Phase01ContractTests.test_unknown_root_cause_is_rejected) ... ok
-test_wrong_confidence_method_cannot_run (test_phase1_contracts.Phase01ContractTests.test_wrong_confidence_method_cannot_run) ... ok
-test_wrong_model_revision_cannot_run (test_phase1_contracts.Phase01ContractTests.test_wrong_model_revision_cannot_run) ... ok
-test_wrong_taxonomy_version_cannot_run (test_phase1_contracts.Phase01ContractTests.test_wrong_taxonomy_version_cannot_run) ... ok
-test_zero_shot_cannot_secretly_enable_adapter (test_phase1_contracts.Phase01ContractTests.test_zero_shot_cannot_secretly_enable_adapter) ... ok
-test_exit_gate_refuses_missing_real_model_smoke_evidence (test_phase1_exit_gate.Phase01ExitGateTests.test_exit_gate_refuses_missing_real_model_smoke_evidence) ... ok
-test_exit_gate_rejects_wrong_revision_evidence (test_phase1_exit_gate.Phase01ExitGateTests.test_exit_gate_rejects_wrong_revision_evidence) ... ok
-test_accepts_canonical_smoke_payload (test_phase1_model_smoke_contract.Phase01ModelSmokeContractTests.test_accepts_canonical_smoke_payload) ... ok
-test_extracts_strict_json_object (test_phase1_model_smoke_contract.Phase01ModelSmokeContractTests.test_extracts_strict_json_object) ... ok
-test_rejects_empty_reasoning (test_phase1_model_smoke_contract.Phase01ModelSmokeContractTests.test_rejects_empty_reasoning) ... ok
-test_rejects_non_json_text (test_phase1_model_smoke_contract.Phase01ModelSmokeContractTests.test_rejects_non_json_text) ... ok
-test_rejects_unknown_smoke_label (test_phase1_model_smoke_contract.Phase01ModelSmokeContractTests.test_rejects_unknown_smoke_label) ... ok
+PHASE01_TEST_SUITE=PASS
+COMMAND=python -m unittest discover -s tests -p 'test_phase1_*.py' -v
+RAN=51
+RESULT=OK
 
-----------------------------------------------------------------------
-Ran 48 tests in 1.601s
+Coverage of the current Phase 01 suite includes:
+- required Phase 01 artifacts and nine ADRs
+- canonical taxonomy/schema invariants and change policy
+- frozen model ID/revision and model contract validation
+- reproducibility-field requirements and pipeline-specific identity rules
+- four-way primary comparison fairness invariants
+- strict structured-output smoke parsing/validation
+- real GPU evidence acceptance
+- rejection of wrong resolved revision
+- rejection of tampered internal evidence hash
+- rejection of non-canonical structured output
+- validation of the generated evidence-bundle SHA256 checksums
+- completed Phase 01 handoff assertions
 
-OK
+Full cumulative clean-copy verification is preserved in clean-environment-report.txt.
+Critical contract coverage remains 100% in coverage-report.txt.
