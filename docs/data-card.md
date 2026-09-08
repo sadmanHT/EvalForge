@@ -1,6 +1,6 @@
 # EvalForge Incident Diagnosis Data Card — Phase 03 Candidate
 
-**Status:** Research benchmark **not yet lockable**. Independent public postmortems have been identified, but frozen-taxonomy coverage and preserved primary-source evidence are still insufficient for a credible locked holdout.
+**Status:** Research benchmark **not yet lockable**. All six frozen labels now have at least one defensible independent candidate mapping, but preserved original-source evidence and per-label independent family depth are still insufficient for a credible locked holdout.
 
 **Candidate dataset version:** `evalforge-incident-diagnosis-v0.1.0-candidate`  
 **Canonical schema:** `incident-schema-v1`  
@@ -13,13 +13,13 @@ EvalForge needs a leakage-safe incident-diagnosis benchmark for the same four pr
 
 ## Source inventory
 
-Phase 03 now tracks three provenance sources with different scientific roles.
+Phase 03 tracks three primary provenance roles, with direct normalized public-incident snapshots attached to the candidate index.
 
 | Source | Nature | Scale | EvalForge role | Primary labeled holdout eligible? |
 | --- | --- | ---: | --- | --- |
 | OpsSentinel BenchmarkLab | Programmatically generated controlled scenarios | 50 scenarios | controlled/source-candidate engineering data | No |
 | UCI dataset 498 / ServiceNow incident-management event log | Real anonymized operational incident events | 141,712 events / 24,918 incidents | real-world auxiliary/robustness corpus | No |
-| postmortems.app (`icco/postmortems`) | Public real-incident discovery index pinned by Git commit/blob SHA | 8 conservatively reviewed candidates | independent postmortem candidate discovery | Not yet |
+| postmortems.app + directly reviewed public incidents | Public real-incident discovery plus normalized candidate snapshots | 11 conservatively reviewed candidates | independent incident candidate discovery | Not yet |
 
 ### OpsSentinel controlled source
 
@@ -115,28 +115,31 @@ This source improves real-world coverage but **does not provide trustworthy huma
 
 It is retained as a real-world auxiliary/robustness corpus, not as the primary labeled research holdout.
 
-### Public postmortem candidate discovery
+### Public incident candidate discovery
 
-EvalForge now pins the public `icco/postmortems` / postmortems.app discovery corpus at commit:
+EvalForge pins the public `icco/postmortems` / postmortems.app discovery corpus at commit:
 
 `42bac673432f564d317dbfc30b5d400e1812c684`
 
-The candidate decision index is `configs/postmortem-candidates.json` (index SHA-256 `8214bbf78b239a5c873e64daa50ed672e345bede218cf8bc990c4604b6f85b7a`). The index can also hold independently discovered external candidates when the candidate records its own evidence repository, commit, path, and Git blob SHA. Each reviewed entry records the exact upstream Git blob SHA and original incident URL. The postmortems.app repository is used only as a pinned discovery/index source: its enriched summaries are **not** automatically treated as primary-source ground truth. Original incident evidence must be preserved before a candidate can enter the research dataset.
+The candidate decision index is `configs/postmortem-candidates.json` (index SHA-256 `7f8c2bfb0651e80aa00987bd8a938b55dc1a1fadc523b5679506338e4786fc2c`). postmortems.app remains a discovery/index source rather than automatic ground truth. Directly reviewed external candidates may instead point to normalized EvalForge snapshots under `datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/`; each such snapshot has a pinned Git blob and SHA-256 checksum and explicitly records that it is not a byte-for-byte original-source archive.
 
-Eight independent public-incident candidates were conservatively reviewed against the frozen taxonomy. Three are strong candidate mappings:
+Eleven independent public-incident candidates have now been conservatively reviewed against the frozen taxonomy. Six are strong candidate mappings, one for every frozen label:
 
 | Candidate | Proposed label | Decision | Why |
 | --- | --- | --- | --- |
 | Amazon EBS, 2012-10-22 | `memory_leak` | supported candidate | narrative explicitly identifies progressive agent memory consumption |
 | Tarsnap, 2016-07-24 | `disk_exhaustion` | supported candidate | unbounded local log fills filesystem and service writes fail |
 | Medoc, 2026-01-11 | `n_plus_one_query` | supported candidate | firsthand production narrative explicitly identifies N+1, 6,000+ DB calls, and batching as the fix |
+| Dispatcharr #1416, 2026-07-06 | `database_connection_leak` | supported candidate | PostgreSQL connection is not returned on stream teardown; pool stays 8/8 and DB-dependent requests wedge until restart |
+| Google Cloud payments, 2021-09-22 | `broken_payment_configuration` | supported candidate | official root cause is a payment-configuration update that prevents credit-card processing until rollback |
+| Google Cloud / Mandiant, 2024-09-18 | `no_fault` | supported candidate | final official investigation reports no service degradation and no supported CrowdStrike alerts missed |
 | incident.io GKE incident | `n_plus_one_query` | rejected as primary | N+1 join is a contributing issue; persistent root cause is `anetd` CPU saturation/packet loss |
 | Twilio billing, 2013 | `broken_payment_configuration` | ambiguous | incorrect Redis configuration contributes, but the incident is a broader multi-causal chain |
 | Elastic Cloud, 2019 | `database_connection_leak` | rejected as primary | connection leaks are Kibana/remediation issues, not established DB-connection root cause |
 | Cloudflare parser incident | `memory_leak` | rejected false friend | memory disclosure from buffer over-read is not runtime memory exhaustion |
 | Skyliner, 2017 | `memory_leak` | insufficient evidence | pinned index entry is too thin for a locked family/evidence record |
 
-Thus the currently supported independent candidate labels are `disk_exhaustion`, `memory_leak`, and `n_plus_one_query`. The frozen labels `broken_payment_configuration`, `database_connection_leak`, and `no_fault` still lack clean independent coverage suitable for a credible family-stratified holdout. The Medoc narrative is pinned to an exact external Git commit/blob but has not yet been materialized into EvalForge's raw primary-source snapshot layer. None of the eight candidates is research-admitted yet.
+Candidate-level taxonomy coverage is therefore **6/6**, but this does **not** make the research benchmark ready. None of the eleven candidates is research-admitted. The three new direct snapshots are normalized semantic evidence rather than byte-for-byte originals; Amazon/Tarsnap originals are not yet preserved; Medoc is pinned to an external Git commit/blob but not yet materialized as an EvalForge original-source archive. In addition, one strong family per label is not enough to create a credible family-stratified train/validation/test split while retaining independent families in every required role.
 
 ## Current canonical research counts
 
@@ -198,7 +201,7 @@ Severe imbalance and missing difficulty tiers are reported instead of silently h
 
 ## Known limitations
 
-- Independent real public-incident candidates are now identified, with three frozen labels having strong candidate mappings. Medoc's N+1 narrative is pinned to immutable external Git evidence, but no accepted candidate has yet been materialized into EvalForge's raw primary-source snapshot layer or research-admitted.
+- Independent public-incident candidates now provide at least one strong candidate mapping for all six frozen labels, but none is research-admitted; original-source preservation and sufficient per-label independent family depth remain outstanding.
 - The ServiceNow/UCI corpus is real-world operational data but lacks trustworthy human-readable root-cause semantics for the frozen taxonomy.
 - The OpsSentinel BenchmarkLab catalog is generated and therefore cannot supply independent held-out evidence.
 - The upstream OpsSentinel source assignments contain inferred generation-family overlap.

@@ -1,5 +1,5 @@
 {
-  "candidate_index_sha256": "8214bbf78b239a5c873e64daa50ed672e345bede218cf8bc990c4604b6f85b7a",
+  "candidate_index_sha256": "7f8c2bfb0651e80aa00987bd8a938b55dc1a1fadc523b5679506338e4786fc2c",
   "candidates": [
     {
       "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
@@ -136,25 +136,72 @@
       "source_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
       "source_path": "src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md",
       "title": "It Worked in Dev. It Worked in QA. Then Production Happened."
+    },
+    {
+      "candidate_id": "github:Dispatcharr:issue-1416:2026-07-06",
+      "company": "Dispatcharr",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "Primary operational report directly traces a bounded PostgreSQL pool outage to connections not returned on stream teardown, with deterministic reproduction, pool-exhaustion evidence, restart recovery, and a negative control. The issue was closed only for template noncompliance.",
+      "evidence_commit": null,
+      "evidence_repository": null,
+      "evidence_summary": "A checked-out PostgreSQL connection is not returned on live-stream teardown; the per-worker pool drains to 8/8, database-dependent requests time out or 504, the pool remains exhausted after streams end, and restart clears the leaked state.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+      "proposed_root_cause_code": "database_connection_leak",
+      "research_admitted": false,
+      "source_blob_sha": "3861e44ebd3167a7deff63b7a6b48127b4bf2980",
+      "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
+      "title": "PostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool"
+    },
+    {
+      "candidate_id": "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+      "company": "Google Cloud",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "The official incident root-cause section directly identifies a payment configuration update as the trigger for failed credit-card payment processing, and rollback of that configuration resolved the failure.",
+      "evidence_commit": null,
+      "evidence_repository": null,
+      "evidence_summary": "A production payment-configuration update intended for virtual credit cards prevented affected U.S. credit-card payments from processing until engineers rolled back the configuration change.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
+      "proposed_root_cause_code": "broken_payment_configuration",
+      "research_admitted": false,
+      "source_blob_sha": "8057f42f29b92d39c0f5ad7750f2c711d8405212",
+      "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
+      "title": "Payment configuration update prevented U.S. credit-card processing"
+    },
+    {
+      "candidate_id": "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+      "company": "Google Cloud / Mandiant",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "The final official investigation states that the suspected ingestion incident had no service degradation and no supported CrowdStrike alerts were missed, making it a defensible real-world negative-control candidate for no_fault.",
+      "evidence_commit": null,
+      "evidence_repository": null,
+      "evidence_summary": "An operationally visible suspected ingestion issue was investigated and the final supported-service finding was healthy: no service degradation and no supported CrowdStrike alerts missed.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
+      "proposed_root_cause_code": "no_fault",
+      "research_admitted": false,
+      "source_blob_sha": "e819f1fb774dfc5b3b6164c3c8c4d90b82a883a4",
+      "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
+      "title": "Mandiant Managed Defense reported ingestion issue resolved as no degradation"
     }
   ],
   "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
   "coverage": {
     "admitted_research_record_count": 0,
     "blocker": "independent_taxonomy_coverage_insufficient",
-    "candidate_count": 8,
+    "candidate_count": 11,
     "decision_counts": {
       "ambiguous_mapping": 1,
       "insufficient_evidence": 1,
       "rejected_as_primary_mapping": 3,
-      "supported_candidate_mapping": 3
+      "supported_candidate_mapping": 6
     },
-    "independent_candidate_family_count": 8,
-    "missing_root_cause_codes": [
-      "broken_payment_configuration",
-      "database_connection_leak",
-      "no_fault"
-    ],
+    "independent_candidate_family_count": 11,
+    "missing_root_cause_codes": [],
     "notes": [
       "postmortems.app is used as a pinned discovery/index source, not as primary-source ground truth",
       "supported candidate mappings are not research-admitted until original incident evidence is preserved",
@@ -162,11 +209,14 @@
     ],
     "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
     "source_repository": "icco/postmortems",
-    "supported_mapping_count": 3,
+    "supported_mapping_count": 6,
     "supported_root_cause_codes": [
+      "broken_payment_configuration",
+      "database_connection_leak",
       "disk_exhaustion",
       "memory_leak",
-      "n_plus_one_query"
+      "n_plus_one_query",
+      "no_fault"
     ],
     "taxonomy_coverage_sufficient_for_locked_holdout": false
   },

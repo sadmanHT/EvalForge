@@ -1,0 +1,24 @@
+{
+  "normalized_facts": [
+    "Google's final incident report states that an update to payment configuration intended to support virtual credit cards triggered the disruption.",
+    "The configuration update prevented credit-card payments from being processed for affected United States customers and generated payment-failure notifications.",
+    "Engineers observed an unexpected increase in payment-request failures, rolled back the configuration change, and the rollback resolved the payment-processing failure condition.",
+    "The incident report identifies progressive rollout errors as a factor that expanded the configuration change more rapidly than intended."
+  ],
+  "observed_at": "2026-09-08T21:36:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot of the official Google Cloud Service Health report, not a byte-for-byte copy of the page.",
+    "It supports candidate-level mapping to broken_payment_configuration but does not satisfy the original-source preservation requirement for research admission."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_event": {
+    "final_report_date": "2021-09-29",
+    "incident_end": "2021-09-23T00:30:00-07:00",
+    "incident_start": "2021-09-22T14:10:00-07:00"
+  },
+  "source_publisher": "Google Cloud Service Health",
+  "source_title": "Automatic payment processing incident for U.S. credit-card billing customers",
+  "source_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1"
+}

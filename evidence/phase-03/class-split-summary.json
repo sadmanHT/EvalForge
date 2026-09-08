@@ -1,8 +1,8 @@
 {
   "auxiliary_source_counts": {
-    "public_postmortem_candidates": 8,
-    "public_postmortem_supported_mappings": 3,
-    "public_postmortem_supported_taxonomy_labels": 3,
+    "public_postmortem_candidates": 11,
+    "public_postmortem_supported_mappings": 6,
+    "public_postmortem_supported_taxonomy_labels": 6,
     "servicenow_uci_event_rows": 141712,
     "servicenow_uci_incidents": 24918
   },
@@ -14,17 +14,16 @@
   },
   "public_postmortem_candidate_coverage": {
     "admitted_research_record_count": 0,
-    "candidate_count": 8,
-    "missing_root_cause_codes": [
+    "candidate_count": 11,
+    "missing_root_cause_codes": [],
+    "supported_mapping_count": 6,
+    "supported_root_cause_codes": [
       "broken_payment_configuration",
       "database_connection_leak",
-      "no_fault"
-    ],
-    "supported_mapping_count": 3,
-    "supported_root_cause_codes": [
       "disk_exhaustion",
       "memory_leak",
-      "n_plus_one_query"
+      "n_plus_one_query",
+      "no_fault"
     ]
   },
   "research_ready": false,

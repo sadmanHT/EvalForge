@@ -1,8 +1,8 @@
 {
   "auxiliary_source_counts": {
-    "public_postmortem_candidates": 8,
-    "public_postmortem_supported_mappings": 3,
-    "public_postmortem_supported_taxonomy_labels": 3,
+    "public_postmortem_candidates": 11,
+    "public_postmortem_supported_mappings": 6,
+    "public_postmortem_supported_taxonomy_labels": 6,
     "servicenow_uci_event_rows": 141712,
     "servicenow_uci_incidents": 24918
   },
@@ -21,7 +21,7 @@
     "Supported public-postmortem candidate mappings are not research-admitted until original primary-source evidence is preserved.",
     "Keyword/title matches are not accepted as root-cause evidence; false friends and contributing factors are explicitly rejected."
   ],
-  "manifest_checksum": "b594ca02eb59488e8ab1b91aac23404db6ebf0dc47b665e0c6407b067d0d3d8a",
+  "manifest_checksum": "9917e979088dac97da630b885a94bba3f434ccbf3bdb9231060db1e7e666dd84",
   "record_count": 0,
   "research_ready": false,
   "schema_version": "incident-schema-v1",
@@ -64,7 +64,7 @@
       "research_eligible_as_independent_heldout_evidence": false,
       "snapshot_identity_kind": "evalforge_candidate_index_sha256",
       "snapshot_path": "configs/postmortem-candidates.json",
-      "snapshot_sha256": "8214bbf78b239a5c873e64daa50ed672e345bede218cf8bc990c4604b6f85b7a",
+      "snapshot_sha256": "7f8c2bfb0651e80aa00987bd8a938b55dc1a1fadc523b5679506338e4786fc2c",
       "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
       "source_generated": false,
       "source_license": "GPL-3.0",

@@ -17,6 +17,11 @@ from app.data.taxonomy import load_taxonomy
 REQUIRED = (
     "configs/dataset.yaml",
     "configs/postmortem-candidates.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/README.md",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/SHA256SUMS.txt",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
     "datasets/incident_diagnosis/raw/README.md",
     (
         "datasets/incident_diagnosis/raw/opssentinel/"
@@ -119,18 +124,43 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_commit")
     if coverage.admitted_research_record_count != 0:
         raise SystemExit("PHASE03_CONTRACT=FAIL premature_postmortem_research_admission")
+    if coverage.candidate_count != 11 or coverage.supported_mapping_count != 6:
+        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_candidate_counts")
     if set(coverage.supported_root_cause_codes) != {
+        "broken_payment_configuration",
+        "database_connection_leak",
         "disk_exhaustion",
         "memory_leak",
         "n_plus_one_query",
-    }:
-        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set")
-    if set(coverage.missing_root_cause_codes) != {
-        "broken_payment_configuration",
-        "database_connection_leak",
         "no_fault",
     }:
+        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set")
+    if coverage.missing_root_cause_codes:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set")
+    public_snapshot_dir = (
+        root / "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1"
+    )
+    public_sums = {}
+    for line in (public_snapshot_dir / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        digest, name = line.split(maxsplit=1)
+        public_sums[name.strip()] = digest
+    local_candidates = [
+        item
+        for item in postmortem_index.candidates
+        if item.source_path.startswith(
+            "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/"
+        )
+    ]
+    if len(local_candidates) != 3:
+        raise SystemExit("PHASE03_CONTRACT=FAIL public_snapshot_candidate_count")
+    for candidate in local_candidates:
+        path = root / candidate.source_path
+        data = path.read_bytes()
+        header = f"blob {len(data)}\0".encode()
+        if hashlib.sha1(header + data).hexdigest() != candidate.source_blob_sha:
+            raise SystemExit("PHASE03_CONTRACT=FAIL public_snapshot_git_blob")
+        if public_sums.get(path.name) != hashlib.sha256(data).hexdigest():
+            raise SystemExit("PHASE03_CONTRACT=FAIL public_snapshot_sha256")
 
     fixture = root / "datasets/incident_diagnosis/fixtures/ci_smoke"
     records = read_jsonl(fixture / "incidents.jsonl", IncidentRecord)

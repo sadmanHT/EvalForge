@@ -1,8 +1,8 @@
 # Phase 03 Handoff — Dataset Engineering, Versioning & Leakage-Safe Benchmark
 
-Status: **IN PROGRESS — HARD EXIT BLOCKED ON INDEPENDENT FROZEN-TAXONOMY COVERAGE.**
+Status: **IN PROGRESS — HARD EXIT BLOCKED ON INDEPENDENT FAMILY DEPTH / ORIGINAL-SOURCE PRESERVATION.**
 
-Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent real public incident evidence is now discoverable, but the reviewed set covers only three of six frozen labels strongly and no candidate has yet been research-admitted with an EvalForge-preserved original primary-source snapshot.
+Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent public incident evidence now has at least one defensible candidate mapping for all six frozen labels, but no candidate is research-admitted and the corpus still lacks the preserved originals and per-label independent family depth required for a credible locked split.
 
 ## Implemented
 
@@ -34,16 +34,20 @@ Phase 03 implementation logic is present and regression-tested. The hard exit ga
 
 GitHub Actions diagnostic run `34262191383` verified the current official UCI dataset 498 download on 2026-09-08. The official ZIP SHA-256 is `6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6`; its sole `incident_event_log.csv` member is 46,212,397 bytes with SHA-256 `fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef`, exactly matching the member in the user-provided Kaggle/mirror archive. EvalForge therefore treats the CSV payload hash as the stable scientific source identity and validates ZIP envelopes separately.
 
-### Public postmortem coverage review
+### Public incident coverage review
 
 - Pinned discovery repository: `icco/postmortems` at `42bac673432f564d317dbfc30b5d400e1812c684`.
-- Conservatively reviewed independent candidates: **8**.
-- Supported candidate mappings: **3** (`disk_exhaustion`, `memory_leak`, `n_plus_one_query`).
-- Missing clean frozen-label coverage: `broken_payment_configuration`, `database_connection_leak`, `no_fault`.
-- Research-admitted public postmortem records: **0**.
-- Cloudflare's parser incident is explicitly rejected as a `memory_leak` false friend because it is a buffer over-read/data-disclosure bug, not runtime resource exhaustion.
-- incident.io's accidental N+1 join is explicitly rejected as the incident's primary root cause because the persistent failure is GKE Dataplane V2 `anetd` CPU saturation/packet loss.
-- Medoc's firsthand production narrative is accepted as a strong `n_plus_one_query` candidate: it explicitly identifies the N+1 pattern, 6,000+ database calls, and batching as the fix. Evidence is pinned to `Nikhil-Gautam-dev/nikhil-gautam-dev.github.io` commit `34d1ecc14b54166608b4197c44e1e7efc82e48b6`, blob `750ba91067e5e4d2e192a3eceffec357a58e9d77`; it remains non-admitted until EvalForge preserves the source in its raw evidence layer.
+- Conservatively reviewed independent candidates: **11**.
+- Supported candidate mappings: **6**, covering all frozen labels (`broken_payment_configuration`, `database_connection_leak`, `disk_exhaustion`, `memory_leak`, `n_plus_one_query`, `no_fault`).
+- Candidate-level frozen-label gaps: **none**.
+- Research-admitted public-incident records: **0**.
+- Cloudflare's parser incident remains rejected as a `memory_leak` false friend because it is a buffer over-read/data-disclosure bug, not runtime resource exhaustion.
+- incident.io's accidental N+1 join remains rejected as the incident's primary root cause because the persistent failure is GKE Dataplane V2 `anetd` CPU saturation/packet loss.
+- Medoc remains a strong `n_plus_one_query` candidate pinned to exact external Git evidence, but not an EvalForge-preserved original-source archive.
+- Dispatcharr #1416 is accepted as a strong `database_connection_leak` candidate because the report directly traces the outage to PostgreSQL connections not returned on stream teardown, shows a pool pinned at 8/8 after streams end, provides deterministic reproduction and a negative control, and notes restart recovery. Its closure was an automated issue-template action rather than a technical rejection.
+- Google Cloud incident `E18Caoo5X1m6dTa1PVr1` is accepted as a strong `broken_payment_configuration` candidate because the official root cause is a payment-configuration update that stopped affected credit-card processing until rollback.
+- Google Cloud / Mandiant incident `fLYHLzSGXGkLkAjc8MJG` is accepted as a `no_fault` negative-control candidate because the final investigation reports no service degradation and no supported CrowdStrike alerts missed. The mapping is limited to that declared supported-service scope.
+- The three new direct-source entries are preserved as normalized EvalForge semantic snapshots with Git-blob and SHA-256 checks, but `original_source_snapshot_preserved=false` remains correct because they are not byte-for-byte original-source archives.
 
 The candidate review is preserved at `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json`.
 
@@ -93,6 +97,7 @@ Reproducibility and contract checks:
 - The repair commits were produced by the GitHub Actions token, so GitHub did not recursively trigger the normal CI workflow from those pushes. This handoff update records the verified repair chain and provides a normal user-authored push so the safe read-only CI workflow can validate the resulting exact head end-to-end.
 - Exact-head push CI Run `34277519206` (Run #22) completed SUCCESS: cumulative `make verify-all`, strict known-blocker recording, evidence upload, and fresh no-cache Compose build/smoke/teardown all passed on `0ddc04187b4a490ca9a08ce07de141f4b3f90fa4`.
 - Draft PR #3 then triggered PR-context Run `34278144995` (Run #24); both `verify-all` and `clean-compose` completed SUCCESS on the same validated head.
+- Medoc evidence validation head `f74a2c85a1b6242e2d72e54df04497b9b4391d0d` passed push Run `34280566223` (Run #28) and PR-context Run `34280571091` (Run #29); `verify-all` and fresh `clean-compose` were SUCCESS in both contexts.
 
 No hard gate was weakened during this repair sequence.
 
@@ -107,10 +112,10 @@ PHASE03_EXIT_GATE=BLOCKED
 BLOCKER=independent_taxonomy_coverage_insufficient
 SOURCE_CANDIDATES=50
 AUXILIARY_REAL_INCIDENTS=24918
-INDEPENDENT_POSTMORTEM_CANDIDATES=8
-SUPPORTED_MAPPING_CANDIDATES=3
-SUPPORTED_TAXONOMY_LABELS=3
-MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,no_fault
+INDEPENDENT_POSTMORTEM_CANDIDATES=11
+SUPPORTED_MAPPING_CANDIDATES=6
+SUPPORTED_TAXONOMY_LABELS=6
+MISSING_TAXONOMY_LABELS=
 BLOCKER_DETAIL=credible_family_stratified_holdout_not_yet_possible
 RESEARCH_TRAIN=0
 RESEARCH_VALIDATION=0
