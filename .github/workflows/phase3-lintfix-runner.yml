@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  formatfix:
+  typefix:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out exact Phase 03 head
@@ -21,7 +21,7 @@ jobs:
       - name: Verify expected parent
         shell: bash
         run: |
-          test "$(git rev-parse HEAD)" = "22ea3b2eae8486f531567bc0a2f7601a894860bb"
+          test "$(git rev-parse HEAD)" = "828f9570f118cf0e539f166fe6abc154ce9ca21d"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,17 +38,30 @@ jobs:
       - name: Materialize pinned Phase 03 sources
         run: python scripts/fetch_phase3_sources.py
 
-      - name: Apply only Ruff formatting repairs
+      - name: Apply exact mypy annotation repair
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("backend/app/data/opssentinel.py")
+          text = path.read_text(encoding="utf-8")
+          replacements = {
+              "    splits = Counter()\n": "    splits: Counter[str] = Counter()\n",
+              "    labels = Counter()\n": "    labels: Counter[str] = Counter()\n",
+              "    difficulties = Counter()\n": "    difficulties: Counter[str] = Counter()\n",
+          }
+          for old, new in replacements.items():
+              if text.count(old) != 1:
+                  raise SystemExit(f"expected exactly one source block: {old!r}")
+              text = text.replace(old, new)
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate Python quality gates
         shell: bash
         run: |
           cd backend
-          ruff format \
-            app/data/audit.py \
-            app/data/split.py \
-            tests/data/test_phase3_data.py \
-            ../scripts/build_phase3_candidate.py \
-            ../scripts/check_phase3_exit.py \
-            ../scripts/fetch_phase3_sources.py
           ruff check \
             app tests \
             ../scripts/audit_dataset.py \
@@ -67,6 +80,7 @@ jobs:
             ../scripts/check_phase3_reproducibility.py \
             ../scripts/fetch_phase3_sources.py \
             ../training/dataset_prep.py
+          mypy app
 
       - name: Run focused Phase 03 tests
         run: python -m pytest backend/tests/data/test_phase3_data.py -q
@@ -75,29 +89,15 @@ jobs:
         shell: bash
         run: |
           git diff --check
-          git diff --name-only > /tmp/changed.txt
-          test -s /tmp/changed.txt
-          while IFS= read -r path; do
-            case "$path" in
-              backend/app/data/audit.py|backend/app/data/split.py|backend/tests/data/test_phase3_data.py|scripts/build_phase3_candidate.py|scripts/check_phase3_exit.py|scripts/fetch_phase3_sources.py) ;;
-              *) echo "unexpected changed path: $path"; exit 1 ;;
-            esac
-          done < /tmp/changed.txt
-          test "$(wc -l < /tmp/changed.txt)" -eq 6
-          cat /tmp/changed.txt
+          test "$(git diff --name-only)" = "backend/app/data/opssentinel.py"
+          git diff -- backend/app/data/opssentinel.py
 
-      - name: Commit verified formatting-only repairs
+      - name: Commit verified type-only repair
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            backend/app/data/audit.py \
-            backend/app/data/split.py \
-            backend/tests/data/test_phase3_data.py \
-            scripts/build_phase3_candidate.py \
-            scripts/check_phase3_exit.py \
-            scripts/fetch_phase3_sources.py
+          git add backend/app/data/opssentinel.py
           git diff --cached --check
-          git commit -m "phase3: format dataset engineering sources"
+          git commit -m "phase3: annotate OpsSentinel counters"
           git push origin HEAD:phase-03-dataset-engineering
