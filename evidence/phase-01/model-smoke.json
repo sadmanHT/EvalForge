@@ -1,0 +1,55 @@
+{
+  "phase": "01",
+  "gate": "exact_frozen_model_structured_output_smoke",
+  "status": "PASS",
+  "smoke_passed": true,
+  "created_at_utc": "2026-09-08T14:44:09.310877+00:00",
+  "repository": "sadmanHT/EvalForge",
+  "model": {
+    "id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "requested_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+    "resolved_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+    "loaded_config_commit": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+    "load_mode": "bitsandbytes_4bit_nf4",
+    "bnb_4bit_use_double_quant": true,
+    "compute_dtype": "float16"
+  },
+  "hardware": {
+    "gpu_name": "Tesla T4",
+    "gpu_vram_gib": 14.562,
+    "cuda_version": "12.8",
+    "compute_capability": [
+      7,
+      5
+    ],
+    "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+    "python": "3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]"
+  },
+  "packages": {
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6",
+    "accelerate": "1.13.0",
+    "bitsandbytes": "0.50.2",
+    "huggingface_hub": "0.36.2",
+    "safetensors": "0.7.0"
+  },
+  "generation": {
+    "max_new_tokens": 96,
+    "do_sample": false
+  },
+  "incident": "Checkout latency rose sharply and database query count increased 18x after an application change; CPU and memory stayed normal.",
+  "canonical_root_cause_codes": [
+    "broken_payment_configuration",
+    "database_connection_leak",
+    "disk_exhaustion",
+    "memory_leak",
+    "n_plus_one_query",
+    "no_fault"
+  ],
+  "raw_output": "{\"root_cause_code\": \"n_plus_one_query\", \"reasoning\": \"The incident of increased checkout latency and a significant rise in database query count, coupled with normal CPU and memory usage, suggests the possibility of the 'n+1' query issue. This pattern occurs when an application executes multiple queries to retrieve the same data, leading to an excessive number of database queries.\"}",
+  "parsed_output": {
+    "root_cause_code": "n_plus_one_query",
+    "reasoning": "The incident of increased checkout latency and a significant rise in database query count, coupled with normal CPU and memory usage, suggests the possibility of the 'n+1' query issue. This pattern occurs when an application executes multiple queries to retrieve the same data, leading to an excessive number of database queries."
+  },
+  "evidence_sha256": "53cf1617d3d52b48105d267e1ce54d3b26a0c9bb952aed249a48da717f3990cb"
+}
