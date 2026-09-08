@@ -10,10 +10,9 @@ from pathlib import Path
 from app.data.audit import audit_dataset
 from app.data.io import read_jsonl
 from app.data.postmortems import inspect_candidate_coverage, load_candidate_index
-from app.data.servicenow import inspect_servicenow_archive
 from app.data.schemas import IncidentFamily, IncidentRecord
+from app.data.servicenow import inspect_servicenow_archive
 from app.data.taxonomy import load_taxonomy
-
 
 REQUIRED = (
     "configs/dataset.yaml",

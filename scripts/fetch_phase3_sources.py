@@ -82,9 +82,11 @@ def main() -> int:
         ) as temp_handle:
             temp = Path(temp_handle.name)
         try:
-            with urllib.request.urlopen(auxiliary["download_url"], timeout=60) as response:
-                with temp.open("wb") as output:
-                    shutil.copyfileobj(response, output)
+            with (
+                urllib.request.urlopen(auxiliary["download_url"], timeout=60) as response,
+                temp.open("wb") as output,
+            ):
+                shutil.copyfileobj(response, output)
             verify_archive(temp, auxiliary)
             temp.replace(target)
         finally:

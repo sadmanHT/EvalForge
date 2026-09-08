@@ -8,17 +8,17 @@ import pytest
 from pydantic import ValidationError
 
 from app.data.audit import audit_dataset
+from app.data.augmentation import make_synthetic_child
 from app.data.fixtures import build_ci_smoke_dataset
 from app.data.hashing import dataset_content_checksum, manifest_checksum
 from app.data.io import read_jsonl, write_jsonl
 from app.data.manifest import build_manifest
-from app.data.postmortems import CandidateDecision, inspect_candidate_coverage, load_candidate_index
 from app.data.opssentinel import (
     SourceEligibilityError,
     inspect_opssentinel_catalog,
     require_research_eligible_catalog,
 )
-from app.data.servicenow import inspect_servicenow_archive
+from app.data.postmortems import CandidateDecision, inspect_candidate_coverage, load_candidate_index
 from app.data.schemas import (
     DifficultyTier,
     IncidentFamily,
@@ -27,10 +27,9 @@ from app.data.schemas import (
     SourceSnapshot,
     Split,
 )
+from app.data.servicenow import inspect_servicenow_archive
 from app.data.split import FamilySeed, family_stratified_split
 from app.data.taxonomy import LabelTaxonomy, validate_record_taxonomy
-from app.data.augmentation import make_synthetic_child
-
 
 TAXONOMY = LabelTaxonomy(
     version="1.0.0",

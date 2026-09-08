@@ -11,7 +11,6 @@ from pydantic import Field
 from app.data.hashing import sha256_hex
 from app.data.schemas import StrictModel
 
-
 EXPECTED_MEMBER = "incident_event_log.csv"
 EXPECTED_COLUMNS = (
     "number",

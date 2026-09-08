@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from app.data.schemas import IncidentFamily, IncidentRecord
 

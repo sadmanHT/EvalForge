@@ -8,7 +8,6 @@ from pathlib import Path
 
 from build_phase3_candidate import build_outputs
 
-
 FILES = (
     "manifest.json",
     "source-candidate-summary.json",

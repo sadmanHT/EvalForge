@@ -5,7 +5,6 @@ import re
 from collections import Counter, defaultdict
 from difflib import SequenceMatcher
 from enum import StrEnum
-from typing import Any
 
 from pydantic import Field
 

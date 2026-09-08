@@ -10,9 +10,9 @@ from app.data.hashing import canonical_json_bytes, sha256_hex
 from app.data.manifest import build_manifest
 from app.data.opssentinel import inspect_opssentinel_catalog
 from app.data.postmortems import inspect_candidate_coverage, load_candidate_index
+from app.data.schemas import SourceSnapshot
 from app.data.servicenow import inspect_servicenow_archive
 from app.data.taxonomy import load_taxonomy
-from app.data.schemas import SourceSnapshot
 
 
 def build_outputs(root: Path) -> dict[str, str]:
