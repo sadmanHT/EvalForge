@@ -168,8 +168,7 @@ def audit_dataset(
                 code="CROSS_SPLIT_FAMILY",
                 severity=FindingSeverity.ERROR,
                 message=(
-                    "family occurs in multiple splits: "
-                    f"{sorted(item.value for item in splits)}"
+                    f"family occurs in multiple splits: {sorted(item.value for item in splits)}"
                 ),
                 incident_ids=sorted(family_members[family_id]),
                 family_ids=[family_id],

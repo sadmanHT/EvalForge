@@ -56,9 +56,7 @@ def family_stratified_split(
             n_validation = 0
 
         test_ids = {item.family_id for item in group[:n_test]}
-        validation_ids = {
-            item.family_id for item in group[n_test : n_test + n_validation]
-        }
+        validation_ids = {item.family_id for item in group[n_test : n_test + n_validation]}
         for item in group:
             if item.family_id in test_ids:
                 assignments[item.family_id] = Split.TEST

@@ -45,11 +45,7 @@ def build_outputs(root: Path) -> dict[str, str]:
     if auxiliary_inspection.archive_sha256 not in accepted_archive_shas:
         raise ValueError("ServiceNow transport archive checksum is not an accepted equivalent")
 
-    processed = (
-        root
-        / "datasets/incident_diagnosis/processed"
-        / config["candidate_dataset_version"]
-    )
+    processed = root / "datasets/incident_diagnosis/processed" / config["candidate_dataset_version"]
     processed.mkdir(parents=True, exist_ok=True)
 
     source_summary = {
@@ -60,9 +56,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         "inspection": inspection.model_dump(mode="json"),
     }
     source_summary_text = json.dumps(source_summary, indent=2, sort_keys=True) + "\n"
-    (processed / "source-candidate-summary.json").write_text(
-        source_summary_text, encoding="utf-8"
-    )
+    (processed / "source-candidate-summary.json").write_text(source_summary_text, encoding="utf-8")
 
     source_snapshot = SourceSnapshot(
         source_repository=source_cfg["repository"],
@@ -79,9 +73,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         source_commit=auxiliary_cfg["source_version"],
         snapshot_path=auxiliary_cfg["path"],
         snapshot_sha256=auxiliary_inspection.member_sha256,
-        snapshot_identity_kind=(
-            "zip_member_sha256:" + auxiliary_cfg["canonical_member_filename"]
-        ),
+        snapshot_identity_kind=("zip_member_sha256:" + auxiliary_cfg["canonical_member_filename"]),
         accepted_transport_sha256s=sorted(accepted_archive_shas),
         source_generated=False,
         research_eligible_as_independent_heldout_evidence=False,
@@ -133,9 +125,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         label_taxonomy_version=config["label_taxonomy_version"],
         source_snapshots=[source_snapshot, auxiliary_snapshot, postmortem_snapshot],
         split_seed=config["split_seed"],
-        generated_at=datetime.fromisoformat(
-            config["generation_timestamp"].replace("Z", "+00:00")
-        ),
+        generated_at=datetime.fromisoformat(config["generation_timestamp"].replace("Z", "+00:00")),
         records=[],
         families=[],
         source_candidate_count=inspection.scenario_count,
@@ -151,9 +141,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         research_ready=False,
         limitations=limitations,
     )
-    manifest_text = json.dumps(
-        manifest.model_dump(mode="json"), indent=2, sort_keys=True
-    ) + "\n"
+    manifest_text = json.dumps(manifest.model_dump(mode="json"), indent=2, sort_keys=True) + "\n"
     (processed / "manifest.json").write_text(manifest_text, encoding="utf-8")
 
     auxiliary_inspection_payload = auxiliary_inspection.model_dump(mode="json")
@@ -172,9 +160,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         "inspection": auxiliary_inspection_payload,
     }
     auxiliary_text = json.dumps(auxiliary_summary, indent=2, sort_keys=True) + "\n"
-    (processed / "auxiliary-servicenow-summary.json").write_text(
-        auxiliary_text, encoding="utf-8"
-    )
+    (processed / "auxiliary-servicenow-summary.json").write_text(auxiliary_text, encoding="utf-8")
 
     postmortem_payload = {
         "name": postmortem_cfg["name"],
@@ -224,9 +210,7 @@ def build_outputs(root: Path) -> dict[str, str]:
         "public_postmortem_candidate_index_sha256": postmortem_index_sha,
         "manifest_identity_checksum": manifest.manifest_checksum,
         "content_checksum": manifest.content_checksum,
-        "source_summary_identity_sha256": sha256_hex(
-            canonical_json_bytes(source_summary)
-        ),
+        "source_summary_identity_sha256": sha256_hex(canonical_json_bytes(source_summary)),
     }
 
 

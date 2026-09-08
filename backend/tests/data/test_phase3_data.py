@@ -120,11 +120,7 @@ def test_family_split_is_deterministic_disjoint_and_stratified() -> None:
     assert first == second
     assert set(first) == {item.family_id for item in families}
     for label in ("a", "b"):
-        splits = {
-            first[item.family_id]
-            for item in families
-            if item.stratify_label == label
-        }
+        splits = {first[item.family_id] for item in families if item.stratify_label == label}
         assert splits == {Split.TRAIN, Split.VALIDATION, Split.TEST}
 
 
@@ -271,10 +267,7 @@ def test_audit_rejects_noneligible_research_holdout() -> None:
 
 
 def test_distribution_audit_reports_imbalance_and_missing_tiers() -> None:
-    records = [
-        base_record(incident_id=f"a-{i}", family_id=f"fa-{i}")
-        for i in range(4)
-    ]
+    records = [base_record(incident_id=f"a-{i}", family_id=f"fa-{i}") for i in range(4)]
     records.append(
         base_record(
             incident_id="b",
@@ -299,12 +292,10 @@ def test_round_trip_preserves_identity_labels_evidence_provenance_and_split(
     loaded_records = read_jsonl(incidents_path, IncidentRecord)
     loaded_families = read_jsonl(families_path, IncidentFamily)
     assert [item.model_dump(mode="json") for item in loaded_records] == [
-        item.model_dump(mode="json")
-        for item in sorted(records, key=lambda item: item.incident_id)
+        item.model_dump(mode="json") for item in sorted(records, key=lambda item: item.incident_id)
     ]
     assert [item.model_dump(mode="json") for item in loaded_families] == [
-        item.model_dump(mode="json")
-        for item in sorted(families, key=lambda item: item.family_id)
+        item.model_dump(mode="json") for item in sorted(families, key=lambda item: item.family_id)
     ]
 
 
@@ -383,17 +374,13 @@ def test_postmortem_keyword_false_friends_are_not_admitted() -> None:
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     by_id = {item.candidate_id: item for item in index.candidates}
 
-    cloudflare = by_id[
-        "postmortems-app:91f1928a-c9cd-4473-a761-dc0b07914b2e"
-    ]
+    cloudflare = by_id["postmortems-app:91f1928a-c9cd-4473-a761-dc0b07914b2e"]
     assert cloudflare.proposed_root_cause_code == "memory_leak"
     assert cloudflare.decision == CandidateDecision.REJECTED
     assert cloudflare.mapping_basis == "terminology_false_friend"
     assert not cloudflare.research_admitted
 
-    incident_io = by_id[
-        "postmortems-app:eb95646f-90c2-4efe-b89e-060debafa0fc"
-    ]
+    incident_io = by_id["postmortems-app:eb95646f-90c2-4efe-b89e-060debafa0fc"]
     assert incident_io.proposed_root_cause_code == "n_plus_one_query"
     assert incident_io.decision == CandidateDecision.REJECTED
     assert incident_io.mapping_basis == "contributing_factor"
@@ -403,9 +390,7 @@ def test_postmortem_keyword_false_friends_are_not_admitted() -> None:
 def test_supported_postmortem_candidates_still_require_primary_source_snapshot() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
-    supported = [
-        item for item in index.candidates if item.decision == CandidateDecision.SUPPORTED
-    ]
+    supported = [item for item in index.candidates if item.decision == CandidateDecision.SUPPORTED]
     assert {item.company for item in supported} == {"Amazon", "Tarsnap"}
     assert all(not item.original_source_snapshot_preserved for item in supported)
     assert all(not item.research_admitted for item in supported)

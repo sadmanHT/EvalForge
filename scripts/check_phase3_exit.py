@@ -17,8 +17,7 @@ def main() -> int:
         auxiliary = manifest.get("auxiliary_source_counts", {})
         print(f"AUXILIARY_REAL_INCIDENTS={auxiliary.get('servicenow_uci_incidents', 0)}")
         print(
-            "INDEPENDENT_POSTMORTEM_CANDIDATES="
-            f"{auxiliary.get('public_postmortem_candidates', 0)}"
+            f"INDEPENDENT_POSTMORTEM_CANDIDATES={auxiliary.get('public_postmortem_candidates', 0)}"
         )
         print(
             "SUPPORTED_MAPPING_CANDIDATES="

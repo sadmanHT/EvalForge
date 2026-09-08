@@ -63,9 +63,7 @@ def main() -> int:
         source_target.parent.mkdir(parents=True, exist_ok=True)
         source_target.write_bytes(source_bytes)
     source_sha = sha256(source_target)
-    source_metadata = json.loads(
-        (source_target.parent / "SOURCE.json").read_text(encoding="utf-8")
-    )
+    source_metadata = json.loads((source_target.parent / "SOURCE.json").read_text(encoding="utf-8"))
     if source_sha != source_metadata["snapshot_sha256"]:
         raise ValueError(
             "OpsSentinel reconstructed snapshot checksum mismatch: "
