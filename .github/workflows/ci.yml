@@ -63,18 +63,20 @@ jobs:
         run: |
           python -m pip freeze --exclude-editable | sort > backend/requirements.full.lock
           test -f frontend/package-lock.json
-      - name: Commit dependency locks to Phase 02 branch
+      - name: Commit missing frontend lock to Phase 02 branch
         if: github.event_name == 'push' && github.ref == 'refs/heads/phase-02-repository-foundation'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f backend/requirements.full.lock frontend/package-lock.json
+          git fetch origin "${GITHUB_REF_NAME}"
+          git reset --hard "origin/${GITHUB_REF_NAME}"
+          git add -f frontend/package-lock.json
           if git diff --cached --quiet; then
-            echo "LOCK_COMMIT=NO_CHANGES"
+            echo "FRONTEND_LOCK_COMMIT=NO_CHANGES"
           else
-            git commit -m "phase2: commit generated dependency locks [skip ci]"
+            git commit -m "phase2: commit generated frontend lock [skip ci]"
             git push origin HEAD:${GITHUB_REF_NAME}
-            echo "LOCK_COMMIT=PUSHED"
+            echo "FRONTEND_LOCK_COMMIT=PUSHED"
           fi
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
