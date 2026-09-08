@@ -1,0 +1,575 @@
+name: phase3-evidence-update-runner
+
+on:
+  push:
+    branches:
+      - phase-03-evidence-update-runner
+
+permissions:
+  contents: write
+
+jobs:
+  update-evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact Phase 03 head
+        uses: actions/checkout@v4
+        with:
+          ref: phase-03-dataset-engineering
+          fetch-depth: 1
+
+      - name: Verify expected parent
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "0ddc04187b4a490ca9a08ce07de141f4b3f90fa4"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+
+      - name: Install locked backend dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+
+      - name: Materialize pinned Phase 03 sources
+        run: python scripts/fetch_phase3_sources.py
+
+      - name: Apply conservative Medoc N+1 evidence update
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path(".")
+
+          def replace_once(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise SystemExit(
+                      f"expected one replacement in {path}: {old[:80]!r}; "
+                      f"count={text.count(old)}"
+                  )
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          # Allow candidate-specific immutable Git evidence without changing the
+          # global postmortems.app discovery-source pin.
+          model_path = root / "backend/app/data/postmortems.py"
+          replace_once(
+              model_path,
+              "    source_blob_sha: str = Field(min_length=40, max_length=40)\n"
+              "    proposed_root_cause_code: str = Field(min_length=1)\n",
+              "    source_blob_sha: str = Field(min_length=40, max_length=40)\n"
+              "    evidence_repository: str | None = Field(default=None, min_length=1)\n"
+              "    evidence_commit: str | None = Field(default=None, min_length=40, max_length=40)\n"
+              "    proposed_root_cause_code: str = Field(min_length=1)\n",
+          )
+          replace_once(
+              model_path,
+              "    def validate_admission(self) -> PostmortemCandidate:\n"
+              "        if (\n",
+              "    def validate_admission(self) -> PostmortemCandidate:\n"
+              "        if (self.evidence_repository is None) != (self.evidence_commit is None):\n"
+              "            raise ValueError(\"candidate evidence repository and commit must be paired\")\n"
+              "        if (\n",
+          )
+
+          # Add one exact, firsthand, version-pinned N+1 production incident.
+          index_path = root / "configs/postmortem-candidates.json"
+          index = json.loads(index_path.read_text(encoding="utf-8"))
+          candidate_id = "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11"
+          if any(item["candidate_id"] == candidate_id for item in index["candidates"]):
+              raise SystemExit("Medoc candidate already present")
+          index["index_version"] = "phase3-public-postmortem-candidates-v2"
+          index["source"]["note"] = (
+              "postmortems.app remains the pinned discovery/index source for its entries. "
+              "External candidates may be included only when their own evidence repository, "
+              "commit, path, and Git blob are pinned. Candidate mappings are not research-"
+              "admitted until EvalForge preserves original-source evidence and the frozen "
+              "taxonomy has sufficient independent family coverage."
+          )
+          index["candidates"].append(
+              {
+                  "candidate_id": candidate_id,
+                  "company": "Medoc",
+                  "title": "It Worked in Dev. It Worked in QA. Then Production Happened.",
+                  "original_url": (
+                      "https://nikhil-gautam-dev.github.io/blog/"
+                      "it-worked-in-dev-it-worked-in-qa-then-production-happened/"
+                  ),
+                  "source_path": (
+                      "src/content/blog/"
+                      "it-worked-in-dev-it-worked-in-qa-then-production-happened.md"
+                  ),
+                  "source_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
+                  "evidence_repository": "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io",
+                  "evidence_commit": "34d1ecc14b54166608b4197c44e1e7efc82e48b6",
+                  "proposed_root_cause_code": "n_plus_one_query",
+                  "decision": "supported_candidate_mapping",
+                  "mapping_basis": "narrative_root_cause",
+                  "evidence_summary": (
+                      "The backend engineer describes a production appointment endpoint that "
+                      "fetched patient details one-by-one for each appointment, explicitly calls "
+                      "the pattern a typical N+1 query problem, records 6,000+ database calls and "
+                      "about four seconds of latency for one doctor, and reports recovery after "
+                      "batching the patient lookup into one database call."
+                  ),
+                  "decision_reason": (
+                      "Firsthand production narrative matches the frozen N+1 failure mode and is "
+                      "pinned to an exact public Git repository state and source blob. The source "
+                      "has not yet been materialized into EvalForge's raw primary-source snapshot "
+                      "layer, so the candidate remains non-admitted."
+                  ),
+                  "original_source_snapshot_preserved": False,
+                  "research_admitted": False,
+              }
+          )
+          index_path.write_text(
+              json.dumps(index, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+          index_sha = hashlib.sha256(index_path.read_bytes()).hexdigest()
+
+          # Update focused regression expectations without relaxing false-friend guards.
+          test_path = root / "backend/tests/data/test_phase3_data.py"
+          replace_once(test_path, "    assert coverage.candidate_count == 7\n", "    assert coverage.candidate_count == 8\n")
+          replace_once(
+              test_path,
+              "    assert coverage.supported_mapping_count == 2\n",
+              "    assert coverage.supported_mapping_count == 3\n",
+          )
+          replace_once(
+              test_path,
+              "    assert coverage.supported_root_cause_codes == [\"disk_exhaustion\", \"memory_leak\"]\n",
+              "    assert coverage.supported_root_cause_codes == [\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "    ]\n",
+          )
+          replace_once(
+              test_path,
+              "    assert coverage.missing_root_cause_codes == [\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "        \"no_fault\",\n"
+              "    ]\n",
+              "    assert coverage.missing_root_cause_codes == [\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"no_fault\",\n"
+              "    ]\n",
+          )
+          replace_once(
+              test_path,
+              "    assert {item.company for item in supported} == {\"Amazon\", \"Tarsnap\"}\n"
+              "    assert all(not item.original_source_snapshot_preserved for item in supported)\n",
+              "    assert {item.company for item in supported} == {\"Amazon\", \"Medoc\", \"Tarsnap\"}\n"
+              "    medoc = next(item for item in supported if item.company == \"Medoc\")\n"
+              "    assert medoc.evidence_repository == \"Nikhil-Gautam-dev/nikhil-gautam-dev.github.io\"\n"
+              "    assert medoc.evidence_commit == \"34d1ecc14b54166608b4197c44e1e7efc82e48b6\"\n"
+              "    assert medoc.source_blob_sha == \"750ba91067e5e4d2e192a3eceffec357a58e9d77\"\n"
+              "    assert not medoc.research_admitted\n"
+              "    assert all(not item.original_source_snapshot_preserved for item in supported)\n",
+          )
+
+          # Update the exact scientific contract to recognize only the new clean mapping.
+          contract_path = root / "scripts/check_phase3_contract.py"
+          replace_once(
+              contract_path,
+              "    if set(coverage.supported_root_cause_codes) != {\"disk_exhaustion\", \"memory_leak\"}:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set\")\n"
+              "    if \"n_plus_one_query\" not in coverage.missing_root_cause_codes:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL n_plus_one_false_admission\")\n",
+              "    if set(coverage.supported_root_cause_codes) != {\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "    }:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set\")\n"
+              "    if set(coverage.missing_root_cause_codes) != {\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"no_fault\",\n"
+              "    }:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set\")\n",
+          )
+
+          # Data-card updates. Keep research-admission language conservative.
+          data_card = root / "docs/data-card.md"
+          replace_once(data_card, "7 conservatively reviewed candidates", "8 conservatively reviewed candidates")
+          text = data_card.read_text(encoding="utf-8")
+          text, count = re.subn(
+              r"\(index SHA-256 `[0-9a-f]{64}`\)",
+              f"(index SHA-256 `{index_sha}`)",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("failed to update candidate-index SHA in data card")
+          text = text.replace(
+              "Seven independent public-postmortem candidates were conservatively reviewed "
+              "against the frozen taxonomy. Only two are strong candidate mappings:",
+              "Eight independent public-incident candidates were conservatively reviewed "
+              "against the frozen taxonomy. Three are strong candidate mappings:",
+          )
+          tarsnap_row = (
+              "| Tarsnap, 2016-07-24 | `disk_exhaustion` | supported candidate | "
+              "unbounded local log fills filesystem and service writes fail |\n"
+          )
+          if text.count(tarsnap_row) != 1:
+              raise SystemExit("Tarsnap row not found exactly once")
+          medoc_row = (
+              "| Medoc, 2026-01-11 | `n_plus_one_query` | supported candidate | "
+              "firsthand production narrative explicitly identifies N+1, 6,000+ DB calls, "
+              "and batching as the fix |\n"
+          )
+          text = text.replace(tarsnap_row, tarsnap_row + medoc_row)
+          text = text.replace(
+              "Thus the currently supported public-postmortem candidate labels are only "
+              "`disk_exhaustion` and `memory_leak`. The frozen labels "
+              "`broken_payment_configuration`, `database_connection_leak`, `n_plus_one_query`, "
+              "and `no_fault` still lack clean independent coverage suitable for a credible "
+              "family-stratified holdout. None of the seven candidates is research-admitted yet.",
+              "Thus the currently supported independent candidate labels are "
+              "`disk_exhaustion`, `memory_leak`, and `n_plus_one_query`. The frozen labels "
+              "`broken_payment_configuration`, `database_connection_leak`, and `no_fault` still "
+              "lack clean independent coverage suitable for a credible family-stratified holdout. "
+              "The Medoc narrative is pinned to an exact external Git commit/blob but has not yet "
+              "been materialized into EvalForge's raw primary-source snapshot layer. None of the "
+              "eight candidates is research-admitted yet."
+          )
+          text = text.replace(
+              "- Independent real public-postmortem candidates are now identified, but only two "
+              "frozen labels currently have strong candidate mappings and none has preserved "
+              "primary-source bytes sufficient for research admission.",
+              "- Independent real public-incident candidates are now identified, with three "
+              "frozen labels having strong candidate mappings. Medoc's N+1 narrative is pinned "
+              "to immutable external Git evidence, but no accepted candidate has yet been "
+              "materialized into EvalForge's raw primary-source snapshot layer or research-admitted."
+          )
+          marker = (
+              "The candidate decision index is `configs/postmortem-candidates.json` "
+              f"(index SHA-256 `{index_sha}`)."
+          )
+          if marker not in text:
+              raise SystemExit("updated candidate index marker missing")
+          insert = (
+              " The index can also hold independently discovered external candidates when the "
+              "candidate records its own evidence repository, commit, path, and Git blob SHA."
+          )
+          text = text.replace(marker, marker + insert, 1)
+          data_card.write_text(text, encoding="utf-8")
+
+          # Evidence README reflects candidate coverage, not research admission.
+          evidence_readme = root / "evidence/phase-03/README.md"
+          replace_once(
+              evidence_readme,
+              "Current scientific blocker: independent real postmortems exist, but frozen taxonomy "
+              "coverage is insufficient for a credible family-stratified holdout. Two strong "
+              "candidate mappings (`memory_leak`, `disk_exhaustion`) are identified; none is "
+              "research-admitted until original primary-source evidence is preserved.\n",
+              "Current scientific blocker: independent real incident evidence exists, but frozen "
+              "taxonomy coverage is insufficient for a credible family-stratified holdout. Three "
+              "strong candidate mappings (`memory_leak`, `disk_exhaustion`, `n_plus_one_query`) "
+              "are identified; none is research-admitted until original primary-source evidence "
+              "is preserved in EvalForge and family coverage is sufficient.\n",
+          )
+
+          # Handoff counts and blocker details.
+          handoff = root / "docs/phase-03-handoff.md"
+          replace_once(
+              handoff,
+              "Phase 03 implementation logic is present and regression-tested. The hard exit gate "
+              "is intentionally not marked complete. Independent real public postmortems are now "
+              "discoverable, but the reviewed set covers only two of six frozen labels strongly "
+              "and no candidate has yet been admitted with a preserved original primary-source "
+              "snapshot.\n",
+              "Phase 03 implementation logic is present and regression-tested. The hard exit gate "
+              "is intentionally not marked complete. Independent real public incident evidence is "
+              "now discoverable, but the reviewed set covers only three of six frozen labels "
+              "strongly and no candidate has yet been research-admitted with an EvalForge-preserved "
+              "original primary-source snapshot.\n",
+          )
+          replace_once(handoff, "- Conservatively reviewed independent candidates: **7**.\n", "- Conservatively reviewed independent candidates: **8**.\n")
+          replace_once(
+              handoff,
+              "- Supported candidate mappings: **2** (`disk_exhaustion`, `memory_leak`).\n",
+              "- Supported candidate mappings: **3** (`disk_exhaustion`, `memory_leak`, `n_plus_one_query`).\n",
+          )
+          replace_once(
+              handoff,
+              "- Missing clean frozen-label coverage: `broken_payment_configuration`, "
+              "`database_connection_leak`, `n_plus_one_query`, `no_fault`.\n",
+              "- Missing clean frozen-label coverage: `broken_payment_configuration`, "
+              "`database_connection_leak`, `no_fault`.\n",
+          )
+          false_friend_line = (
+              "- incident.io's accidental N+1 join is explicitly rejected as the incident's "
+              "primary root cause because the persistent failure is GKE Dataplane V2 `anetd` "
+              "CPU saturation/packet loss.\n"
+          )
+          if handoff.read_text(encoding="utf-8").count(false_friend_line) != 1:
+              raise SystemExit("incident.io handoff guard line missing")
+          handoff_text = handoff.read_text(encoding="utf-8").replace(
+              false_friend_line,
+              false_friend_line
+              + "- Medoc's firsthand production narrative is accepted as a strong "
+              "`n_plus_one_query` candidate: it explicitly identifies the N+1 pattern, 6,000+ "
+              "database calls, and batching as the fix. Evidence is pinned to "
+              "`Nikhil-Gautam-dev/nikhil-gautam-dev.github.io` commit "
+              "`34d1ecc14b54166608b4197c44e1e7efc82e48b6`, blob "
+              "`750ba91067e5e4d2e192a3eceffec357a58e9d77`; it remains non-admitted until "
+              "EvalForge preserves the source in its raw evidence layer.\n",
+          )
+          handoff_text = handoff_text.replace(
+              "INDEPENDENT_POSTMORTEM_CANDIDATES=7\n"
+              "SUPPORTED_MAPPING_CANDIDATES=2\n"
+              "SUPPORTED_TAXONOMY_LABELS=2\n"
+              "MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,n_plus_one_query,no_fault\n",
+              "INDEPENDENT_POSTMORTEM_CANDIDATES=8\n"
+              "SUPPORTED_MAPPING_CANDIDATES=3\n"
+              "SUPPORTED_TAXONOMY_LABELS=3\n"
+              "MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,no_fault\n",
+          )
+          history_marker = (
+              "- The repair commits were produced by the GitHub Actions token, so GitHub did not "
+              "recursively trigger the normal CI workflow from those pushes. This handoff update "
+              "records the verified repair chain and provides a normal user-authored push so the "
+              "safe read-only CI workflow can validate the resulting exact head end-to-end.\n"
+          )
+          if history_marker not in handoff_text:
+              raise SystemExit("remote-CI history marker missing")
+          handoff_text = handoff_text.replace(
+              history_marker,
+              history_marker
+              + "- Exact-head push CI Run `34277519206` (Run #22) completed SUCCESS: cumulative "
+              "`make verify-all`, strict known-blocker recording, evidence upload, and fresh "
+              "no-cache Compose build/smoke/teardown all passed on `0ddc04187b4a490ca9a08ce07de141f4b3f90fa4`.\n"
+              + "- Draft PR #3 then triggered PR-context Run `34278144995` (Run #24); both "
+              "`verify-all` and `clean-compose` completed SUCCESS on the same validated head.\n",
+          )
+          handoff.write_text(handoff_text, encoding="utf-8")
+          PY
+
+      - name: Format touched Python
+        shell: bash
+        run: |
+          cd backend
+          ruff format \
+            app/data/postmortems.py \
+            tests/data/test_phase3_data.py \
+            ../scripts/check_phase3_contract.py
+          ruff check --fix \
+            app/data/postmortems.py \
+            tests/data/test_phase3_data.py \
+            ../scripts/check_phase3_contract.py
+
+      - name: Rebuild candidate outputs and synchronize evidence
+        shell: bash
+        run: |
+          python scripts/build_phase3_candidate.py
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import shutil
+          from pathlib import Path
+
+          root = Path(".")
+          version = "evalforge-incident-diagnosis-v0.1.0-candidate"
+          processed = root / "datasets/incident_diagnosis/processed" / version
+          evidence = root / "evidence/phase-03"
+          mapping = {
+              "manifest.json": "candidate-manifest.json",
+              "auxiliary-servicenow-summary.json": "auxiliary-servicenow-summary.json",
+              "public-postmortem-candidate-coverage.json": "public-postmortem-candidate-coverage.json",
+              "source-audit-report.json": "source-audit-report.json",
+              "source-candidate-summary.json": "source-candidate-summary.json",
+          }
+          for source, destination in mapping.items():
+              shutil.copyfile(processed / source, evidence / destination)
+
+          manifest = json.loads((processed / "manifest.json").read_text(encoding="utf-8"))
+          coverage_payload = json.loads(
+              (processed / "public-postmortem-candidate-coverage.json").read_text(encoding="utf-8")
+          )
+          coverage = coverage_payload["coverage"]
+          class_summary_path = evidence / "class-split-summary.json"
+          class_summary = json.loads(class_summary_path.read_text(encoding="utf-8"))
+          class_summary["auxiliary_source_counts"] = manifest["auxiliary_source_counts"]
+          class_summary["public_postmortem_candidate_coverage"] = {
+              "admitted_research_record_count": coverage["admitted_research_record_count"],
+              "candidate_count": coverage["candidate_count"],
+              "missing_root_cause_codes": coverage["missing_root_cause_codes"],
+              "supported_mapping_count": coverage["supported_mapping_count"],
+              "supported_root_cause_codes": coverage["supported_root_cause_codes"],
+          }
+          class_summary_path.write_text(
+              json.dumps(class_summary, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+
+          checksums_path = evidence / "checksums.txt"
+          lines = []
+          for path in sorted(evidence.iterdir(), key=lambda item: item.name):
+              if not path.is_file() or path.name == "checksums.txt":
+                  continue
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              lines.append(f"{digest}  {path.name}")
+          checksums_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Run focused Phase 03 coverage and refresh handoff percentage
+        shell: bash
+        run: |
+          python -m pytest backend/tests/data/test_phase3_data.py \
+            --cov=app.data \
+            --cov-report=term-missing \
+            --cov-report=json:/tmp/phase3-coverage.json \
+            --cov-fail-under=90 \
+            -q
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          coverage = json.loads(Path("/tmp/phase3-coverage.json").read_text())
+          percent = coverage["totals"]["percent_covered"]
+          handoff = Path("docs/phase-03-handoff.md")
+          text = handoff.read_text(encoding="utf-8")
+          text, count = re.subn(
+              r"Result: \*\*[0-9]+(?:\.[0-9]+)?% overall `app\.data` coverage\*\*\.",
+              f"Result: **{percent:.2f}% overall `app.data` coverage**.",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("could not refresh handoff coverage percentage")
+          handoff.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate Phase 03 quality and scientific gates
+        shell: bash
+        run: |
+          cd backend
+          ruff check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          mypy app
+          cd ..
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+          set +e
+          exit_output="$(python scripts/check_phase3_exit.py 2>&1)"
+          exit_status=$?
+          set -e
+          printf '%s\n' "$exit_output"
+          test "$exit_status" -eq 2
+          grep -Fx 'PHASE03_EXIT_GATE=BLOCKED' <<<"$exit_output"
+          grep -Fx 'BLOCKER=independent_taxonomy_coverage_insufficient' <<<"$exit_output"
+          grep -Fx 'INDEPENDENT_POSTMORTEM_CANDIDATES=8' <<<"$exit_output"
+          grep -Fx 'SUPPORTED_MAPPING_CANDIDATES=3' <<<"$exit_output"
+          grep -Fx 'SUPPORTED_TAXONOMY_LABELS=3' <<<"$exit_output"
+          grep -Fx 'MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,no_fault' <<<"$exit_output"
+          grep -Fx 'RESEARCH_TRAIN=0' <<<"$exit_output"
+          grep -Fx 'RESEARCH_VALIDATION=0' <<<"$exit_output"
+          grep -Fx 'RESEARCH_TEST=0' <<<"$exit_output"
+
+      - name: Validate exact changed-file scope
+        shell: bash
+        run: |
+          git diff --check
+          python - <<'PY'
+          import subprocess
+
+          changed = set(
+              subprocess.check_output(["git", "diff", "--name-only"], text=True)
+              .strip()
+              .splitlines()
+          )
+          allowed = {
+              "backend/app/data/postmortems.py",
+              "backend/tests/data/test_phase3_data.py",
+              "configs/postmortem-candidates.json",
+              "scripts/check_phase3_contract.py",
+              "docs/data-card.md",
+              "docs/phase-03-handoff.md",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/source-audit-report.json",
+              "evidence/phase-03/README.md",
+              "evidence/phase-03/candidate-manifest.json",
+              "evidence/phase-03/checksums.txt",
+              "evidence/phase-03/class-split-summary.json",
+              "evidence/phase-03/public-postmortem-candidate-coverage.json",
+              "evidence/phase-03/source-audit-report.json",
+          }
+          unexpected = sorted(changed - allowed)
+          missing_core = sorted(
+              {
+                  "backend/app/data/postmortems.py",
+                  "configs/postmortem-candidates.json",
+                  "scripts/check_phase3_contract.py",
+                  "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json",
+                  "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json",
+                  "evidence/phase-03/class-split-summary.json",
+              }
+              - changed
+          )
+          if unexpected:
+              raise SystemExit(f"unexpected changed files: {unexpected}")
+          if missing_core:
+              raise SystemExit(f"expected evidence files did not change: {missing_core}")
+          print("CHANGED_FILES=" + ",".join(sorted(changed)))
+          PY
+
+      - name: Commit verified Phase 03 evidence increment
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            backend/app/data/postmortems.py \
+            backend/tests/data/test_phase3_data.py \
+            configs/postmortem-candidates.json \
+            scripts/check_phase3_contract.py \
+            docs/data-card.md \
+            docs/phase-03-handoff.md \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/source-audit-report.json \
+            evidence/phase-03/README.md \
+            evidence/phase-03/candidate-manifest.json \
+            evidence/phase-03/checksums.txt \
+            evidence/phase-03/class-split-summary.json \
+            evidence/phase-03/public-postmortem-candidate-coverage.json \
+            evidence/phase-03/source-audit-report.json
+          git diff --cached --check
+          git commit -m "phase3: add pinned Medoc N+1 candidate evidence"
+          git push origin HEAD:phase-03-dataset-engineering
