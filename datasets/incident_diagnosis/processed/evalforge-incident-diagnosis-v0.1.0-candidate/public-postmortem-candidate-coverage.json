@@ -1,0 +1,145 @@
+{
+  "candidate_index_sha256": "c121c4e1880120f69cf1d4157b5155b3625bd5991c7cb64a8e8980466244da74",
+  "candidates": [
+    {
+      "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+      "company": "Amazon",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "Direct match to EvalForge's runtime resource-exhaustion memory_leak label.",
+      "evidence_summary": "The incident narrative explicitly identifies an EBS data-collection-agent memory leak that slowly consumed system memory and degraded request handling.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://aws.amazon.com/message/680342/",
+      "proposed_root_cause_code": "memory_leak",
+      "research_admitted": false,
+      "source_blob_sha": "76d8b745fe2e28bceca58e7bbcfc5d8f3446dd5a",
+      "source_path": "data/76f27cf3-b204-40e4-942e-19657614f658.md",
+      "title": "AWS US-East Region Service Event of October 22, 2012"
+    },
+    {
+      "candidate_id": "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+      "company": "Tarsnap",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "Direct match to disk_exhaustion rather than a generic disk hardware/storage failure.",
+      "evidence_summary": "A background-job log grew without bound until it filled the filesystem, causing critical writes to fail and the service to stop.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "http://mail.tarsnap.com/tarsnap-announce/msg00035.html",
+      "proposed_root_cause_code": "disk_exhaustion",
+      "research_admitted": false,
+      "source_blob_sha": "a91eb5b70c305a00dc1d090e2caa9019ced11c0e",
+      "source_path": "data/e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb.md",
+      "title": "Tarsnap outage 2016-07-24"
+    },
+    {
+      "candidate_id": "postmortems-app:eb95646f-90c2-4efe-b89e-060debafa0fc",
+      "company": "incident.io",
+      "decision": "rejected_as_primary_mapping",
+      "decision_reason": "N+1 behavior was a separate contributing issue, so labeling the whole incident n_plus_one_query would overstate the evidence.",
+      "evidence_summary": "The narrative reports an accidental N+1 database join, but identifies GKE Dataplane V2 anetd CPU saturation and packet drops as the persistent incident root cause.",
+      "mapping_basis": "contributing_factor",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://incident.io/blog/clouds-caches-and-connection-conundrums",
+      "proposed_root_cause_code": "n_plus_one_query",
+      "research_admitted": false,
+      "source_blob_sha": "08b2efe9438b24958940d7508df1e0d66171330c",
+      "source_path": "data/eb95646f-90c2-4efe-b89e-060debafa0fc.md",
+      "title": "GKE Dataplane V2 anetd CPU saturation causes connection timeouts"
+    },
+    {
+      "candidate_id": "postmortems-app:4fc691c5-2853-49c7-8797-a63249067ade",
+      "company": "Twilio",
+      "decision": "ambiguous_mapping",
+      "decision_reason": "The incident is billing-related and configuration contributed materially, but the causal chain is broader than the frozen broken_payment_configuration label.",
+      "evidence_summary": "A network partition overloaded Redis; a restart then loaded an incorrect configuration/read-only state, after which auto-recharge repeatedly charged customers.",
+      "mapping_basis": "multi_causal_configuration_chain",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://www.twilio.com/blog/2013/07/billing-incident-post-mortem-breakdown-analysis-and-root-cause.html",
+      "proposed_root_cause_code": "broken_payment_configuration",
+      "research_admitted": false,
+      "source_blob_sha": "1f2d9fa4fed583b38fa0087a62e55da42dc1662a",
+      "source_path": "data/4fc691c5-2853-49c7-8797-a63249067ade.md",
+      "title": "Twilio billing system incident of July 2013"
+    },
+    {
+      "candidate_id": "postmortems-app:0b69e012-c539-485c-a2c7-b59c50d0650a",
+      "company": "Elastic",
+      "decision": "rejected_as_primary_mapping",
+      "decision_reason": "The cited leaks are not established database-connection leaks and are not the primary incident root cause.",
+      "evidence_summary": "The report mentions Kibana connection leaks during remediation, while the primary outage root cause is ZooKeeper coordination-layer instability and loss of quorum.",
+      "mapping_basis": "non_database_connection_leak",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://www.elastic.co/blog/elastic-cloud-incident-report-feburary-4-2019",
+      "proposed_root_cause_code": "database_connection_leak",
+      "research_admitted": false,
+      "source_blob_sha": "698958130aaa8a19aad363b97a9c65840cda02fb",
+      "source_path": "data/0b69e012-c539-485c-a2c7-b59c50d0650a.md",
+      "title": "Elastic Cloud AWS us-east-1 outage of February 2019"
+    },
+    {
+      "candidate_id": "postmortems-app:91f1928a-c9cd-4473-a761-dc0b07914b2e",
+      "company": "Cloudflare",
+      "decision": "rejected_as_primary_mapping",
+      "decision_reason": "Keyword/title says memory leak, but it does not match EvalForge's resource-exhaustion memory_leak semantics.",
+      "evidence_summary": "The root cause is a parser buffer over-read/pointer-boundary bug that disclosed memory contents, not progressive runtime memory consumption.",
+      "mapping_basis": "terminology_false_friend",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://blog.cloudflare.com/incident-report-on-memory-leak-caused-by-cloudflare-parser-bug/",
+      "proposed_root_cause_code": "memory_leak",
+      "research_admitted": false,
+      "source_blob_sha": "28cc1df0d8c487e05cdf7a3ef6f561172c75b805",
+      "source_path": "data/91f1928a-c9cd-4473-a761-dc0b07914b2e.md",
+      "title": "Cloudflare parser bug causes memory leak"
+    },
+    {
+      "candidate_id": "postmortems-app:49e932a9-67eb-443d-9c33-1c6fa32b0d14",
+      "company": "Skyliner",
+      "decision": "insufficient_evidence",
+      "decision_reason": "Potential label match, but evidence is too thin to admit as a locked research incident without preserving the original source narrative.",
+      "evidence_summary": "The pinned entry states only that a third-party-library memory leak caused two outages, without enough incident detail for family/evidence construction.",
+      "mapping_basis": "thin_summary_only",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://blog.skyliner.io/post-mortem-outages-on-1-19-17-and-1-23-17-3f65cc6f693e",
+      "proposed_root_cause_code": "memory_leak",
+      "research_admitted": false,
+      "source_blob_sha": "7d6f16455e722fce3b4c73a187e2fec8a3bdefbc",
+      "source_path": "data/49e932a9-67eb-443d-9c33-1c6fa32b0d14.md",
+      "title": "Skyliner outages on 2017-01-19 and 2017-01-23"
+    }
+  ],
+  "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
+  "coverage": {
+    "admitted_research_record_count": 0,
+    "blocker": "independent_taxonomy_coverage_insufficient",
+    "candidate_count": 7,
+    "decision_counts": {
+      "ambiguous_mapping": 1,
+      "insufficient_evidence": 1,
+      "rejected_as_primary_mapping": 3,
+      "supported_candidate_mapping": 2
+    },
+    "independent_candidate_family_count": 7,
+    "missing_root_cause_codes": [
+      "broken_payment_configuration",
+      "database_connection_leak",
+      "n_plus_one_query",
+      "no_fault"
+    ],
+    "notes": [
+      "postmortems.app is used as a pinned discovery/index source, not as primary-source ground truth",
+      "supported candidate mappings are not research-admitted until original incident evidence is preserved",
+      "keyword or title matches alone are insufficient for label admission"
+    ],
+    "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
+    "source_repository": "icco/postmortems",
+    "supported_mapping_count": 2,
+    "supported_root_cause_codes": [
+      "disk_exhaustion",
+      "memory_leak"
+    ],
+    "taxonomy_coverage_sufficient_for_locked_holdout": false
+  },
+  "license": "GPL-3.0",
+  "name": "postmortems_app",
+  "repository": "icco/postmortems"
+}

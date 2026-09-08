@@ -1,0 +1,62 @@
+{
+  "auxiliary_source_counts": {
+    "public_postmortem_candidates": 7,
+    "public_postmortem_supported_mappings": 2,
+    "public_postmortem_supported_taxonomy_labels": 2,
+    "servicenow_uci_event_rows": 141712,
+    "servicenow_uci_incidents": 24918
+  },
+  "candidate_dataset_version": "evalforge-incident-diagnosis-v0.1.0-candidate",
+  "eligible_research_split_counts": {
+    "test": 0,
+    "train": 0,
+    "validation": 0
+  },
+  "public_postmortem_candidate_coverage": {
+    "admitted_research_record_count": 0,
+    "candidate_count": 7,
+    "missing_root_cause_codes": [
+      "broken_payment_configuration",
+      "database_connection_leak",
+      "n_plus_one_query",
+      "no_fault"
+    ],
+    "supported_mapping_count": 2,
+    "supported_root_cause_codes": [
+      "disk_exhaustion",
+      "memory_leak"
+    ]
+  },
+  "research_ready": false,
+  "servicenow_incident_field_presence_counts": {
+    "category": 24911,
+    "caused_by": 3,
+    "closed_code": 24811,
+    "cmdb_ci": 56,
+    "problem_id": 381,
+    "rfc": 179,
+    "subcategory": 24910,
+    "u_symptom": 19405
+  },
+  "source_candidate_count": 50,
+  "source_difficulty_counts": {
+    "adversarial": 8,
+    "compound": 8,
+    "easy": 10,
+    "hard": 12,
+    "medium": 12
+  },
+  "source_label_counts": {
+    "broken_payment_configuration": 9,
+    "database_connection_leak": 14,
+    "disk_exhaustion": 8,
+    "memory_leak": 7,
+    "n_plus_one_query": 11,
+    "no_fault": 1
+  },
+  "source_split_counts": {
+    "dev": 30,
+    "hidden_test": 10,
+    "validation": 10
+  }
+}

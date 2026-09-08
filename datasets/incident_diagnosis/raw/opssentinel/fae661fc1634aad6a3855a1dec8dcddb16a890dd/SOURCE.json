@@ -1,0 +1,27 @@
+{
+  "benchmark_version": "1.0.0",
+  "note": "Read-only extraction from the pinned OpsSentinel release catalog. EvalForge does not modify the upstream repository.",
+  "research_eligible_as_independent_heldout_evidence": false,
+  "scenario_count": 50,
+  "snapshot_file": "release-catalog.snapshot.json",
+  "snapshot_format": "normalized_semantic_release_catalog_json",
+  "snapshot_sha256": "b4828ac9793d64c7850c7bbd6c262d4e7a89db0fd09346a9ed72a48f82dc8241",
+  "source_commit": "fae661fc1634aad6a3855a1dec8dcddb16a890dd",
+  "source_files": [
+    {
+      "git_blob_sha": "cd7bbfe3f0b00da90e1d514bae59ee1539c50a2f",
+      "path": "benchmarklab/benchmarklab/definitions.py"
+    },
+    {
+      "git_blob_sha": "5bc58b35f8ec9a1f8483a6be858d6a6d5502ffe5",
+      "path": "benchmarklab/benchmarklab/models.py"
+    }
+  ],
+  "source_generated": true,
+  "source_repository": "sadmanHT/OpsSentinel",
+  "upstream_split_counts": {
+    "dev": 30,
+    "hidden_test": 10,
+    "validation": 10
+  }
+}

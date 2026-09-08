@@ -1,0 +1,28 @@
+{
+  "accepted_transport_archives": [
+    {
+      "origin": "user-provided Kaggle/mirror archive inspected by EvalForge",
+      "sha256": "3ea92768cb2cfada908dd601b057d7066127fe75dc8fe19e4abaa1c6766a6c13"
+    },
+    {
+      "origin": "official UCI dataset 498 download verified in GitHub Actions on 2026-09-08",
+      "sha256": "6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6"
+    }
+  ],
+  "archive_filename": "incident-management-process-enriched-event-log.zip",
+  "archive_identity_note": "The accepted ZIP envelopes differ byte-for-byte, but both contain the exact same sole incident_event_log.csv payload. EvalForge keys scientific source identity to the inner CSV SHA-256 and separately validates the transport archive against this allowlist.",
+  "canonical_member_filename": "incident_event_log.csv",
+  "canonical_member_sha256": "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef",
+  "citation": "Amaral, C., Fantinato, M., & Peres, S. (2018). Incident management process enriched event log [Dataset]. UCI Machine Learning Repository.",
+  "dataset_id": 498,
+  "doi": "10.24432/C57S4H",
+  "license": "CC BY 4.0",
+  "research_eligibility": {
+    "independent_real_operational_source": true,
+    "primary_evalforge_rca_holdout": false,
+    "reason": "The source contains real operational incidents, but textual attributes were omitted/anonymized and no trustworthy mapping from anonymous codes to EvalForge root-cause labels is available."
+  },
+  "source_generated": false,
+  "source_name": "UCI Incident management process enriched event log",
+  "source_url": "https://archive.ics.uci.edu/dataset/498/incident+management+process+enriched+event+log"
+}

@@ -1,0 +1,49 @@
+{
+  "inspection": {
+    "accepted_transport_archive_sha256s": [
+      "3ea92768cb2cfada908dd601b057d7066127fe75dc8fe19e4abaa1c6766a6c13",
+      "6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6"
+    ],
+    "blockers": [
+      "The source is a real ServiceNow operational event log, but textual attributes were omitted/anonymized and it does not expose trustworthy human-readable root-cause labels for EvalForge taxonomy mapping.",
+      "Anonymous category/symptom/closure codes must not be guessed into EvalForge root-cause codes; this source is auxiliary/robustness evidence, not the primary labeled holdout."
+    ],
+    "canonical_member_sha256": "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef",
+    "column_count": 36,
+    "event_row_count": 141712,
+    "has_human_readable_root_cause_text": false,
+    "incident_count": 24918,
+    "incident_field_presence_counts": {
+      "category": 24911,
+      "caused_by": 3,
+      "closed_code": 24811,
+      "cmdb_ci": 56,
+      "problem_id": 381,
+      "rfc": 179,
+      "subcategory": 24910,
+      "u_symptom": 19405
+    },
+    "incident_state_counts": {
+      "-100": 5,
+      "Active": 38716,
+      "Awaiting Evidence": 38,
+      "Awaiting Problem": 461,
+      "Awaiting User Info": 14642,
+      "Awaiting Vendor": 707,
+      "Closed": 24985,
+      "New": 36407,
+      "Resolved": 25751
+    },
+    "member_name": "incident_event_log.csv",
+    "member_sha256": "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef",
+    "real_world_operational_source": true,
+    "research_eligible_as_independent_heldout_evidence": false,
+    "source_generated": false
+  },
+  "license": "CC BY 4.0",
+  "name": "servicenow_uci_incident_event_log",
+  "role": "real_world_auxiliary_robustness_corpus",
+  "snapshot_identity": "canonical_zip_member_sha256",
+  "source_uri": "https://doi.org/10.24432/C57S4H",
+  "source_version": "uci-498"
+}

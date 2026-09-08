@@ -1,0 +1,6 @@
+{"family_id": "family-test-config", "member_incident_ids": ["ci-test-config"], "metadata": {"fixture": true}, "root_cause_codes": ["broken_payment_configuration"], "source_family_key": "family-test-config", "split": "test"}
+{"family_id": "family-test-memory", "member_incident_ids": ["ci-test-memory"], "metadata": {"fixture": true}, "root_cause_codes": ["memory_leak"], "source_family_key": "family-test-memory", "split": "test"}
+{"family_id": "family-train-conn", "member_incident_ids": ["ci-train-conn"], "metadata": {"fixture": true}, "root_cause_codes": ["database_connection_leak"], "source_family_key": "family-train-conn", "split": "train"}
+{"family_id": "family-train-n1", "member_incident_ids": ["ci-train-n1", "ci-train-n1-synthetic"], "metadata": {"fixture": true}, "root_cause_codes": ["n_plus_one_query"], "source_family_key": "family-train-n1", "split": "train"}
+{"family_id": "family-val-control", "member_incident_ids": ["ci-val-control"], "metadata": {"fixture": true}, "root_cause_codes": ["no_fault"], "source_family_key": "family-val-control", "split": "validation"}
+{"family_id": "family-val-disk", "member_incident_ids": ["ci-val-disk"], "metadata": {"fixture": true}, "root_cause_codes": ["disk_exhaustion"], "source_family_key": "family-val-disk", "split": "validation"}

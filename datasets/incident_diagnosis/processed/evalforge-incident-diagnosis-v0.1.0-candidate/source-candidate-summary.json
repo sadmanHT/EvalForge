@@ -1,0 +1,51 @@
+{
+  "candidate_dataset_version": "evalforge-incident-diagnosis-v0.1.0-candidate",
+  "inspection": {
+    "blockers": [
+      "The pinned OpsSentinel BenchmarkLab release catalog is programmatically generated, so its validation/hidden-test scenarios are not independent production incident evidence.",
+      "EvalForge must acquire/version independent incident families before a research validation or test split can be locked.",
+      "The upstream dev/validation/hidden-test assignments also split several inferred generation families across source splits; those assignments must not be reused."
+    ],
+    "cross_split_generation_families": {
+      "opssentinel:misleading_change_temporal:connection_leak": [
+        "hidden_test",
+        "validation"
+      ],
+      "opssentinel:single_noisy_dependency:connection_leak": [
+        "dev",
+        "validation"
+      ],
+      "opssentinel:single_noisy_dependency:n_plus_one": [
+        "dev",
+        "validation"
+      ]
+    },
+    "derived_generation_family_count": 29,
+    "difficulty_counts": {
+      "adversarial": 8,
+      "compound": 8,
+      "easy": 10,
+      "hard": 12,
+      "medium": 12
+    },
+    "label_counts": {
+      "broken_payment_configuration": 9,
+      "database_connection_leak": 14,
+      "disk_exhaustion": 8,
+      "memory_leak": 7,
+      "n_plus_one_query": 11,
+      "no_fault": 1
+    },
+    "research_eligible_as_independent_heldout_evidence": false,
+    "scenario_count": 50,
+    "source_generated_count": 50,
+    "source_split_counts": {
+      "dev": 30,
+      "hidden_test": 10,
+      "validation": 10
+    }
+  },
+  "source_commit": "fae661fc1634aad6a3855a1dec8dcddb16a890dd",
+  "source_repository": "sadmanHT/OpsSentinel",
+  "source_snapshot_sha256": "b4828ac9793d64c7850c7bbd6c262d4e7a89db0fd09346a9ed72a48f82dc8241"
+}
