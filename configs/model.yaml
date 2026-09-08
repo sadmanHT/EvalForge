@@ -1,0 +1,14 @@
+{
+  "model_contract_version": "1.0.0",
+  "study_id": "evalforge-incident-diagnosis-primary-v1",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "license": "apache-2.0",
+  "frozen": true,
+  "main_study_rule": "All ZERO_SHOT, RAG, FINETUNED, and COMBINED primary runs use this exact base model ID and revision.",
+  "smoke_test": {
+    "script": "scripts/model_smoke.py",
+    "required_for_phase_complete": true,
+    "status": "pending_connected_hardware"
+  }
+}
