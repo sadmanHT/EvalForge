@@ -1,0 +1,58 @@
+name: phase3-helper-fix-whitelist
+
+on:
+  push:
+    branches:
+      - phase3-candidate-update-helper
+    paths:
+      - .github/workflows/phase3-helper-fix-whitelist.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-helper:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out helper branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase3-candidate-update-helper
+          fetch-depth: 1
+
+      - name: Patch only changed-file discovery
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/phase3-candidate-update-helper.yml')
+          text = path.read_text(encoding='utf-8')
+          old = '''          changed = set(
+              subprocess.check_output(["git", "diff", "--name-only"], text=True).strip().splitlines()
+          )
+'''
+          new = '''          changed = set(
+              subprocess.check_output(["git", "diff", "--name-only"], text=True).strip().splitlines()
+          )
+          changed.update(
+              subprocess.check_output(
+                  ["git", "ls-files", "--others", "--exclude-standard"], text=True
+              ).strip().splitlines()
+          )
+'''
+          if text.count(old) != 1:
+              raise SystemExit(f'expected exactly one whitelist block, found {text.count(old)}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+          git diff --check
+
+      - name: Commit helper-only fix
+        shell: bash
+        run: |
+          test "$(git diff --name-only)" = ".github/workflows/phase3-candidate-update-helper.yml"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/phase3-candidate-update-helper.yml
+          git commit -m "ci: include untracked snapshots in helper whitelist"
+          git push origin HEAD:phase3-candidate-update-helper
