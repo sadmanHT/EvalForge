@@ -1,163 +1,201 @@
 # EvalForge Research Protocol v1.0.0
 
-## Scoped research question
+**Study ID:** `evalforge-incident-diagnosis-primary-v1`  
+**Domain:** production incident diagnosis / root-cause classification  
+**Status:** Phase 01 protocol frozen; concrete benchmark manifests are created and locked in Phase 03.
 
-Within **production incident diagnosis/root-cause classification**, how do four strategies—zero-shot inference, retrieval-augmented generation (RAG), domain LoRA/QLoRA fine-tuning, and fine-tuning plus RAG—trade off correctness, calibration, retrieval quality, latency, marginal cost, amortized cost, and failure modes when evaluated under the same benchmark and common evaluator?
+## 1. Scoped research question
 
-This is a domain-specific study. It must not be presented as proving universal superiority of one strategy for LLM applications.
+Within production incident diagnosis, how do four strategies—zero-shot inference, retrieval-augmented generation (RAG), domain LoRA/QLoRA fine-tuning, and fine-tuning plus RAG—trade off exact root-cause accuracy, calibration, retrieval quality, latency, marginal cost, amortized cost, and failure modes when evaluated under one common benchmark and evaluator?
 
-## Primary comparison arms
+This is a domain-specific study. Results must not be generalized into universal claims about RAG or fine-tuning across unrelated tasks, datasets, model families, or deployment environments.
+
+## 2. Pre-specified hypotheses
+
+The hypotheses are recorded before the held-out benchmark is used for model/prompt/retrieval selection.
+
+- **H1 — Adaptation benefit:** at least one adapted arm (`RAG`, `FINETUNED`, `COMBINED`) will improve exact root-cause-code accuracy over `ZERO_SHOT` on the locked incident-diagnosis benchmark.
+- **H2 — Retrieval mediation:** RAG-family errors will be materially associated with retrieval failures; cases with relevant eligible evidence retrieved should outperform cases with retrieval misses.
+- **H3 — Fine-tuning efficiency trade-off:** `FINETUNED` may reduce marginal inference overhead relative to RAG-family arms, but any economic advantage must be assessed after amortizing training cost.
+- **H4 — Combined trade-off:** `COMBINED` may achieve the strongest exact accuracy, but it is not assumed to dominate latency or cost; superiority claims require metric-specific evidence.
+- **H5 — Calibration is not assumed to track accuracy:** an arm may improve accuracy while worsening Brier score/ECE. Calibration is therefore evaluated independently rather than inferred from accuracy.
+
+These are falsifiable study hypotheses, not promised outcomes. Null or contrary findings are valid results.
+
+## 3. Primary comparison arms
 
 | Arm | Frozen base model | Retrieval | Adapter |
-|---|---|---|---|
-| ZERO_SHOT | yes | no | no |
-| RAG | yes | yes | no |
-| FINETUNED | yes | no | yes |
-| COMBINED | yes | yes | yes |
+| --- | --- | --- | --- |
+| `ZERO_SHOT` | yes | no | no |
+| `RAG` | yes | yes | no |
+| `FINETUNED` | yes | no | yes |
+| `COMBINED` | yes | yes | yes |
 
-The **base model ID and exact revision are identical across all four primary arms**. Retrieval state and adapter state are the intended independent variables.
+The base-model ID and exact revision are identical across all four primary arms. Retrieval state and adapter state are the intended independent variables.
 
-## Ground truth and label contract
+## 4. Ground truth and labels
 
-The primary target is a structured `root_cause_code`. The EvalForge label taxonomy is independently versioned and may only change through an explicit taxonomy version bump.
+The primary target is the canonical structured field `root_cause_code`. The EvalForge taxonomy is versioned independently in `configs/label-taxonomy.yaml`.
 
-Phase 01 records a read-only external upstream label snapshot observed from `sadmanHT/OpsSentinel` at commit `40467b27085130c110098cac5077fb62dee4e5aa`. EvalForge does not modify that repository. Observed codes are:
+Phase 01 records a read-only external upstream label snapshot from the incident benchmark source. EvalForge does not mutate that external project. Category metadata in EvalForge is EvalForge-owned and versioned.
 
-- `n_plus_one_query`
-- `database_connection_leak`
-- `disk_exhaustion`
-- `broken_payment_configuration`
-- `memory_leak`
-- `no_fault`
+Unknown labels are invalid. Adding, removing, renaming, merging, splitting, or recategorizing canonical labels requires a taxonomy version bump and a comparability review.
 
-EvalForge-owned hierarchy/category metadata is not claimed to be upstream OpsSentinel taxonomy.
+## 5. Outcomes
 
-## Outcomes
+### 5.1 Primary outcome
 
-### Primary metric
-- exact root-cause-code accuracy on the locked held-out evaluation set
+- **Exact root-cause-code accuracy** on the locked held-out evaluation set.
 
-### Secondary classification metrics
+### 5.2 Secondary classification outcomes
+
 - hierarchical/category accuracy
 - top-3 accuracy
 
-### Calibration
+### 5.3 Calibration outcomes
+
 - Brier score
 - expected calibration error (ECE)
 - reliability-diagram data
 
-### Retrieval-only supporting metrics
+### 5.4 Retrieval-supporting outcomes
+
+For RAG-capable arms only:
+
 - context precision
 - context recall
 - retrieval miss rate
-- faithfulness/RAGAS outputs as supporting evidence only
+- faithfulness / RAGAS outputs as supporting evidence
 
-### Efficiency
-- latency p50/p95
+RAGAS or LLM-judge outputs may not decide the primary winner when deterministic ground-truth root-cause labels exist.
+
+### 5.5 Efficiency outcomes
+
+- latency p50 and p95
 - marginal cost/query
 - queries/dollar
-- amortized total cost/query including fine-tuning cost where applicable
+- amortized total cost/query at declared query volumes
 
-### Failure analysis
-At minimum: `HALLUCINATED_EVIDENCE`, `ANCHORING`, `INSUFFICIENT_CONTEXT`, `CORRECT_CATEGORY_WRONG_CAUSE`, `OVERCONFIDENT_WRONG`, `UNDERCONFIDENT_CORRECT`, `RETRIEVAL_MISS`, `OTHER`.
+### 5.6 Failure taxonomy
 
-LLM judges and RAGAS may support explanation/retrieval analysis but may not determine the primary winner when deterministic root-cause labels exist.
+At minimum:
 
-## Dataset and split policy
+- `HALLUCINATED_EVIDENCE`
+- `ANCHORING`
+- `INSUFFICIENT_CONTEXT`
+- `CORRECT_CATEGORY_WRONG_CAUSE`
+- `OVERCONFIDENT_WRONG`
+- `UNDERCONFIDENT_CORRECT`
+- `RETRIEVAL_MISS`
+- `OTHER`
 
-1. The unit of independence is the **incident family**, not an individual row.
-2. Incident families are partitioned into train/validation/test **before synthetic augmentation**.
+Failure labels support analysis; they do not replace deterministic primary grading.
+
+## 6. Dataset split and leakage policy
+
+1. The unit of independence is the **incident family**, not the row.
+2. Incident families are partitioned into train/validation/test before any synthetic augmentation.
 3. Synthetic descendants may be generated only from training families.
 4. Validation controls prompt design, retrieval configuration, calibration fitting, checkpoint selection, and training hyperparameters.
-5. The test set is locked. Test outcomes may not select prompts, retriever settings, calibration parameters, checkpoints, thresholds, or training hyperparameters.
-6. RAG knowledge-base provenance must prevent documents derived from held-out incident families from leaking answers in research mode.
-7. If the available real benchmark is too small for a defensible holdout, document that limitation or expand independent real cases. Synthetic test cases may not be used to create the appearance of independent evidence.
+5. The held-out test set is locked once Phase 03 creates its manifest. Test outcomes may not choose prompts, retriever settings, calibration parameters, checkpoints, thresholds, or training hyperparameters.
+6. Research-mode RAG must exclude documents derived from held-out incident families where they reveal the target answer.
+7. If the benchmark is too small for a defensible holdout, the limitation must be reported or additional independent real incidents collected. Synthetic held-out variants may not be presented as independent real evidence.
 
-## Fairness controls
+## 7. Fairness controls for the primary study
 
-For the primary four-way study, the following must match unless a protocol amendment explicitly says otherwise:
+Unless a protocol amendment explicitly states otherwise, the following are frozen across primary arms:
 
 - base model ID and exact revision
 - label taxonomy version
-- held-out incident IDs
-- dataset/test manifest checksum
-- prompt/output schema family
+- held-out incident IDs and test-manifest checksum
+- prompt/output-schema family
 - decoding policy and generation limits
 - confidence method
-- evaluator version
-- metric implementation
-- case alignment for paired comparisons
-- latency measurement method and declared hardware/runtime descriptor
+- evaluator version and metric implementation
+- paired case alignment
+- hardware/runtime timing methodology
 
 Pipeline-specific differences are limited to retrieval configuration and/or adapter revision as appropriate.
 
-## Confidence source
+## 8. Confidence source
 
-Preferred confidence is model-derived, not a free-form self-report:
+Preferred confidence is model-derived rather than an unconstrained self-report:
 
 1. Score every allowed root-cause label with normalized sequence log-likelihood under the active pipeline context.
 2. Normalize label scores into a probability distribution.
-3. If calibration is applied, fit temperature scaling on **validation predictions only**.
+3. If calibration is applied, fit temperature scaling on validation predictions only.
 4. Apply the frozen calibration transform unchanged to held-out test predictions.
 
-If a runtime cannot expose suitable token scores, self-reported confidence may be stored only with source `self_reported`; it must not be described as equivalent to a calibrated model probability.
+If a runtime cannot expose suitable token scores, a self-reported confidence value may be stored only with source `self_reported`; it must never be described as equivalent to a calibrated model probability.
 
-## Statistical analysis
+## 9. Statistical analysis
 
-Because all primary pipelines evaluate the same held-out incidents, comparisons are paired.
+Because every primary pipeline evaluates the same held-out incidents, comparisons are paired.
 
-Required reporting:
+Required reporting for the final four-way study:
+
 - point estimate for exact accuracy
 - 95% confidence interval
-- paired delta for key comparisons
+- paired accuracy delta for key comparisons
 - paired bootstrap confidence interval for deltas
-- McNemar test or another pre-documented paired procedure for binary correctness when assumptions are satisfied
-- effect sizes/deltas, not p-values alone
+- McNemar test, paired permutation, or another pre-documented paired procedure for binary correctness when appropriate
+- effect size/delta alongside any p-value
 
-Overlapping or non-overlapping marginal confidence intervals alone do not determine significance.
+Overlapping or non-overlapping marginal confidence intervals alone do not establish paired significance. A larger percentage alone is not sufficient to claim a meaningful win.
 
-No claim may say a strategy “wins” or is “better” without naming the metric, benchmark version, comparison arm, and uncertainty.
-
-## Cost accounting
+## 10. Cost accounting
 
 Report both:
+
 - **marginal inference cost/query**, and
 - **amortized total cost/query** at declared query volumes.
 
-Fine-tuning economic claims must include training compute and any material hosting/artifact costs. RAG costs must include retrieval/embedding/reranking and increased prompt/inference cost where applicable. Pricing assumptions are versioned with timestamps.
+Fine-tuning economics include training compute and material adapter/model hosting costs. RAG economics include retrieval, embedding/reranking, and additional prompt/inference cost. Pricing assumptions are versioned and timestamped.
 
-## Experiment identity and reproducibility
+## 11. Experiment identity and reproducibility
 
-An experiment may not enter `RUNNING` unless its identity contains every required field declared in `configs/study.yaml`. Non-applicable fields are still present with `null`, so absence cannot be confused with omission.
+An experiment may not enter `RUNNING` unless it contains every field declared in `configs/study.yaml`. Fields that are genuinely not applicable remain explicit `null`; omission is not allowed.
 
-Completed experiment identities are immutable. A meaningful change creates a new config/version.
+Pipeline-specific required fields are enforced by the Phase 01 contract validator. Completed experiment identities are immutable; meaningful changes create a new version/config hash.
 
-## Invalidation rules
+## 12. Primary-run invalidation rules
 
-A primary experiment is invalid if any of these are discovered:
+A primary experiment is invalid if any of the following is discovered:
+
 - cross-split incident-family leakage
-- held-out-family answer leakage through RAG
-- wrong or mismatched base-model revision
-- different held-out case set without protocol justification
+- held-out-family answer leakage through research-mode RAG
+- wrong/mismatched base-model revision
+- different held-out case set without a documented protocol amendment
 - test-guided tuning
-- corrupted/missing/duplicated predictions that break paired alignment
-- evaluator/metric bug affecting the result
-- untraceable manually entered metrics
+- corrupted, missing, or duplicated predictions that break paired alignment
+- evaluator or metric bug that affects reported results
+- manually substituted or untraceable dashboard metrics
 
-Invalid runs remain auditable but may not be used for final claims.
+Invalid runs remain auditable but may not support final claims.
 
-## Allowed claims
+## 13. Allowed and disallowed claims
 
-Allowed: “On EvalForge incident-diagnosis benchmark version X, pipeline A changed exact accuracy by Y percentage points versus pipeline B, with Z uncertainty under the frozen protocol.”
+Allowed form:
 
-Not allowed: “Fine-tuning is better than RAG for LLMs” or another universal conclusion from this single domain/model family.
+> On EvalForge incident-diagnosis benchmark version X, pipeline A changed exact root-cause-code accuracy by Y percentage points versus pipeline B, with Z uncertainty under protocol v1.0.0.
 
-## Protocol-change rule
+Disallowed form:
 
-Any change that could alter scientific meaning requires:
-1. a version bump,
+> Fine-tuning is better than RAG for LLMs.
+
+All claims must identify the benchmark/version, metric, comparison arm, and uncertainty where applicable.
+
+## 14. Protocol-change rule
+
+Any change that can alter scientific meaning requires:
+
+1. a protocol/version bump,
 2. an ADR or protocol amendment,
-3. an explanation of whether previous experiments remain comparable,
+3. a comparability assessment for prior experiments,
 4. rerunning affected validation/primary experiments when necessary.
 
-The locked test must never be retrospectively redefined to rescue a result.
+The locked test set must never be retrospectively redefined to rescue a result.
+
+## 15. Phase boundaries
+
+Phase 01 freezes scientific and architecture contracts only. It does not implement the database, API, worker, retrieval, training, or UI systems assigned to later phases.
