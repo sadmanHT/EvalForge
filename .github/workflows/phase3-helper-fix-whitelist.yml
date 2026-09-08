@@ -26,24 +26,23 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          path = Path('.github/workflows/phase3-candidate-update-helper.yml')
-          text = path.read_text(encoding='utf-8')
-          old = '''          changed = set(
-              subprocess.check_output(["git", "diff", "--name-only"], text=True).strip().splitlines()
+          path = Path(".github/workflows/phase3-candidate-update-helper.yml")
+          text = path.read_text(encoding="utf-8")
+          old = (
+              "          changed = set(\n"
+              "              subprocess.check_output([\"git\", \"diff\", \"--name-only\"], text=True).strip().splitlines()\n"
+              "          )\n"
           )
-'''
-          new = '''          changed = set(
-              subprocess.check_output(["git", "diff", "--name-only"], text=True).strip().splitlines()
+          new = old + (
+              "          changed.update(\n"
+              "              subprocess.check_output(\n"
+              "                  [\"git\", \"ls-files\", \"--others\", \"--exclude-standard\"], text=True\n"
+              "              ).strip().splitlines()\n"
+              "          )\n"
           )
-          changed.update(
-              subprocess.check_output(
-                  ["git", "ls-files", "--others", "--exclude-standard"], text=True
-              ).strip().splitlines()
-          )
-'''
           if text.count(old) != 1:
-              raise SystemExit(f'expected exactly one whitelist block, found {text.count(old)}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
+              raise SystemExit(f"expected exactly one whitelist block, found {text.count(old)}")
+          path.write_text(text.replace(old, new), encoding="utf-8")
           PY
           git diff --check
 
