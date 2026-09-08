@@ -1,0 +1,24 @@
+{
+  "taxonomy_version": "1.0.0",
+  "source": {
+    "kind": "external_upstream_snapshot",
+    "repository": "sadmanHT/OpsSentinel",
+    "commit": "40467b27085130c110098cac5077fb62dee4e5aa",
+    "note": "Root-cause codes observed from upstream benchmark definitions; categories below are EvalForge-owned."
+  },
+  "categories": [
+    {"id": "database_behavior", "description": "Database query/connection behavior failures."},
+    {"id": "resource_exhaustion", "description": "Runtime resource exhaustion/leak failures."},
+    {"id": "configuration", "description": "Invalid or broken service configuration."},
+    {"id": "control", "description": "No active benchmark fault / control case."}
+  ],
+  "labels": [
+    {"id": "n_plus_one_query", "category": "database_behavior"},
+    {"id": "database_connection_leak", "category": "database_behavior"},
+    {"id": "disk_exhaustion", "category": "resource_exhaustion"},
+    {"id": "memory_leak", "category": "resource_exhaustion"},
+    {"id": "broken_payment_configuration", "category": "configuration"},
+    {"id": "no_fault", "category": "control"}
+  ],
+  "change_policy": "Changing, adding, or removing a canonical label/category requires an explicit taxonomy version bump and comparability review."
+}

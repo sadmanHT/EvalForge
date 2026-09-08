@@ -1,0 +1,21 @@
+PHASE01_TEST_SUITE=PASS
+COMMAND=python -m unittest discover -s tests -p 'test_phase1_*.py' -v
+RAN=51
+RESULT=OK
+
+Coverage of the current Phase 01 suite includes:
+- required Phase 01 artifacts and nine ADRs
+- canonical taxonomy/schema invariants and change policy
+- frozen model ID/revision and model contract validation
+- reproducibility-field requirements and pipeline-specific identity rules
+- four-way primary comparison fairness invariants
+- strict structured-output smoke parsing/validation
+- real GPU evidence acceptance
+- rejection of wrong resolved revision
+- rejection of tampered internal evidence hash
+- rejection of non-canonical structured output
+- validation of the generated evidence-bundle SHA256 checksums
+- completed Phase 01 handoff assertions
+
+Full cumulative clean-copy verification is preserved in clean-environment-report.txt.
+Critical contract coverage remains 100% in coverage-report.txt.

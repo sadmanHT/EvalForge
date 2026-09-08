@@ -1,0 +1,5 @@
+PHASE01_EXIT_GATE=PASS
+MODEL=mistralai/Mistral-7B-Instruct-v0.3@e8737b84b4470b28db3a0be719b362b1bd39a14d
+GPU=Tesla T4 (14.562 GiB)
+LOAD_MODE=bitsandbytes_4bit_nf4
+SMOKE_LABEL=n_plus_one_query
