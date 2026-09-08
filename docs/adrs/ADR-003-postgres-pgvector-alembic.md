@@ -1,5 +1,15 @@
-# ADR-003 — PostgreSQL + pgvector and Alembic
+# ADR-003 — PostgreSQL + pgvector + Alembic
 
 **Status:** Accepted
 
-PostgreSQL is the system of record for dataset/model/KB versions, experiments, runs, predictions, metrics, jobs, artifacts, failures, and cost records. pgvector keeps retrieval provenance in the same versioned data system. Alembic owns every schema change, and migrations must work from an empty database.
+## Context
+EvalForge needs one durable system of record for experiments plus vector retrieval and version/provenance relationships.
+
+## Decision
+Use PostgreSQL as the durable data store, pgvector for vector columns/indexes, and Alembic for every relational schema change.
+
+## Consequences
+- experiments and retrieval provenance share transactional/versioned storage;
+- all schema changes must have migrations;
+- Phase 04 must prove migration from an empty database;
+- Redis is never treated as durable research truth.
