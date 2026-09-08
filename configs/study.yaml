@@ -4,7 +4,12 @@
   "domain": "production_incident_diagnosis",
   "task": "root_cause_classification",
   "label_taxonomy_version": "1.0.0",
-  "pipelines": ["ZERO_SHOT", "RAG", "FINETUNED", "COMBINED"],
+  "pipelines": [
+    "ZERO_SHOT",
+    "RAG",
+    "FINETUNED",
+    "COMBINED"
+  ],
   "primary_metric": "exact_root_cause_code_accuracy",
   "secondary_metrics": [
     "hierarchical_accuracy",
@@ -22,7 +27,10 @@
   ],
   "confidence_method": "normalized_label_sequence_log_likelihood",
   "calibration_policy": "temperature_scaling_validation_only_optional",
-  "paired_statistics": ["paired_bootstrap_ci", "mcnemar_when_applicable"],
+  "paired_statistics": [
+    "paired_bootstrap_ci",
+    "mcnemar_when_applicable"
+  ],
   "locked_test": true,
   "split_unit": "incident_family",
   "augmentation_policy": "train_families_only_after_split",
@@ -93,5 +101,60 @@
     "output_schema_version",
     "confidence_method",
     "evaluator_version"
-  ]
+  ],
+  "hypotheses_record": "docs/research-protocol.md#2-pre-specified-hypotheses",
+  "pipeline_required_fields": {
+    "ZERO_SHOT": [],
+    "RAG": [
+      "knowledge_base_version",
+      "embedding_model_revision",
+      "chunker_version",
+      "chunk_size",
+      "overlap",
+      "top_k"
+    ],
+    "FINETUNED": [
+      "adapter_id",
+      "adapter_revision"
+    ],
+    "COMBINED": [
+      "adapter_id",
+      "adapter_revision",
+      "knowledge_base_version",
+      "embedding_model_revision",
+      "chunker_version",
+      "chunk_size",
+      "overlap",
+      "top_k"
+    ]
+  },
+  "pipeline_forbidden_non_null_fields": {
+    "ZERO_SHOT": [
+      "adapter_id",
+      "adapter_revision",
+      "knowledge_base_version",
+      "embedding_model_revision",
+      "chunker_version",
+      "chunk_size",
+      "overlap",
+      "top_k",
+      "reranker_id",
+      "reranker_revision"
+    ],
+    "RAG": [
+      "adapter_id",
+      "adapter_revision"
+    ],
+    "FINETUNED": [
+      "knowledge_base_version",
+      "embedding_model_revision",
+      "chunker_version",
+      "chunk_size",
+      "overlap",
+      "top_k",
+      "reranker_id",
+      "reranker_revision"
+    ],
+    "COMBINED": []
+  }
 }
