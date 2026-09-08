@@ -1,5 +1,9 @@
-# ADR-009 — Docker Compose, CI/CD, and Provider-Independent Deployment
+# ADR-009 — Docker Compose, CI/CD, and Deployment Strategy
 
 **Status:** Accepted
 
-Local integration uses Docker Compose. CI/CD will use GitHub Actions with clean database/service setup, regression tests, and Docker builds. Deployment remains provider-independent: the application consumes standard `DATABASE_URL`, Redis URL, object/artifact credentials, and API secrets rather than provider-specific database logic. Railway, Fly.io, or an equivalent provider may be selected later by deployment ADR without changing core persistence contracts.
+## Decision
+Use Docker/Docker Compose for reproducible local multi-service development, GitHub Actions for CI gates/regression enforcement, and a managed deployment platform for the public application/API. Provider-specific deployment details are deferred until the deployment phase so the application remains portable through environment-based configuration.
+
+## Consequences
+Phase 02 establishes reproducible containers and CI. Phase 15 selects/finalizes production hosting and proves public read-only evidence. Local hidden state may not be required for a passing phase gate.
