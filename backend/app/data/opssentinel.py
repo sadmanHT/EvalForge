@@ -57,9 +57,9 @@ def inspect_opssentinel_catalog(payload: dict[str, Any]) -> UpstreamCatalogInspe
     if not isinstance(scenarios, list) or not scenarios:
         raise ValueError("OpsSentinel release catalog must contain scenarios")
 
-    splits = Counter()
-    labels = Counter()
-    difficulties = Counter()
+    splits: Counter[str] = Counter()
+    labels: Counter[str] = Counter()
+    difficulties: Counter[str] = Counter()
     family_splits: dict[str, set[str]] = defaultdict(set)
     for scenario in scenarios:
         splits[str(scenario["split"])] += 1
