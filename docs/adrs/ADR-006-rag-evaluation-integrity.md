@@ -2,4 +2,11 @@
 
 **Status:** Accepted
 
-RAG uses versioned pgvector retrieval with document/chunk provenance and a configurable reranker interface. Research mode must exclude documents derived from held-out incident families. The primary ground truth is deterministic root-cause codes; RAGAS and LLM judges are supporting evaluators only. All four pipelines enter one common evaluation harness.
+## Context
+RAG can leak held-out answers through historical incidents/documents, and LLM judges can confound deterministic classification evaluation.
+
+## Decision
+Research-mode retrieval is provenance-aware and excludes held-out-family answer leakage. Structured root-cause-code exact match is the primary evaluator. RAGAS/LLM judges are supporting evaluators only.
+
+## Consequences
+Phase 07 must version KB documents/chunks and enforce eligibility filters. Primary leaderboard results cannot be manually overridden by judge scores.
