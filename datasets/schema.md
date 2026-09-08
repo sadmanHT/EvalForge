@@ -1,39 +1,56 @@
-# EvalForge Incident / Label Schema v1
+# EvalForge Incident Dataset Schema — Initial Contract
 
-## Purpose
+**Schema version:** `incident-schema-v1`  
+**Taxonomy:** `configs/label-taxonomy.yaml`
 
-This file defines the minimum semantic schema required before Phase 03 creates the versioned benchmark. It freezes names and provenance expectations without pretending the final dataset already exists.
+Phase 01 defines semantics only. Phase 03 implements ingestion, manifests, family-safe splitting, augmentation lineage, and leakage audits.
 
-## Canonical label
+## Incident record
 
-Each incident has:
-- `root_cause_code`: canonical label ID from `configs/label-taxonomy.yaml`
-- `root_cause_category`: EvalForge category mapped by taxonomy version
-- optional `secondary_root_cause_codes` for compound cases
+Required semantic fields:
 
-Unknown root-cause codes are invalid for a versioned benchmark unless the taxonomy is explicitly version-bumped first.
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `incident_id` | string | Stable unique incident identifier. |
+| `incident_family_id` | string | Independence/split unit; all descendants of one family stay in one split. |
+| `root_cause_code` | string | Canonical taxonomy label. |
+| `root_cause_category` | string | Category implied by the taxonomy label. |
+| `difficulty_tier` | string | Versioned benchmark difficulty label when available. |
+| `evidence` | array/object | Ground-truth evidence references or normalized evidence fields. |
+| `source_provenance` | object | Source/version information sufficient for audit. |
+| `is_synthetic` | boolean | Whether the row was generated rather than sourced as an independent real incident. |
+| `parent_incident_id` | string/null | Direct source incident for synthetic descendants. |
 
-## Incident identity
+Phase 03 may add operational fields, but it may not weaken the family/split or label constraints without a schema/taxonomy version change.
 
-Phase 03 records at minimum:
-- `incident_id`
-- `incident_family_id`
-- `source`
-- `source_version` / upstream commit where applicable
-- `difficulty`
-- `root_cause_code`
-- `secondary_root_cause_codes`
-- `evidence`
-- `provenance`
-- `split`
-- `synthetic`
-- `parent_incident_id` when synthetic
-- schema/taxonomy version
+## Canonical label rule
 
-## Split invariant
+`root_cause_code` must be one of the canonical IDs in `configs/label-taxonomy.yaml`. Unknown codes are rejected; silent coercion is forbidden.
 
-`incident_family_id` is the unit of independence. A family may occur in only one of train, validation, or test. Synthetic examples must inherit a training-family ID and may never originate from validation/test families.
+`root_cause_category` must equal the category assigned to the canonical label in the same taxonomy version.
 
-## Upstream boundary
+## Family/split invariant
 
-The Phase 01 label snapshot records observed root-cause codes from external repository `sadmanHT/OpsSentinel` at commit `40467b27085130c110098cac5077fb62dee4e5aa`. EvalForge does not write to or mutate that repository. Future upstream changes require an explicit EvalForge import/taxonomy version decision.
+The split unit is `incident_family_id`. A family may belong to exactly one of train, validation, or test. Synthetic descendants inherit the family and may only be created from training families.
+
+## Synthetic-lineage invariant
+
+For a synthetic row:
+
+- `is_synthetic = true`;
+- `parent_incident_id` is non-null;
+- the parent belongs to a training family;
+- the synthetic row cannot change the canonical family identity to bypass split rules.
+
+## Initial prediction smoke contract
+
+Phase 01 model smoke output must be strict JSON containing at least:
+
+```json
+{
+  "root_cause_code": "n_plus_one_query",
+  "reasoning": "brief explanation"
+}
+```
+
+The full production prediction/evaluation schema is implemented in Phase 05.
