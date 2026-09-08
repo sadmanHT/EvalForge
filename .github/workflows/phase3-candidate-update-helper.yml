@@ -1,0 +1,673 @@
+name: phase3-candidate-update-helper
+
+on:
+  push:
+    branches:
+      - phase3-candidate-update-helper
+
+permissions:
+  contents: write
+
+jobs:
+  update-evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact Phase 03 target
+        uses: actions/checkout@v4
+        with:
+          ref: phase-03-dataset-engineering
+          fetch-depth: 1
+
+      - name: Verify expected parent
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "f74a2c85a1b6242e2d72e54df04497b9b4391d0d"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+
+      - name: Install locked backend dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+
+      - name: Materialize pinned Phase 03 sources
+        run: python scripts/fetch_phase3_sources.py
+
+      - name: Apply public incident candidate update
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path(".")
+          snapshot_dir = root / "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1"
+          snapshot_dir.mkdir(parents=True, exist_ok=True)
+
+          def json_text(payload: object) -> str:
+              return json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+
+          def git_blob_sha(data: bytes) -> str:
+              header = f"blob {len(data)}\0".encode()
+              return hashlib.sha1(header + data).hexdigest()
+
+          snapshots = {
+              "dispatcharr-1416.snapshot.json": {
+                  "normalized_facts": [
+                      "Under normal live-stream use, database-dependent player API requests periodically timed out or returned 504 while a version endpoint that did not require the database remained healthy.",
+                      "The report traced the failure to a PostgreSQL connection checked out from a bounded per-worker pool and not returned on the live-stream teardown or channel-switch path.",
+                      "After enough leaked connections accumulated, the eight-connection worker pool remained pinned at capacity even after all streams ended, and database-dependent requests stayed blocked until restart.",
+                      "The report supplied a deterministic concurrent-stream reproduction plus a negative control in which short database reads recycled connections and did not reproduce the wedge.",
+                      "The issue was automatically closed because it was not opened from the required repository template; the closure comment did not dispute the technical diagnosis.",
+                  ],
+                  "observed_at": "2026-09-08T21:36:00Z",
+                  "provenance_limitations": [
+                      "This file is an EvalForge normalized semantic snapshot, not byte-for-byte GitHub issue content.",
+                      "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate.",
+                  ],
+                  "research_admission_eligible": False,
+                  "snapshot_format": "evalforge-normalized-public-incident-v1",
+                  "snapshot_kind": "normalized_semantic_snapshot",
+                  "source_event": {
+                      "closed_at": "2026-07-06T15:16:52Z",
+                      "created_at": "2026-07-06T15:16:37Z",
+                      "issue_number": 1416,
+                      "state": "closed",
+                      "state_reason": "completed",
+                  },
+                  "source_publisher": "Dispatcharr/Dispatcharr GitHub repository",
+                  "source_title": "[Bug]: player_api.php / XC API hangs (504) under streaming load — PostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool",
+                  "source_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+              },
+              "google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json": {
+                  "normalized_facts": [
+                      "Google's final incident report states that an update to payment configuration intended to support virtual credit cards triggered the disruption.",
+                      "The configuration update prevented credit-card payments from being processed for affected United States customers and generated payment-failure notifications.",
+                      "Engineers observed an unexpected increase in payment-request failures, rolled back the configuration change, and the rollback resolved the payment-processing failure condition.",
+                      "The incident report identifies progressive rollout errors as a factor that expanded the configuration change more rapidly than intended.",
+                  ],
+                  "observed_at": "2026-09-08T21:36:00Z",
+                  "provenance_limitations": [
+                      "This file is an EvalForge normalized semantic snapshot of the official Google Cloud Service Health report, not a byte-for-byte copy of the page.",
+                      "It supports candidate-level mapping to broken_payment_configuration but does not satisfy the original-source preservation requirement for research admission.",
+                  ],
+                  "research_admission_eligible": False,
+                  "snapshot_format": "evalforge-normalized-public-incident-v1",
+                  "snapshot_kind": "normalized_semantic_snapshot",
+                  "source_event": {
+                      "final_report_date": "2021-09-29",
+                      "incident_end": "2021-09-23T00:30:00-07:00",
+                      "incident_start": "2021-09-22T14:10:00-07:00",
+                  },
+                  "source_publisher": "Google Cloud Service Health",
+                  "source_title": "Automatic payment processing incident for U.S. credit-card billing customers",
+                  "source_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
+              },
+              "google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json": {
+                  "normalized_facts": [
+                      "Google posted an investigation for reported Mandiant Managed Defense ingestion issues involving some CrowdStrike Falcon integrations.",
+                      "The final engineering investigation concluded that there was no service degradation during the reported period.",
+                      "The final update also states that no supported CrowdStrike alerts were missed during the period.",
+                      "EvalForge treats this only as a candidate real-world negative-control family: an operationally visible suspected incident whose supported system scope was ultimately found healthy.",
+                  ],
+                  "observed_at": "2026-09-08T21:36:00Z",
+                  "provenance_limitations": [
+                      "This file is an EvalForge normalized semantic snapshot of the official Google Cloud Service Health entry, not a byte-for-byte copy of the page.",
+                      "The no_fault mapping is limited to the final supported-service scope described by the source and remains non-admitted pending the Phase 03 control-family policy and original-source preservation gate.",
+                  ],
+                  "research_admission_eligible": False,
+                  "snapshot_format": "evalforge-normalized-public-incident-v1",
+                  "snapshot_kind": "normalized_semantic_snapshot",
+                  "source_event": {
+                      "incident_end": "2024-09-20T14:51:00-07:00",
+                      "incident_start": "2024-09-18T12:40:00-07:00",
+                  },
+                  "source_publisher": "Google Cloud Service Health / Mandiant Managed Defense",
+                  "source_title": "Reported CrowdStrike Falcon ingestion issue investigation",
+                  "source_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
+              },
+          }
+
+          snapshot_bytes: dict[str, bytes] = {}
+          for name, payload in snapshots.items():
+              data = json_text(payload).encode()
+              snapshot_bytes[name] = data
+              (snapshot_dir / name).write_bytes(data)
+
+          readme = (
+              "# Phase 03 normalized public-incident candidate snapshots\n\n"
+              "These files preserve the exact EvalForge review facts used for candidate-level "
+              "taxonomy mapping. They are normalized semantic snapshots with source URLs and "
+              "observation metadata; they are deliberately not represented as byte-for-byte "
+              "copies of the original public pages/issues. Therefore they do not, by themselves, "
+              "satisfy the Phase 03 original-primary-source preservation requirement for research "
+              "admission.\n"
+          )
+          (snapshot_dir / "README.md").write_text(readme, encoding="utf-8")
+          sums = [
+              f"{hashlib.sha256(data).hexdigest()}  {name}"
+              for name, data in sorted(snapshot_bytes.items())
+          ]
+          (snapshot_dir / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
+
+          index_path = root / "configs/postmortem-candidates.json"
+          index = json.loads(index_path.read_text(encoding="utf-8"))
+          index["index_version"] = "phase3-public-postmortem-candidates-v3"
+          index["source"]["note"] = (
+              "postmortems.app remains the pinned discovery/index source for its entries. "
+              "Directly reviewed external candidates may point either to their own exact Git "
+              "repository state or to an EvalForge-normalized public-incident snapshot whose "
+              "Git blob is pinned. Normalized snapshots are candidate-review provenance only and "
+              "do not set original_source_snapshot_preserved=true. Research admission still "
+              "requires original primary-source preservation plus sufficient independent family depth."
+          )
+          existing = {item["candidate_id"] for item in index["candidates"]}
+
+          def snapshot_ref(name: str) -> tuple[str, str]:
+              rel = f"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/{name}"
+              return rel, git_blob_sha(snapshot_bytes[name])
+
+          dispatch_path, dispatch_blob = snapshot_ref("dispatcharr-1416.snapshot.json")
+          payment_path, payment_blob = snapshot_ref(
+              "google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json"
+          )
+          control_path, control_blob = snapshot_ref(
+              "google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json"
+          )
+          additions = [
+              {
+                  "candidate_id": "github:Dispatcharr:issue-1416:2026-07-06",
+                  "company": "Dispatcharr",
+                  "decision": "supported_candidate_mapping",
+                  "decision_reason": (
+                      "Primary operational report directly traces a bounded PostgreSQL pool outage "
+                      "to connections not returned on stream teardown, with deterministic reproduction, "
+                      "pool-exhaustion evidence, restart recovery, and a negative control. The issue was "
+                      "closed only for template noncompliance."
+                  ),
+                  "evidence_summary": (
+                      "A checked-out PostgreSQL connection is not returned on live-stream teardown; "
+                      "the per-worker pool drains to 8/8, database-dependent requests time out or 504, "
+                      "the pool remains exhausted after streams end, and restart clears the leaked state."
+                  ),
+                  "mapping_basis": "narrative_root_cause",
+                  "original_source_snapshot_preserved": False,
+                  "original_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+                  "proposed_root_cause_code": "database_connection_leak",
+                  "research_admitted": False,
+                  "source_blob_sha": dispatch_blob,
+                  "source_path": dispatch_path,
+                  "title": "PostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool",
+              },
+              {
+                  "candidate_id": "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+                  "company": "Google Cloud",
+                  "decision": "supported_candidate_mapping",
+                  "decision_reason": (
+                      "The official incident root-cause section directly identifies a payment "
+                      "configuration update as the trigger for failed credit-card payment processing, "
+                      "and rollback of that configuration resolved the failure."
+                  ),
+                  "evidence_summary": (
+                      "A production payment-configuration update intended for virtual credit cards "
+                      "prevented affected U.S. credit-card payments from processing until engineers "
+                      "rolled back the configuration change."
+                  ),
+                  "mapping_basis": "narrative_root_cause",
+                  "original_source_snapshot_preserved": False,
+                  "original_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
+                  "proposed_root_cause_code": "broken_payment_configuration",
+                  "research_admitted": False,
+                  "source_blob_sha": payment_blob,
+                  "source_path": payment_path,
+                  "title": "Payment configuration update prevented U.S. credit-card processing",
+              },
+              {
+                  "candidate_id": "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+                  "company": "Google Cloud / Mandiant",
+                  "decision": "supported_candidate_mapping",
+                  "decision_reason": (
+                      "The final official investigation states that the suspected ingestion incident "
+                      "had no service degradation and no supported CrowdStrike alerts were missed, "
+                      "making it a defensible real-world negative-control candidate for no_fault."
+                  ),
+                  "evidence_summary": (
+                      "An operationally visible suspected ingestion issue was investigated and the "
+                      "final supported-service finding was healthy: no service degradation and no "
+                      "supported CrowdStrike alerts missed."
+                  ),
+                  "mapping_basis": "narrative_root_cause",
+                  "original_source_snapshot_preserved": False,
+                  "original_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
+                  "proposed_root_cause_code": "no_fault",
+                  "research_admitted": False,
+                  "source_blob_sha": control_blob,
+                  "source_path": control_path,
+                  "title": "Mandiant Managed Defense reported ingestion issue resolved as no degradation",
+              },
+          ]
+          for item in additions:
+              if item["candidate_id"] in existing:
+                  raise SystemExit(f"candidate already present: {item['candidate_id']}")
+              index["candidates"].append(item)
+          index_path.write_text(json_text(index), encoding="utf-8")
+          index_sha = hashlib.sha256(index_path.read_bytes()).hexdigest()
+
+          def replace_once(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise SystemExit(
+                      f"expected one replacement in {path}: count={text.count(old)} old={old[:100]!r}"
+                  )
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          tests = root / "backend/tests/data/test_phase3_data.py"
+          replace_once(tests, "import json\n", "import hashlib\nimport json\n")
+          replace_once(tests, "    assert coverage.candidate_count == 8\n", "    assert coverage.candidate_count == 11\n")
+          replace_once(tests, "    assert coverage.supported_mapping_count == 3\n", "    assert coverage.supported_mapping_count == 6\n")
+          replace_once(
+              tests,
+              "    assert coverage.supported_root_cause_codes == [\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "    ]\n",
+              "    assert coverage.supported_root_cause_codes == [\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "        \"no_fault\",\n"
+              "    ]\n",
+          )
+          replace_once(
+              tests,
+              "    assert coverage.missing_root_cause_codes == [\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"no_fault\",\n"
+              "    ]\n",
+              "    assert coverage.missing_root_cause_codes == []\n",
+          )
+          replace_once(
+              tests,
+              "    assert {item.company for item in supported} == {\"Amazon\", \"Medoc\", \"Tarsnap\"}\n",
+              "    assert {item.company for item in supported} == {\n"
+              "        \"Amazon\",\n"
+              "        \"Dispatcharr\",\n"
+              "        \"Google Cloud\",\n"
+              "        \"Google Cloud / Mandiant\",\n"
+              "        \"Medoc\",\n"
+              "        \"Tarsnap\",\n"
+              "    }\n",
+          )
+          marker = "    assert not medoc.research_admitted\n"
+          insert = marker + (
+              "    expected_external = {\n"
+              "        \"github:Dispatcharr:issue-1416:2026-07-06\": \"database_connection_leak\",\n"
+              "        \"google-cloud-status:E18Caoo5X1m6dTa1PVr1\": \"broken_payment_configuration\",\n"
+              "        \"google-cloud-status:fLYHLzSGXGkLkAjc8MJG\": \"no_fault\",\n"
+              "    }\n"
+              "    by_id = {item.candidate_id: item for item in supported}\n"
+              "    for candidate_id, label in expected_external.items():\n"
+              "        candidate = by_id[candidate_id]\n"
+              "        assert candidate.proposed_root_cause_code == label\n"
+              "        snapshot = (root / candidate.source_path).read_bytes()\n"
+              "        header = f\"blob {len(snapshot)}\\0\".encode()\n"
+              "        assert hashlib.sha1(header + snapshot).hexdigest() == candidate.source_blob_sha\n"
+              "        assert not candidate.original_source_snapshot_preserved\n"
+              "        assert not candidate.research_admitted\n"
+          )
+          replace_once(tests, marker, insert)
+
+          contract = root / "scripts/check_phase3_contract.py"
+          replace_once(
+              contract,
+              "    \"configs/postmortem-candidates.json\",\n",
+              "    \"configs/postmortem-candidates.json\",\n"
+              "    \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/README.md\",\n"
+              "    \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/SHA256SUMS.txt\",\n"
+              "    \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json\",\n"
+              "    \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json\",\n"
+              "    \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json\",\n",
+          )
+          replace_once(
+              contract,
+              "    if set(coverage.supported_root_cause_codes) != {\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "    }:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set\")\n"
+              "    if set(coverage.missing_root_cause_codes) != {\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"no_fault\",\n"
+              "    }:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set\")\n",
+              "    if coverage.candidate_count != 11 or coverage.supported_mapping_count != 6:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_candidate_counts\")\n"
+              "    if set(coverage.supported_root_cause_codes) != {\n"
+              "        \"broken_payment_configuration\",\n"
+              "        \"database_connection_leak\",\n"
+              "        \"disk_exhaustion\",\n"
+              "        \"memory_leak\",\n"
+              "        \"n_plus_one_query\",\n"
+              "        \"no_fault\",\n"
+              "    }:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set\")\n"
+              "    if coverage.missing_root_cause_codes:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set\")\n"
+              "    public_snapshot_dir = (\n"
+              "        root / \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1\"\n"
+              "    )\n"
+              "    public_sums = {}\n"
+              "    for line in (public_snapshot_dir / \"SHA256SUMS.txt\").read_text(encoding=\"utf-8\").splitlines():\n"
+              "        digest, name = line.split(maxsplit=1)\n"
+              "        public_sums[name.strip()] = digest\n"
+              "    local_candidates = [\n"
+              "        item\n"
+              "        for item in postmortem_index.candidates\n"
+              "        if item.source_path.startswith(\n"
+              "            \"datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/\"\n"
+              "        )\n"
+              "    ]\n"
+              "    if len(local_candidates) != 3:\n"
+              "        raise SystemExit(\"PHASE03_CONTRACT=FAIL public_snapshot_candidate_count\")\n"
+              "    for candidate in local_candidates:\n"
+              "        path = root / candidate.source_path\n"
+              "        data = path.read_bytes()\n"
+              "        header = f\"blob {len(data)}\\0\".encode()\n"
+              "        if hashlib.sha1(header + data).hexdigest() != candidate.source_blob_sha:\n"
+              "            raise SystemExit(\"PHASE03_CONTRACT=FAIL public_snapshot_git_blob\")\n"
+              "        if public_sums.get(path.name) != hashlib.sha256(data).hexdigest():\n"
+              "            raise SystemExit(\"PHASE03_CONTRACT=FAIL public_snapshot_sha256\")\n",
+          )
+
+          data_card = root / "docs/data-card.md"
+          replace_once(
+              data_card,
+              "**Status:** Research benchmark **not yet lockable**. Independent public postmortems have been identified, but frozen-taxonomy coverage and preserved primary-source evidence are still insufficient for a credible locked holdout.\n",
+              "**Status:** Research benchmark **not yet lockable**. All six frozen labels now have at least one defensible independent candidate mapping, but preserved original-source evidence and per-label independent family depth are still insufficient for a credible locked holdout.\n",
+          )
+          replace_once(
+              data_card,
+              "Phase 03 now tracks three provenance sources with different scientific roles.\n",
+              "Phase 03 tracks three primary provenance roles, with direct normalized public-incident snapshots attached to the candidate index.\n",
+          )
+          replace_once(
+              data_card,
+              "| postmortems.app (`icco/postmortems`) | Public real-incident discovery index pinned by Git commit/blob SHA | 8 conservatively reviewed candidates | independent postmortem candidate discovery | Not yet |\n",
+              "| postmortems.app + directly reviewed public incidents | Public real-incident discovery plus normalized candidate snapshots | 11 conservatively reviewed candidates | independent incident candidate discovery | Not yet |\n",
+          )
+          card_text = data_card.read_text(encoding="utf-8")
+          start = card_text.index("### Public postmortem candidate discovery")
+          end = card_text.index("## Current canonical research counts")
+          public_section = f'''### Public incident candidate discovery\n\nEvalForge pins the public `icco/postmortems` / postmortems.app discovery corpus at commit:\n\n`42bac673432f564d317dbfc30b5d400e1812c684`\n\nThe candidate decision index is `configs/postmortem-candidates.json` (index SHA-256 `{index_sha}`). postmortems.app remains a discovery/index source rather than automatic ground truth. Directly reviewed external candidates may instead point to normalized EvalForge snapshots under `datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/`; each such snapshot has a pinned Git blob and SHA-256 checksum and explicitly records that it is not a byte-for-byte original-source archive.\n\nEleven independent public-incident candidates have now been conservatively reviewed against the frozen taxonomy. Six are strong candidate mappings, one for every frozen label:\n\n| Candidate | Proposed label | Decision | Why |\n| --- | --- | --- | --- |\n| Amazon EBS, 2012-10-22 | `memory_leak` | supported candidate | narrative explicitly identifies progressive agent memory consumption |\n| Tarsnap, 2016-07-24 | `disk_exhaustion` | supported candidate | unbounded local log fills filesystem and service writes fail |\n| Medoc, 2026-01-11 | `n_plus_one_query` | supported candidate | firsthand production narrative explicitly identifies N+1, 6,000+ DB calls, and batching as the fix |\n| Dispatcharr #1416, 2026-07-06 | `database_connection_leak` | supported candidate | PostgreSQL connection is not returned on stream teardown; pool stays 8/8 and DB-dependent requests wedge until restart |\n| Google Cloud payments, 2021-09-22 | `broken_payment_configuration` | supported candidate | official root cause is a payment-configuration update that prevents credit-card processing until rollback |\n| Google Cloud / Mandiant, 2024-09-18 | `no_fault` | supported candidate | final official investigation reports no service degradation and no supported CrowdStrike alerts missed |\n| incident.io GKE incident | `n_plus_one_query` | rejected as primary | N+1 join is a contributing issue; persistent root cause is `anetd` CPU saturation/packet loss |\n| Twilio billing, 2013 | `broken_payment_configuration` | ambiguous | incorrect Redis configuration contributes, but the incident is a broader multi-causal chain |\n| Elastic Cloud, 2019 | `database_connection_leak` | rejected as primary | connection leaks are Kibana/remediation issues, not established DB-connection root cause |\n| Cloudflare parser incident | `memory_leak` | rejected false friend | memory disclosure from buffer over-read is not runtime memory exhaustion |\n| Skyliner, 2017 | `memory_leak` | insufficient evidence | pinned index entry is too thin for a locked family/evidence record |\n\nCandidate-level taxonomy coverage is therefore **6/6**, but this does **not** make the research benchmark ready. None of the eleven candidates is research-admitted. The three new direct snapshots are normalized semantic evidence rather than byte-for-byte originals; Amazon/Tarsnap originals are not yet preserved; Medoc is pinned to an external Git commit/blob but not yet materialized as an EvalForge original-source archive. In addition, one strong family per label is not enough to create a credible family-stratified train/validation/test split while retaining independent families in every required role.\n\n'''
+          card_text = card_text[:start] + public_section + card_text[end:]
+          card_text = card_text.replace(
+              "- Independent real public-incident candidates are now identified, with three frozen labels having strong candidate mappings. Medoc's N+1 narrative is pinned to immutable external Git evidence, but no accepted candidate has yet been materialized into EvalForge's raw primary-source snapshot layer or research-admitted.",
+              "- Independent public-incident candidates now provide at least one strong candidate mapping for all six frozen labels, but none is research-admitted; original-source preservation and sufficient per-label independent family depth remain outstanding.",
+          )
+          data_card.write_text(card_text, encoding="utf-8")
+
+          handoff = root / "docs/phase-03-handoff.md"
+          handoff_text = handoff.read_text(encoding="utf-8")
+          handoff_text = handoff_text.replace(
+              "Status: **IN PROGRESS — HARD EXIT BLOCKED ON INDEPENDENT FROZEN-TAXONOMY COVERAGE.**",
+              "Status: **IN PROGRESS — HARD EXIT BLOCKED ON INDEPENDENT FAMILY DEPTH / ORIGINAL-SOURCE PRESERVATION.**",
+          )
+          handoff_text = handoff_text.replace(
+              "Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent real public incident evidence is now discoverable, but the reviewed set covers only three of six frozen labels strongly and no candidate has yet been research-admitted with an EvalForge-preserved original primary-source snapshot.",
+              "Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent public incident evidence now has at least one defensible candidate mapping for all six frozen labels, but no candidate is research-admitted and the corpus still lacks the preserved originals and per-label independent family depth required for a credible locked split.",
+          )
+          h_start = handoff_text.index("### Public postmortem coverage review")
+          h_end = handoff_text.index("### UCI / ServiceNow")
+          handoff_section = '''### Public incident coverage review\n\n- Pinned discovery repository: `icco/postmortems` at `42bac673432f564d317dbfc30b5d400e1812c684`.\n- Conservatively reviewed independent candidates: **11**.\n- Supported candidate mappings: **6**, covering all frozen labels (`broken_payment_configuration`, `database_connection_leak`, `disk_exhaustion`, `memory_leak`, `n_plus_one_query`, `no_fault`).\n- Candidate-level frozen-label gaps: **none**.\n- Research-admitted public-incident records: **0**.\n- Cloudflare's parser incident remains rejected as a `memory_leak` false friend because it is a buffer over-read/data-disclosure bug, not runtime resource exhaustion.\n- incident.io's accidental N+1 join remains rejected as the incident's primary root cause because the persistent failure is GKE Dataplane V2 `anetd` CPU saturation/packet loss.\n- Medoc remains a strong `n_plus_one_query` candidate pinned to exact external Git evidence, but not an EvalForge-preserved original-source archive.\n- Dispatcharr #1416 is accepted as a strong `database_connection_leak` candidate because the report directly traces the outage to PostgreSQL connections not returned on stream teardown, shows a pool pinned at 8/8 after streams end, provides deterministic reproduction and a negative control, and notes restart recovery. Its closure was an automated issue-template action rather than a technical rejection.\n- Google Cloud incident `E18Caoo5X1m6dTa1PVr1` is accepted as a strong `broken_payment_configuration` candidate because the official root cause is a payment-configuration update that stopped affected credit-card processing until rollback.\n- Google Cloud / Mandiant incident `fLYHLzSGXGkLkAjc8MJG` is accepted as a `no_fault` negative-control candidate because the final investigation reports no service degradation and no supported CrowdStrike alerts missed. The mapping is limited to that declared supported-service scope.\n- The three new direct-source entries are preserved as normalized EvalForge semantic snapshots with Git-blob and SHA-256 checks, but `original_source_snapshot_preserved=false` remains correct because they are not byte-for-byte original-source archives.\n\nThe candidate review is preserved at `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json`.\n\n'''
+          handoff_text = handoff_text[:h_start] + handoff_section + handoff_text[h_end:]
+          handoff_text = handoff_text.replace(
+              "- Exact-head push CI Run `34277519206` (Run #22) completed SUCCESS: cumulative `make verify-all`, strict known-blocker recording, evidence upload, and fresh no-cache Compose build/smoke/teardown all passed on `0ddc04187b4a490ca9a08ce07de141f4b3f90fa4`.\n- Draft PR #3 then triggered PR-context Run `34278144995` (Run #24); both `verify-all` and `clean-compose` completed SUCCESS on the same validated head.\n",
+              "- Exact-head push CI Run `34277519206` (Run #22) completed SUCCESS: cumulative `make verify-all`, strict known-blocker recording, evidence upload, and fresh no-cache Compose build/smoke/teardown all passed on `0ddc04187b4a490ca9a08ce07de141f4b3f90fa4`.\n- Draft PR #3 then triggered PR-context Run `34278144995` (Run #24); both `verify-all` and `clean-compose` completed SUCCESS on the same validated head.\n- Medoc evidence validation head `f74a2c85a1b6242e2d72e54df04497b9b4391d0d` passed push Run `34280566223` (Run #28) and PR-context Run `34280571091` (Run #29); `verify-all` and fresh `clean-compose` were SUCCESS in both contexts.\n",
+          )
+          handoff_text = handoff_text.replace("INDEPENDENT_POSTMORTEM_CANDIDATES=8", "INDEPENDENT_POSTMORTEM_CANDIDATES=11")
+          handoff_text = handoff_text.replace("SUPPORTED_MAPPING_CANDIDATES=3", "SUPPORTED_MAPPING_CANDIDATES=6")
+          handoff_text = handoff_text.replace("SUPPORTED_TAXONOMY_LABELS=3", "SUPPORTED_TAXONOMY_LABELS=6")
+          handoff_text = handoff_text.replace(
+              "MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,no_fault",
+              "MISSING_TAXONOMY_LABELS=",
+          )
+          handoff.write_text(handoff_text, encoding="utf-8")
+
+          evidence_readme = root / "evidence/phase-03/README.md"
+          evidence_readme.write_text(
+              "# Phase 03 Evidence\n\n"
+              "Status: IN PROGRESS / hard exit blocked.\n\n"
+              "Preserved evidence includes the candidate manifest, OpsSentinel source audit/summary, "
+              "ServiceNow/UCI auxiliary summary, public-incident candidate coverage review, class/split "
+              "summary, normalized direct-source candidate snapshots, and deterministic SHA-256 checksums.\n\n"
+              "Current scientific blocker: candidate-level frozen-taxonomy coverage is now 6/6, but "
+              "the research corpus is still not lockable. None of the 11 reviewed candidates is "
+              "research-admitted, the direct-source snapshots are normalized rather than byte-for-byte "
+              "original archives, and there are not enough independently preserved families per label "
+              "to create a credible family-stratified train/validation/test split.\n\n"
+              "No OpsSentinel source was modified.\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Format touched Python
+        shell: bash
+        run: |
+          cd backend
+          ruff format tests/data/test_phase3_data.py ../scripts/check_phase3_contract.py
+          ruff check --fix tests/data/test_phase3_data.py ../scripts/check_phase3_contract.py
+
+      - name: Rebuild candidate outputs and synchronize evidence
+        shell: bash
+        run: |
+          python scripts/build_phase3_candidate.py
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import shutil
+          from pathlib import Path
+
+          root = Path(".")
+          version = "evalforge-incident-diagnosis-v0.1.0-candidate"
+          processed = root / "datasets/incident_diagnosis/processed" / version
+          evidence = root / "evidence/phase-03"
+          mapping = {
+              "manifest.json": "candidate-manifest.json",
+              "auxiliary-servicenow-summary.json": "auxiliary-servicenow-summary.json",
+              "public-postmortem-candidate-coverage.json": "public-postmortem-candidate-coverage.json",
+              "source-audit-report.json": "source-audit-report.json",
+              "source-candidate-summary.json": "source-candidate-summary.json",
+          }
+          for source, destination in mapping.items():
+              shutil.copyfile(processed / source, evidence / destination)
+
+          manifest = json.loads((processed / "manifest.json").read_text(encoding="utf-8"))
+          coverage_payload = json.loads(
+              (processed / "public-postmortem-candidate-coverage.json").read_text(encoding="utf-8")
+          )
+          coverage = coverage_payload["coverage"]
+          class_summary_path = evidence / "class-split-summary.json"
+          class_summary = json.loads(class_summary_path.read_text(encoding="utf-8"))
+          class_summary["auxiliary_source_counts"] = manifest["auxiliary_source_counts"]
+          class_summary["public_postmortem_candidate_coverage"] = {
+              "admitted_research_record_count": coverage["admitted_research_record_count"],
+              "candidate_count": coverage["candidate_count"],
+              "missing_root_cause_codes": coverage["missing_root_cause_codes"],
+              "supported_mapping_count": coverage["supported_mapping_count"],
+              "supported_root_cause_codes": coverage["supported_root_cause_codes"],
+          }
+          class_summary_path.write_text(
+              json.dumps(class_summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+
+          checksums_path = evidence / "checksums.txt"
+          lines = []
+          for path in sorted(evidence.iterdir(), key=lambda item: item.name):
+              if not path.is_file() or path.name == "checksums.txt":
+                  continue
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              lines.append(f"{digest}  {path.name}")
+          checksums_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Run focused Phase 03 coverage and refresh handoff percentage
+        shell: bash
+        run: |
+          python -m pytest backend/tests/data/test_phase3_data.py \
+            --cov=app.data \
+            --cov-report=term-missing \
+            --cov-report=json:/tmp/phase3-coverage.json \
+            --cov-fail-under=90 \
+            -q
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          coverage = json.loads(Path("/tmp/phase3-coverage.json").read_text())
+          percent = coverage["totals"]["percent_covered"]
+          handoff = Path("docs/phase-03-handoff.md")
+          text = handoff.read_text(encoding="utf-8")
+          text, count = re.subn(
+              r"Result: \*\*[0-9]+(?:\.[0-9]+)?% overall `app\.data` coverage\*\*\.",
+              f"Result: **{percent:.2f}% overall `app.data` coverage**.",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("could not refresh handoff coverage percentage")
+          handoff.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate Phase 03 quality and scientific gates
+        shell: bash
+        run: |
+          cd backend
+          ruff check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          mypy app
+          cd ..
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+          set +e
+          exit_output="$(python scripts/check_phase3_exit.py 2>&1)"
+          exit_status=$?
+          set -e
+          printf '%s\n' "$exit_output"
+          test "$exit_status" -eq 2
+          grep -Fx 'PHASE03_EXIT_GATE=BLOCKED' <<<"$exit_output"
+          grep -Fx 'BLOCKER=independent_taxonomy_coverage_insufficient' <<<"$exit_output"
+          grep -Fx 'INDEPENDENT_POSTMORTEM_CANDIDATES=11' <<<"$exit_output"
+          grep -Fx 'SUPPORTED_MAPPING_CANDIDATES=6' <<<"$exit_output"
+          grep -Fx 'SUPPORTED_TAXONOMY_LABELS=6' <<<"$exit_output"
+          grep -Fx 'MISSING_TAXONOMY_LABELS=' <<<"$exit_output"
+          grep -Fx 'RESEARCH_TRAIN=0' <<<"$exit_output"
+          grep -Fx 'RESEARCH_VALIDATION=0' <<<"$exit_output"
+          grep -Fx 'RESEARCH_TEST=0' <<<"$exit_output"
+
+      - name: Validate exact changed-file scope
+        shell: bash
+        run: |
+          git diff --check
+          python - <<'PY'
+          import subprocess
+
+          changed = set(
+              subprocess.check_output(["git", "diff", "--name-only"], text=True).strip().splitlines()
+          )
+          allowed = {
+              "backend/tests/data/test_phase3_data.py",
+              "configs/postmortem-candidates.json",
+              "scripts/check_phase3_contract.py",
+              "docs/data-card.md",
+              "docs/phase-03-handoff.md",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/README.md",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/SHA256SUMS.txt",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/source-audit-report.json",
+              "evidence/phase-03/README.md",
+              "evidence/phase-03/candidate-manifest.json",
+              "evidence/phase-03/checksums.txt",
+              "evidence/phase-03/class-split-summary.json",
+              "evidence/phase-03/public-postmortem-candidate-coverage.json",
+              "evidence/phase-03/source-audit-report.json",
+          }
+          unexpected = sorted(changed - allowed)
+          required = {
+              "configs/postmortem-candidates.json",
+              "backend/tests/data/test_phase3_data.py",
+              "scripts/check_phase3_contract.py",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
+              "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
+              "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json",
+              "evidence/phase-03/public-postmortem-candidate-coverage.json",
+          }
+          missing = sorted(required - changed)
+          if unexpected:
+              raise SystemExit(f"unexpected changed files: {unexpected}")
+          if missing:
+              raise SystemExit(f"required files did not change: {missing}")
+          print("CHANGED_FILES=" + ",".join(sorted(changed)))
+          PY
+
+      - name: Commit verified Phase 03 candidate coverage increment
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            backend/tests/data/test_phase3_data.py \
+            configs/postmortem-candidates.json \
+            scripts/check_phase3_contract.py \
+            docs/data-card.md \
+            docs/phase-03-handoff.md \
+            datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1 \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/manifest.json \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/source-audit-report.json \
+            evidence/phase-03/README.md \
+            evidence/phase-03/candidate-manifest.json \
+            evidence/phase-03/checksums.txt \
+            evidence/phase-03/class-split-summary.json \
+            evidence/phase-03/public-postmortem-candidate-coverage.json \
+            evidence/phase-03/source-audit-report.json
+          git diff --cached --check
+          git commit -m "phase3: cover all frozen labels with independent candidates"
+          git push origin HEAD:phase-03-dataset-engineering
