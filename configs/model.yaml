@@ -5,10 +5,18 @@
   "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
   "license": "apache-2.0",
   "frozen": true,
+  "selection_record": "docs/model-selection.md",
   "main_study_rule": "All ZERO_SHOT, RAG, FINETUNED, and COMBINED primary runs use this exact base model ID and revision.",
+  "intended_environment": {
+    "os": "linux",
+    "accelerator": "cuda_gpu",
+    "class": "single_gpu_7b_peft_development_training",
+    "evidence_required": ["gpu_model", "vram_gib", "python", "torch", "transformers", "load_mode"]
+  },
   "smoke_test": {
     "script": "scripts/model_smoke.py",
     "required_for_phase_complete": true,
-    "status": "pending_connected_hardware"
+    "required_output": "strict_json_with_canonical_root_cause_code_and_reasoning",
+    "status": "pending_real_gpu_execution"
   }
 }
