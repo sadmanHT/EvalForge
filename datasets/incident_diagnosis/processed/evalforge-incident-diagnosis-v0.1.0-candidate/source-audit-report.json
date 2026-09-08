@@ -21,18 +21,18 @@
   },
   "derived_generation_family_count": 29,
   "passed_leakage_safe_research_exit": false,
-  "public_postmortem_candidate_count": 7,
+  "public_postmortem_candidate_count": 8,
   "public_postmortem_missing_root_cause_codes": [
     "broken_payment_configuration",
     "database_connection_leak",
-    "n_plus_one_query",
     "no_fault"
   ],
   "public_postmortem_research_admitted_count": 0,
-  "public_postmortem_supported_mapping_count": 2,
+  "public_postmortem_supported_mapping_count": 3,
   "public_postmortem_supported_root_cause_codes": [
     "disk_exhaustion",
-    "memory_leak"
+    "memory_leak",
+    "n_plus_one_query"
   ],
   "research_eligible_as_independent_heldout_evidence": false,
   "source_generated_count": 50,

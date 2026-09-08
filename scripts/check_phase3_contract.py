@@ -119,10 +119,18 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_commit")
     if coverage.admitted_research_record_count != 0:
         raise SystemExit("PHASE03_CONTRACT=FAIL premature_postmortem_research_admission")
-    if set(coverage.supported_root_cause_codes) != {"disk_exhaustion", "memory_leak"}:
+    if set(coverage.supported_root_cause_codes) != {
+        "disk_exhaustion",
+        "memory_leak",
+        "n_plus_one_query",
+    }:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set")
-    if "n_plus_one_query" not in coverage.missing_root_cause_codes:
-        raise SystemExit("PHASE03_CONTRACT=FAIL n_plus_one_false_admission")
+    if set(coverage.missing_root_cause_codes) != {
+        "broken_payment_configuration",
+        "database_connection_leak",
+        "no_fault",
+    }:
+        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set")
 
     fixture = root / "datasets/incident_diagnosis/fixtures/ci_smoke"
     records = read_jsonl(fixture / "incidents.jsonl", IncidentRecord)

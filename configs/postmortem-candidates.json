@@ -1,12 +1,12 @@
 {
-  "index_version": "phase3-public-postmortem-candidates-v1",
+  "index_version": "phase3-public-postmortem-candidates-v2",
   "source": {
     "name": "postmortems.app",
     "repository": "icco/postmortems",
     "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
     "license": "GPL-3.0",
     "role": "candidate_discovery_index_only",
-    "note": "Entries are pinned by Git blob SHA. EvalForge does not treat the repository's enriched summaries as primary-source ground truth; original incident sources must be snapshotted/verified before research admission."
+    "note": "postmortems.app remains the pinned discovery/index source for its entries. External candidates may be included only when their own evidence repository, commit, path, and Git blob are pinned. Candidate mappings are not research-admitted until EvalForge preserves original-source evidence and the frozen taxonomy has sufficient independent family coverage."
   },
   "candidates": [
     {
@@ -111,6 +111,23 @@
       "mapping_basis": "thin_summary_only",
       "evidence_summary": "The pinned entry states only that a third-party-library memory leak caused two outages, without enough incident detail for family/evidence construction.",
       "decision_reason": "Potential label match, but evidence is too thin to admit as a locked research incident without preserving the original source narrative.",
+      "original_source_snapshot_preserved": false,
+      "research_admitted": false
+    },
+    {
+      "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+      "company": "Medoc",
+      "title": "It Worked in Dev. It Worked in QA. Then Production Happened.",
+      "original_url": "https://nikhil-gautam-dev.github.io/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened/",
+      "source_path": "src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md",
+      "source_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
+      "evidence_repository": "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io",
+      "evidence_commit": "34d1ecc14b54166608b4197c44e1e7efc82e48b6",
+      "proposed_root_cause_code": "n_plus_one_query",
+      "decision": "supported_candidate_mapping",
+      "mapping_basis": "narrative_root_cause",
+      "evidence_summary": "The backend engineer describes a production appointment endpoint that fetched patient details one-by-one for each appointment, explicitly calls the pattern a typical N+1 query problem, records 6,000+ database calls and about four seconds of latency for one doctor, and reports recovery after batching the patient lookup into one database call.",
+      "decision_reason": "Firsthand production narrative matches the frozen N+1 failure mode and is pinned to an exact public Git repository state and source blob. The source has not yet been materialized into EvalForge's raw primary-source snapshot layer, so the candidate remains non-admitted.",
       "original_source_snapshot_preserved": false,
       "research_admitted": false
     }

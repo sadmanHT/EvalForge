@@ -25,6 +25,8 @@ class PostmortemCandidate(StrictModel):
     original_url: str = Field(min_length=1)
     source_path: str = Field(min_length=1)
     source_blob_sha: str = Field(min_length=40, max_length=40)
+    evidence_repository: str | None = Field(default=None, min_length=1)
+    evidence_commit: str | None = Field(default=None, min_length=40, max_length=40)
     proposed_root_cause_code: str = Field(min_length=1)
     decision: CandidateDecision
     mapping_basis: str = Field(min_length=1)
@@ -35,6 +37,8 @@ class PostmortemCandidate(StrictModel):
 
     @model_validator(mode="after")
     def validate_admission(self) -> PostmortemCandidate:
+        if (self.evidence_repository is None) != (self.evidence_commit is None):
+            raise ValueError("candidate evidence repository and commit must be paired")
         if (
             self.decision == CandidateDecision.SUPPORTED
             and self.mapping_basis != "narrative_root_cause"

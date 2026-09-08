@@ -2,7 +2,7 @@
 
 Status: **IN PROGRESS — HARD EXIT BLOCKED ON INDEPENDENT FROZEN-TAXONOMY COVERAGE.**
 
-Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent real public postmortems are now discoverable, but the reviewed set covers only two of six frozen labels strongly and no candidate has yet been admitted with a preserved original primary-source snapshot.
+Phase 03 implementation logic is present and regression-tested. The hard exit gate is intentionally not marked complete. Independent real public incident evidence is now discoverable, but the reviewed set covers only three of six frozen labels strongly and no candidate has yet been research-admitted with an EvalForge-preserved original primary-source snapshot.
 
 ## Implemented
 
@@ -37,12 +37,13 @@ GitHub Actions diagnostic run `34262191383` verified the current official UCI da
 ### Public postmortem coverage review
 
 - Pinned discovery repository: `icco/postmortems` at `42bac673432f564d317dbfc30b5d400e1812c684`.
-- Conservatively reviewed independent candidates: **7**.
-- Supported candidate mappings: **2** (`disk_exhaustion`, `memory_leak`).
-- Missing clean frozen-label coverage: `broken_payment_configuration`, `database_connection_leak`, `n_plus_one_query`, `no_fault`.
+- Conservatively reviewed independent candidates: **8**.
+- Supported candidate mappings: **3** (`disk_exhaustion`, `memory_leak`, `n_plus_one_query`).
+- Missing clean frozen-label coverage: `broken_payment_configuration`, `database_connection_leak`, `no_fault`.
 - Research-admitted public postmortem records: **0**.
 - Cloudflare's parser incident is explicitly rejected as a `memory_leak` false friend because it is a buffer over-read/data-disclosure bug, not runtime resource exhaustion.
 - incident.io's accidental N+1 join is explicitly rejected as the incident's primary root cause because the persistent failure is GKE Dataplane V2 `anetd` CPU saturation/packet loss.
+- Medoc's firsthand production narrative is accepted as a strong `n_plus_one_query` candidate: it explicitly identifies the N+1 pattern, 6,000+ database calls, and batching as the fix. Evidence is pinned to `Nikhil-Gautam-dev/nikhil-gautam-dev.github.io` commit `34d1ecc14b54166608b4197c44e1e7efc82e48b6`, blob `750ba91067e5e4d2e192a3eceffec357a58e9d77`; it remains non-admitted until EvalForge preserves the source in its raw evidence layer.
 
 The candidate review is preserved at `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json`.
 
@@ -71,7 +72,7 @@ Critical dataset module coverage:
 
 `python -m pytest backend/tests/data/test_phase3_data.py --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q`
 
-Result: **91.47% overall `app.data` coverage**.
+Result: **91.36% overall `app.data` coverage**.
 
 Reproducibility and contract checks:
 
@@ -90,6 +91,8 @@ Reproducibility and contract checks:
 - Exact-head run `34277009480` then passed source materialization, locked installs, dependency-lock verification, Python lint/format, frontend Prettier, and frontend ESLint. It stopped at `mypy app` because three `Counter` variables in `backend/app/data/opssentinel.py` lacked explicit generic annotations.
 - Guarded type-repair run `34277344415` applied only those three annotations, then required complete Phase 03 Python Ruff lint/format, `mypy app`, the focused **18-test** suite, and an exact one-file whitelist to pass before pushing type-only commit `d98b5c8aaf50fcf01172020bbdb359c5f43e4532`.
 - The repair commits were produced by the GitHub Actions token, so GitHub did not recursively trigger the normal CI workflow from those pushes. This handoff update records the verified repair chain and provides a normal user-authored push so the safe read-only CI workflow can validate the resulting exact head end-to-end.
+- Exact-head push CI Run `34277519206` (Run #22) completed SUCCESS: cumulative `make verify-all`, strict known-blocker recording, evidence upload, and fresh no-cache Compose build/smoke/teardown all passed on `0ddc04187b4a490ca9a08ce07de141f4b3f90fa4`.
+- Draft PR #3 then triggered PR-context Run `34278144995` (Run #24); both `verify-all` and `clean-compose` completed SUCCESS on the same validated head.
 
 No hard gate was weakened during this repair sequence.
 
@@ -104,10 +107,10 @@ PHASE03_EXIT_GATE=BLOCKED
 BLOCKER=independent_taxonomy_coverage_insufficient
 SOURCE_CANDIDATES=50
 AUXILIARY_REAL_INCIDENTS=24918
-INDEPENDENT_POSTMORTEM_CANDIDATES=7
-SUPPORTED_MAPPING_CANDIDATES=2
-SUPPORTED_TAXONOMY_LABELS=2
-MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,n_plus_one_query,no_fault
+INDEPENDENT_POSTMORTEM_CANDIDATES=8
+SUPPORTED_MAPPING_CANDIDATES=3
+SUPPORTED_TAXONOMY_LABELS=3
+MISSING_TAXONOMY_LABELS=broken_payment_configuration,database_connection_leak,no_fault
 BLOCKER_DETAIL=credible_family_stratified_holdout_not_yet_possible
 RESEARCH_TRAIN=0
 RESEARCH_VALIDATION=0

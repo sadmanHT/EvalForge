@@ -1,11 +1,13 @@
 {
-  "candidate_index_sha256": "c121c4e1880120f69cf1d4157b5155b3625bd5991c7cb64a8e8980466244da74",
+  "candidate_index_sha256": "8214bbf78b239a5c873e64daa50ed672e345bede218cf8bc990c4604b6f85b7a",
   "candidates": [
     {
       "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
       "company": "Amazon",
       "decision": "supported_candidate_mapping",
       "decision_reason": "Direct match to EvalForge's runtime resource-exhaustion memory_leak label.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "The incident narrative explicitly identifies an EBS data-collection-agent memory leak that slowly consumed system memory and degraded request handling.",
       "mapping_basis": "narrative_root_cause",
       "original_source_snapshot_preserved": false,
@@ -21,6 +23,8 @@
       "company": "Tarsnap",
       "decision": "supported_candidate_mapping",
       "decision_reason": "Direct match to disk_exhaustion rather than a generic disk hardware/storage failure.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "A background-job log grew without bound until it filled the filesystem, causing critical writes to fail and the service to stop.",
       "mapping_basis": "narrative_root_cause",
       "original_source_snapshot_preserved": false,
@@ -36,6 +40,8 @@
       "company": "incident.io",
       "decision": "rejected_as_primary_mapping",
       "decision_reason": "N+1 behavior was a separate contributing issue, so labeling the whole incident n_plus_one_query would overstate the evidence.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "The narrative reports an accidental N+1 database join, but identifies GKE Dataplane V2 anetd CPU saturation and packet drops as the persistent incident root cause.",
       "mapping_basis": "contributing_factor",
       "original_source_snapshot_preserved": false,
@@ -51,6 +57,8 @@
       "company": "Twilio",
       "decision": "ambiguous_mapping",
       "decision_reason": "The incident is billing-related and configuration contributed materially, but the causal chain is broader than the frozen broken_payment_configuration label.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "A network partition overloaded Redis; a restart then loaded an incorrect configuration/read-only state, after which auto-recharge repeatedly charged customers.",
       "mapping_basis": "multi_causal_configuration_chain",
       "original_source_snapshot_preserved": false,
@@ -66,6 +74,8 @@
       "company": "Elastic",
       "decision": "rejected_as_primary_mapping",
       "decision_reason": "The cited leaks are not established database-connection leaks and are not the primary incident root cause.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "The report mentions Kibana connection leaks during remediation, while the primary outage root cause is ZooKeeper coordination-layer instability and loss of quorum.",
       "mapping_basis": "non_database_connection_leak",
       "original_source_snapshot_preserved": false,
@@ -81,6 +91,8 @@
       "company": "Cloudflare",
       "decision": "rejected_as_primary_mapping",
       "decision_reason": "Keyword/title says memory leak, but it does not match EvalForge's resource-exhaustion memory_leak semantics.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "The root cause is a parser buffer over-read/pointer-boundary bug that disclosed memory contents, not progressive runtime memory consumption.",
       "mapping_basis": "terminology_false_friend",
       "original_source_snapshot_preserved": false,
@@ -96,6 +108,8 @@
       "company": "Skyliner",
       "decision": "insufficient_evidence",
       "decision_reason": "Potential label match, but evidence is too thin to admit as a locked research incident without preserving the original source narrative.",
+      "evidence_commit": null,
+      "evidence_repository": null,
       "evidence_summary": "The pinned entry states only that a third-party-library memory leak caused two outages, without enough incident detail for family/evidence construction.",
       "mapping_basis": "thin_summary_only",
       "original_source_snapshot_preserved": false,
@@ -105,24 +119,40 @@
       "source_blob_sha": "7d6f16455e722fce3b4c73a187e2fec8a3bdefbc",
       "source_path": "data/49e932a9-67eb-443d-9c33-1c6fa32b0d14.md",
       "title": "Skyliner outages on 2017-01-19 and 2017-01-23"
+    },
+    {
+      "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+      "company": "Medoc",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "Firsthand production narrative matches the frozen N+1 failure mode and is pinned to an exact public Git repository state and source blob. The source has not yet been materialized into EvalForge's raw primary-source snapshot layer, so the candidate remains non-admitted.",
+      "evidence_commit": "34d1ecc14b54166608b4197c44e1e7efc82e48b6",
+      "evidence_repository": "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io",
+      "evidence_summary": "The backend engineer describes a production appointment endpoint that fetched patient details one-by-one for each appointment, explicitly calls the pattern a typical N+1 query problem, records 6,000+ database calls and about four seconds of latency for one doctor, and reports recovery after batching the patient lookup into one database call.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": false,
+      "original_url": "https://nikhil-gautam-dev.github.io/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened/",
+      "proposed_root_cause_code": "n_plus_one_query",
+      "research_admitted": false,
+      "source_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
+      "source_path": "src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md",
+      "title": "It Worked in Dev. It Worked in QA. Then Production Happened."
     }
   ],
   "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
   "coverage": {
     "admitted_research_record_count": 0,
     "blocker": "independent_taxonomy_coverage_insufficient",
-    "candidate_count": 7,
+    "candidate_count": 8,
     "decision_counts": {
       "ambiguous_mapping": 1,
       "insufficient_evidence": 1,
       "rejected_as_primary_mapping": 3,
-      "supported_candidate_mapping": 2
+      "supported_candidate_mapping": 3
     },
-    "independent_candidate_family_count": 7,
+    "independent_candidate_family_count": 8,
     "missing_root_cause_codes": [
       "broken_payment_configuration",
       "database_connection_leak",
-      "n_plus_one_query",
       "no_fault"
     ],
     "notes": [
@@ -132,10 +162,11 @@
     ],
     "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
     "source_repository": "icco/postmortems",
-    "supported_mapping_count": 2,
+    "supported_mapping_count": 3,
     "supported_root_cause_codes": [
       "disk_exhaustion",
-      "memory_leak"
+      "memory_leak",
+      "n_plus_one_query"
     ],
     "taxonomy_coverage_sufficient_for_locked_holdout": false
   },

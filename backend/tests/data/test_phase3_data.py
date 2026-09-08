@@ -355,13 +355,16 @@ def test_public_postmortem_candidate_coverage_is_conservative() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     coverage = inspect_candidate_coverage(index, TAXONOMY)
-    assert coverage.candidate_count == 7
-    assert coverage.supported_mapping_count == 2
-    assert coverage.supported_root_cause_codes == ["disk_exhaustion", "memory_leak"]
+    assert coverage.candidate_count == 8
+    assert coverage.supported_mapping_count == 3
+    assert coverage.supported_root_cause_codes == [
+        "disk_exhaustion",
+        "memory_leak",
+        "n_plus_one_query",
+    ]
     assert coverage.missing_root_cause_codes == [
         "broken_payment_configuration",
         "database_connection_leak",
-        "n_plus_one_query",
         "no_fault",
     ]
     assert coverage.admitted_research_record_count == 0
@@ -391,6 +394,11 @@ def test_supported_postmortem_candidates_still_require_primary_source_snapshot()
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     supported = [item for item in index.candidates if item.decision == CandidateDecision.SUPPORTED]
-    assert {item.company for item in supported} == {"Amazon", "Tarsnap"}
+    assert {item.company for item in supported} == {"Amazon", "Medoc", "Tarsnap"}
+    medoc = next(item for item in supported if item.company == "Medoc")
+    assert medoc.evidence_repository == "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io"
+    assert medoc.evidence_commit == "34d1ecc14b54166608b4197c44e1e7efc82e48b6"
+    assert medoc.source_blob_sha == "750ba91067e5e4d2e192a3eceffec357a58e9d77"
+    assert not medoc.research_admitted
     assert all(not item.original_source_snapshot_preserved for item in supported)
     assert all(not item.research_admitted for item in supported)
