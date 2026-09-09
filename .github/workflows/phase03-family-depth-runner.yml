@@ -29,19 +29,24 @@ jobs:
       - name: Normalize build-source sentence for deterministic patch
         run: |
           python - <<'PY'
+          import re
           from pathlib import Path
+
           path = Path('scripts/build_phase3_candidate.py')
           text = path.read_text(encoding='utf-8')
-          old = '''            (
-                "Independent public postmortem candidates exist, but the frozen taxonomy "
-                "is not covered sufficiently for a credible family-stratified holdout."
-            ),'''
-          new = '''            (
+          pattern = re.compile(
+              r'''            \(\n'''
+              r'''\s+"Independent public postmortem candidates exist, but the frozen taxonomy "\n'''
+              r'''\s+"is not covered sufficiently for a credible family-stratified holdout\."\n'''
+              r'''\s+\),'''
+          )
+          replacement = '''            (
                 "Independent public postmortem candidates exist, but the frozen taxonomy is not covered sufficiently for a credible family-stratified holdout."
             ),'''
-          if text.count(old) != 1:
-              raise SystemExit('expected one family-depth limitation source block')
-          path.write_text(text.replace(old, new), encoding='utf-8')
+          updated, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'expected one family-depth limitation source block, found {count}')
+          path.write_text(updated, encoding='utf-8')
           PY
       - name: Apply family-depth increment
         run: python scripts/phase3_family_depth_increment.py
