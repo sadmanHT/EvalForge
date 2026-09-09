@@ -12,6 +12,7 @@
     "train": 0,
     "validation": 0
   },
+  "public_postmortem_candidate_count": 23,
   "public_postmortem_candidate_coverage": {
     "admitted_research_record_count": 0,
     "candidate_count": 11,
@@ -26,6 +27,18 @@
       "no_fault"
     ]
   },
+  "public_postmortem_research_admitted_count": 0,
+  "public_postmortem_supported_family_counts_by_root_cause_code": {
+    "broken_payment_configuration": 3,
+    "database_connection_leak": 3,
+    "disk_exhaustion": 3,
+    "memory_leak": 3,
+    "n_plus_one_query": 3,
+    "no_fault": 3
+  },
+  "public_postmortem_supported_family_depth_sufficient_for_split": true,
+  "public_postmortem_supported_mapping_count": 18,
+  "public_postmortem_supported_taxonomy_label_count": 6,
   "research_ready": false,
   "servicenow_incident_field_presence_counts": {
     "category": 24911,

@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "SoundCloud described a production database outage in which maintenance activity generated more than 3 GB/minute of MySQL binary logs.",
+    "The binlog partition expanded from roughly 10 GB to 100 GB of usage in about 30 minutes and then filled completely.",
+    "The disk-full condition caused a partial binlog write, corrupted the final event, stopped slave replication, and left the master unable to make progress.",
+    "Recovery required expanding the binlog volume and failing over to a consistent slave."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "SoundCloud Backstage Blog",
+  "source_title": "Doing the right thing",
+  "source_url": "https://developers.soundcloud.com/blog/doing-the-right-thing/"
+}

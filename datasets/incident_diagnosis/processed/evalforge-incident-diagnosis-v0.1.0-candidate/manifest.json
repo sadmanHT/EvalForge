@@ -1,7 +1,7 @@
 {
   "auxiliary_source_counts": {
-    "public_postmortem_candidates": 11,
-    "public_postmortem_supported_mappings": 6,
+    "public_postmortem_candidates": 23,
+    "public_postmortem_supported_mappings": 18,
     "public_postmortem_supported_taxonomy_labels": 6,
     "servicenow_uci_event_rows": 141712,
     "servicenow_uci_incidents": 24918
@@ -17,11 +17,11 @@
     "The upstream dev/validation/hidden-test assignments also split several inferred generation families across source splits; those assignments must not be reused.",
     "The source is a real ServiceNow operational event log, but textual attributes were omitted/anonymized and it does not expose trustworthy human-readable root-cause labels for EvalForge taxonomy mapping.",
     "Anonymous category/symptom/closure codes must not be guessed into EvalForge root-cause codes; this source is auxiliary/robustness evidence, not the primary labeled holdout.",
-    "Independent public postmortem candidates exist, but the frozen taxonomy is not covered sufficiently for a credible family-stratified holdout.",
+    "Independent public incident candidates now provide the splitter's minimum three supported families per frozen taxonomy label, but no candidate is research-admitted until original primary-source evidence is preserved and canonical records are built.",
     "Supported public-postmortem candidate mappings are not research-admitted until original primary-source evidence is preserved.",
     "Keyword/title matches are not accepted as root-cause evidence; false friends and contributing factors are explicitly rejected."
   ],
-  "manifest_checksum": "9917e979088dac97da630b885a94bba3f434ccbf3bdb9231060db1e7e666dd84",
+  "manifest_checksum": "e930382e74bbd28034b900fc7d575fe424eaf6e8d914e204148b3bc5a866bedd",
   "record_count": 0,
   "research_ready": false,
   "schema_version": "incident-schema-v1",
@@ -64,7 +64,7 @@
       "research_eligible_as_independent_heldout_evidence": false,
       "snapshot_identity_kind": "evalforge_candidate_index_sha256",
       "snapshot_path": "configs/postmortem-candidates.json",
-      "snapshot_sha256": "7f8c2bfb0651e80aa00987bd8a938b55dc1a1fadc523b5679506338e4786fc2c",
+      "snapshot_sha256": "f21939484c37eff7f34b8ec62bf3348fd87301620eba57b7d4d689655a39c355",
       "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
       "source_generated": false,
       "source_license": "GPL-3.0",

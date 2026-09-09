@@ -37,8 +37,8 @@ GitHub Actions diagnostic run `34262191383` verified the current official UCI da
 ### Public incident coverage review
 
 - Pinned discovery repository: `icco/postmortems` at `42bac673432f564d317dbfc30b5d400e1812c684`.
-- Conservatively reviewed independent candidates: **11**.
-- Supported candidate mappings: **6**, covering all frozen labels (`broken_payment_configuration`, `database_connection_leak`, `disk_exhaustion`, `memory_leak`, `n_plus_one_query`, `no_fault`).
+- Conservatively reviewed independent candidates: **23**.
+- Supported candidate mappings: **18**, covering all frozen labels (`broken_payment_configuration`, `database_connection_leak`, `disk_exhaustion`, `memory_leak`, `n_plus_one_query`, `no_fault`).
 - Candidate-level frozen-label gaps: **none**.
 - Research-admitted public-incident records: **0**.
 - Cloudflare's parser incident remains rejected as a `memory_leak` false friend because it is a buffer over-read/data-disclosure bug, not runtime resource exhaustion.
@@ -48,6 +48,9 @@ GitHub Actions diagnostic run `34262191383` verified the current official UCI da
 - Google Cloud incident `E18Caoo5X1m6dTa1PVr1` is accepted as a strong `broken_payment_configuration` candidate because the official root cause is a payment-configuration update that stopped affected credit-card processing until rollback.
 - Google Cloud / Mandiant incident `fLYHLzSGXGkLkAjc8MJG` is accepted as a `no_fault` negative-control candidate because the final investigation reports no service degradation and no supported CrowdStrike alerts missed. The mapping is limited to that declared supported-service scope.
 - The three new direct-source entries are preserved as normalized EvalForge semantic snapshots with Git-blob and SHA-256 checks, but `original_source_snapshot_preserved=false` remains correct because they are not byte-for-byte original-source archives.
+
+
+Family-depth milestone: **18 supported candidate families = 3 per frozen label**. This meets the deterministic splitter's minimum depth for one train, one validation, and one test family per label, but does not admit any research row. Original primary-source preservation, canonicalization, leakage audit, and final split construction remain required.
 
 The candidate review is preserved at `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/public-postmortem-candidate-coverage.json`.
 
@@ -109,14 +112,14 @@ Expected current result:
 
 ```text
 PHASE03_EXIT_GATE=BLOCKED
-BLOCKER=independent_taxonomy_coverage_insufficient
+BLOCKER=original_source_preservation_and_research_admission_required
 SOURCE_CANDIDATES=50
 AUXILIARY_REAL_INCIDENTS=24918
-INDEPENDENT_POSTMORTEM_CANDIDATES=11
-SUPPORTED_MAPPING_CANDIDATES=6
+INDEPENDENT_POSTMORTEM_CANDIDATES=23
+SUPPORTED_MAPPING_CANDIDATES=18
 SUPPORTED_TAXONOMY_LABELS=6
 MISSING_TAXONOMY_LABELS=
-BLOCKER_DETAIL=credible_family_stratified_holdout_not_yet_possible
+BLOCKER_DETAIL=original_primary_source_preservation_and_canonical_research_admission_required
 RESEARCH_TRAIN=0
 RESEARCH_VALIDATION=0
 RESEARCH_TEST=0

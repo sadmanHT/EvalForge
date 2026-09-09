@@ -124,7 +124,7 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_commit")
     if coverage.admitted_research_record_count != 0:
         raise SystemExit("PHASE03_CONTRACT=FAIL premature_postmortem_research_admission")
-    if coverage.candidate_count != 11 or coverage.supported_mapping_count != 6:
+    if coverage.candidate_count != 23 or coverage.supported_mapping_count != 18:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_candidate_counts")
     if set(coverage.supported_root_cause_codes) != {
         "broken_payment_configuration",
@@ -137,6 +137,10 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_supported_mapping_set")
     if coverage.missing_root_cause_codes:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_missing_mapping_set")
+    if not coverage.supported_family_depth_sufficient_for_split:
+        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth")
+    if set(coverage.supported_family_counts_by_root_cause_code.values()) != {3}:
+        raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth_counts")
     public_snapshot_dir = (
         root / "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1"
     )
@@ -151,7 +155,7 @@ def main() -> int:
             "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/"
         )
     ]
-    if len(local_candidates) != 3:
+    if len(local_candidates) != 15:
         raise SystemExit("PHASE03_CONTRACT=FAIL public_snapshot_candidate_count")
     for candidate in local_candidates:
         path = root / candidate.source_path

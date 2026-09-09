@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "DNSimple reported a production outage in its San Jose region that made its redirector service unreachable.",
+    "Its hosting provider identified a slow memory leak in a network switch, triggered by packets from monitoring checks becoming stuck.",
+    "The leak eventually exhausted the switch memory and prevented it from processing incoming packets.",
+    "The hosting provider planned a network-switch software upgrade specifically to prevent recurrence of the memory leak."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "DNSimple",
+  "source_title": "Incident Report - San Jose Region and Redirector Service Outage",
+  "source_url": "https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/"
+}

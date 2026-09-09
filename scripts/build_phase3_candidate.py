@@ -106,8 +106,10 @@ def build_outputs(root: Path) -> dict[str, str]:
     limitations.extend(
         [
             (
-                "Independent public postmortem candidates exist, but the frozen taxonomy "
-                "is not covered sufficiently for a credible family-stratified holdout."
+                "Independent public incident candidates now provide the splitter's minimum "
+                "three supported families per frozen taxonomy label, but no candidate is "
+                "research-admitted until original primary-source evidence is preserved "
+                "and canonical records are built."
             ),
             (
                 "Supported public-postmortem candidate mappings are not research-admitted "

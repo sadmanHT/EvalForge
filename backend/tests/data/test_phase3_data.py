@@ -356,8 +356,8 @@ def test_public_postmortem_candidate_coverage_is_conservative() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     coverage = inspect_candidate_coverage(index, TAXONOMY)
-    assert coverage.candidate_count == 11
-    assert coverage.supported_mapping_count == 6
+    assert coverage.candidate_count == 23
+    assert coverage.supported_mapping_count == 18
     assert coverage.supported_root_cause_codes == [
         "broken_payment_configuration",
         "database_connection_leak",
@@ -367,9 +367,18 @@ def test_public_postmortem_candidate_coverage_is_conservative() -> None:
         "no_fault",
     ]
     assert coverage.missing_root_cause_codes == []
+    assert coverage.supported_family_counts_by_root_cause_code == {
+        "broken_payment_configuration": 3,
+        "database_connection_leak": 3,
+        "disk_exhaustion": 3,
+        "memory_leak": 3,
+        "n_plus_one_query": 3,
+        "no_fault": 3,
+    }
+    assert coverage.supported_family_depth_sufficient_for_split
     assert coverage.admitted_research_record_count == 0
     assert not coverage.taxonomy_coverage_sufficient_for_locked_holdout
-    assert coverage.blocker == "independent_taxonomy_coverage_insufficient"
+    assert coverage.blocker == "original_source_preservation_and_research_admission_required"
 
 
 def test_postmortem_keyword_false_friends_are_not_admitted() -> None:
@@ -394,14 +403,8 @@ def test_supported_postmortem_candidates_still_require_primary_source_snapshot()
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     supported = [item for item in index.candidates if item.decision == CandidateDecision.SUPPORTED]
-    assert {item.company for item in supported} == {
-        "Amazon",
-        "Dispatcharr",
-        "Google Cloud",
-        "Google Cloud / Mandiant",
-        "Medoc",
-        "Tarsnap",
-    }
+    assert len(supported) == 18
+    assert len({item.candidate_id for item in supported}) == 18
     medoc = next(item for item in supported if item.company == "Medoc")
     assert medoc.evidence_repository == "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io"
     assert medoc.evidence_commit == "34d1ecc14b54166608b4197c44e1e7efc82e48b6"

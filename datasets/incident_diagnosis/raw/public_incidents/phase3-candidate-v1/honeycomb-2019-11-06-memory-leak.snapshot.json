@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "Honeycomb reported four roughly 20-minute ingest brownouts in which 1\u20133% of customer telemetry was rejected.",
+    "The incident trigger was explicitly identified as a slow memory leak that accumulated over hours across ingest backends.",
+    "The backends crashed within minutes of one another as memory pressure accumulated, causing in-flight and new ingest requests to fail.",
+    "After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Honeycomb",
+  "source_title": "Incident Report: Running Dry on Memory Without Noticing",
+  "source_url": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing"
+}

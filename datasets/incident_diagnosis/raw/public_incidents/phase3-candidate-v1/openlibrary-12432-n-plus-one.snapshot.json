@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "Production pg_stat_statements showed SELECT-by-key as the database's highest-volume query with 3,830,328 calls in the observation window.",
+    "The existing batched equivalent accounted for only 134,057 calls, a reported 28:1 ratio of unbatched to batched lookups.",
+    "The issue explicitly diagnoses pages that resolve list items individually as an N+1 pattern and recommends replacing loops with the existing get_many batching path.",
+    "The repeated single-row lookups consumed roughly 2.5 million milliseconds of database time and increased cache/I/O pressure on the production database."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Internet Archive / Open Library GitHub",
+  "source_title": "perf: N+1 queries on thing table causing 3.8M single-row DB lookups",
+  "source_url": "https://github.com/internetarchive/openlibrary/issues/12432"
+}
