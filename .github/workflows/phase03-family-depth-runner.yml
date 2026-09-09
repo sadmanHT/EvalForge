@@ -90,13 +90,14 @@ jobs:
           rm scripts/phase3_family_depth_increment.py
           rm .github/workflows/phase03-family-depth-runner.yml
       - name: Format changed Python
+        working-directory: backend
         run: |
-          python -m ruff format \
-            backend/app/data/postmortems.py \
-            backend/tests/data/test_phase3_data.py \
-            scripts/build_phase3_candidate.py \
-            scripts/check_phase3_contract.py \
-            scripts/check_phase3_exit.py
+          ruff format \
+            app/data/postmortems.py \
+            tests/data/test_phase3_data.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py
       - name: Canonical Phase 03 Python lint and format scope
         working-directory: backend
         run: |
