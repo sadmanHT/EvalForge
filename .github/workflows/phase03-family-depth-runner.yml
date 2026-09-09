@@ -1,0 +1,110 @@
+name: phase03-family-depth-runner
+
+on:
+  push:
+    branches:
+      - phase-03-family-depth-runner
+
+permissions:
+  contents: write
+
+jobs:
+  family-depth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Verify exact base ancestry
+        run: |
+          git merge-base --is-ancestor 1022d511b35aab2014e80d62261fa57a983d9949 HEAD
+          test "$(git rev-list --count 1022d511b35aab2014e80d62261fa57a983d9949..HEAD)" -eq 2
+      - name: Install locked backend toolchain
+        run: python -m pip install -r backend/requirements.full.lock
+      - name: Materialize pinned Phase 03 sources
+        run: python scripts/fetch_phase3_sources.py
+      - name: Apply family-depth increment
+        run: python scripts/phase3_family_depth_increment.py
+      - name: Remove temporary runner files
+        run: |
+          rm scripts/phase3_family_depth_increment.py
+          rm .github/workflows/phase03-family-depth-runner.yml
+      - name: Format changed Python
+        run: |
+          python -m ruff format \
+            backend/app/data/postmortems.py \
+            backend/tests/data/test_phase3_data.py \
+            scripts/build_phase3_candidate.py \
+            scripts/check_phase3_contract.py \
+            scripts/check_phase3_exit.py
+      - name: Full Phase 03 lint and format scope
+        run: |
+          python -m ruff check backend/app backend/tests scripts training
+          python -m ruff format --check backend/app backend/tests scripts training
+      - name: Typecheck backend app
+        working-directory: backend
+        run: mypy app
+      - name: Focused Phase 03 tests with coverage
+        env:
+          PYTHONPATH: backend
+        run: |
+          python -m pytest backend/tests/data/test_phase3_data.py \
+            --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q
+      - name: Reproducibility and contract
+        run: |
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+      - name: Verify exact blocked hard exit
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_phase3_exit.py | tee /tmp/phase03-depth-exit.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          test "$rc" -eq 2
+          grep -q '^PHASE03_EXIT_GATE=BLOCKED$' /tmp/phase03-depth-exit.txt
+          grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-depth-exit.txt
+          grep -q '^INDEPENDENT_POSTMORTEM_CANDIDATES=23$' /tmp/phase03-depth-exit.txt
+          grep -q '^SUPPORTED_MAPPING_CANDIDATES=18$' /tmp/phase03-depth-exit.txt
+          grep -q '^SUPPORTED_TAXONOMY_LABELS=6$' /tmp/phase03-depth-exit.txt
+          grep -q '^MISSING_TAXONOMY_LABELS=$' /tmp/phase03-depth-exit.txt
+          grep -q '^BLOCKER_DETAIL=original_primary_source_preservation_and_canonical_research_admission_required$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_TEST=0$' /tmp/phase03-depth-exit.txt
+      - name: Verify changed-file allowlist
+        shell: bash
+        run: |
+          git status --short
+          git diff --name-only 1022d511b35aab2014e80d62261fa57a983d9949 > /tmp/changed.txt
+          test -s /tmp/changed.txt
+          while IFS= read -r path; do
+            case "$path" in
+              .github/workflows/ci.yml|backend/app/data/postmortems.py|backend/tests/data/test_phase3_data.py|configs/postmortem-candidates.json|docs/data-card.md|docs/phase-03-handoff.md|scripts/build_phase3_candidate.py|scripts/check_phase3_contract.py|scripts/check_phase3_exit.py)
+                ;;
+              datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/*)
+                ;;
+              datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/*)
+                ;;
+              evidence/phase-03/*)
+                ;;
+              *)
+                echo "unexpected changed path: $path" >&2
+                exit 1
+                ;;
+            esac
+          done < /tmp/changed.txt
+          ! grep -qi 'opssentinel' /tmp/changed.txt
+      - name: Commit validated helper tree
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'phase3: establish three-family candidate depth per label'
+          git push origin HEAD:phase-03-family-depth-runner
