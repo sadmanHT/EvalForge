@@ -72,7 +72,14 @@ jobs:
           code=${PIPESTATUS[0]}
           set -e
           if [ "$code" -eq 2 ]; then
-            grep -q '^BLOCKER=independent_taxonomy_coverage_insufficient$' /tmp/phase03-exit.txt
+            grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-exit.txt
+            grep -q '^SUPPORTED_MAPPING_CANDIDATES=18$' /tmp/phase03-exit.txt
+            grep -q '^SUPPORTED_TAXONOMY_LABELS=6$' /tmp/phase03-exit.txt
+            grep -q '^MISSING_TAXONOMY_LABELS=$' /tmp/phase03-exit.txt
+            grep -q '^BLOCKER_DETAIL=original_primary_source_preservation_and_canonical_research_admission_required$' /tmp/phase03-exit.txt
+            grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-exit.txt
+            grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-exit.txt
+            grep -q '^RESEARCH_TEST=0$' /tmp/phase03-exit.txt
           elif [ "$code" -ne 0 ]; then
             exit "$code"
           fi

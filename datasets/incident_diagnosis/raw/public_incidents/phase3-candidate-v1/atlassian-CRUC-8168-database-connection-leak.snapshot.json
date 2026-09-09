@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "Atlassian tracked a Crucible production bug in which the application became unresponsive after running for a period of time.",
+    "The failure was attributed to BoneCP database connections not being returned to the pool, leaving database connections unavailable to the application.",
+    "Restarting the application restored service temporarily, consistent with exhausted leaked pool state.",
+    "Atlassian classified the issue as a major bug and fixed it in subsequent Crucible releases."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Atlassian Jira",
+  "source_title": "BoneCP connections are not returned to pool",
+  "source_url": "https://jira.atlassian.com/browse/CRUC-8168"
+}

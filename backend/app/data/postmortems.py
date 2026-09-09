@@ -76,6 +76,8 @@ class PostmortemCoverageReport(StrictModel):
     decision_counts: dict[str, int]
     supported_mapping_count: int
     supported_root_cause_codes: list[str]
+    supported_family_counts_by_root_cause_code: dict[str, int]
+    supported_family_depth_sufficient_for_split: bool
     missing_root_cause_codes: list[str]
     admitted_research_record_count: int
     taxonomy_coverage_sufficient_for_locked_holdout: bool
@@ -105,6 +107,17 @@ def inspect_candidate_coverage(
     }
     admitted = [item for item in index.candidates if item.research_admitted]
     decision_counts = Counter(item.decision.value for item in index.candidates)
+    supported_counts = Counter(
+        item.proposed_root_cause_code
+        for item in index.candidates
+        if item.decision == CandidateDecision.SUPPORTED
+    )
+    supported_family_counts = {
+        code: supported_counts.get(code, 0) for code in sorted(taxonomy_codes)
+    }
+    supported_family_depth_sufficient = all(
+        count >= 3 for count in supported_family_counts.values()
+    )
     missing = sorted(taxonomy_codes - supported)
     return PostmortemCoverageReport(
         source_repository=index.source["repository"],
@@ -116,12 +129,18 @@ def inspect_candidate_coverage(
             item.decision == CandidateDecision.SUPPORTED for item in index.candidates
         ),
         supported_root_cause_codes=sorted(supported),
+        supported_family_counts_by_root_cause_code=supported_family_counts,
+        supported_family_depth_sufficient_for_split=supported_family_depth_sufficient,
         missing_root_cause_codes=missing,
         admitted_research_record_count=len(admitted),
         taxonomy_coverage_sufficient_for_locked_holdout=(
             not missing and len(admitted) >= len(taxonomy_codes) * 3
         ),
-        blocker="independent_taxonomy_coverage_insufficient",
+        blocker=(
+            "original_source_preservation_and_research_admission_required"
+            if not missing and supported_family_depth_sufficient
+            else "independent_taxonomy_coverage_insufficient"
+        ),
         notes=[
             (
                 "postmortems.app is used as a pinned discovery/index source, "

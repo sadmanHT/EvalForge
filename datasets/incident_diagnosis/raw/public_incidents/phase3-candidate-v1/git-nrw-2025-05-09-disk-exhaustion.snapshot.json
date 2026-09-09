@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "git.nrw reported a complete GitLab outage lasting 5 hours 45 minutes.",
+    "Database replication had silently stopped, leaving one database node to accumulate WAL transaction logs.",
+    "The remaining database node's disk filled with WAL logs and the service went down.",
+    "The incident was resolved by increasing disk capacity and restoring replication, with WAL-size monitoring added as follow-up."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "git.nrw",
+  "source_title": "Incident: gitlab.git.nrw outage",
+  "source_url": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/"
+}

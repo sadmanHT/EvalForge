@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "CoderDen reported a roughly 45-minute full platform outage in which API requests returned 503 errors.",
+    "One of two explicitly identified root-cause mechanisms was an unclosed database query in a high-traffic endpoint.",
+    "A missing rows.Close/defer path prevented PostgreSQL connections from being returned, causing connection leakage under load.",
+    "Aggressive background scheduling compounded the exhaustion, so the candidate is scoped specifically to the documented connection-leak mechanism rather than claiming a single-cause incident."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "CoderDen Engineering",
+  "source_title": "SEV-1: Database Connection Exhaustion Incident",
+  "source_url": "https://engineering.coderden.in/posts/database-connection-exhaustion-incident/"
+}

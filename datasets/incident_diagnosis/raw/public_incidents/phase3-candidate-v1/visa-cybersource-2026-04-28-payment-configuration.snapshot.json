@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "Cybersource reported an incident affecting the Payer Authentication setup service on April 28, 2026.",
+    "A configuration issue caused some authentication requests routed through one data center not to complete as expected.",
+    "The root cause was a misconfiguration in the data center health-check mapping introduced during a prior change.",
+    "Cardholders could see checkout errors or need to retry transactions; rollback/correction restored payer-authentication behavior."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Visa Acceptance / Cybersource",
+  "source_title": "Post-Incident Report: Payer Authentication Setup Errors",
+  "source_url": "https://support.visaacceptance.com/_entity/annotation/c9e6d35e-3744-f111-88b4-0022480ac605"
+}

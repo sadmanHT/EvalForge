@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "Fastly initially posted that it was investigating elevated Cloud WAF errors.",
+    "Customer Incident Response later changed the event from degraded performance to available/informational after investigation.",
+    "Fastly explicitly confirmed the status update was a false alarm and that there were no elevated Cloud WAF errors.",
+    "Other locations and services were unaffected throughout the investigation."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Fastly Status",
+  "source_title": "(False Alarm) Cloud WAF Performance Issues",
+  "source_url": "https://fastly.status.page/incidents?componentId=510172"
+}

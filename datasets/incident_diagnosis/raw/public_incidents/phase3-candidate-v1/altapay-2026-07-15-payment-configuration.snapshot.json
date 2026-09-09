@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "AltaPay reported that 3-D Secure authentication in its Shopify embedded application stopped functioning correctly.",
+    "Affected customers could not finalize credit-card payments at checkout.",
+    "AltaPay traced the incident to a firewall configuration change.",
+    "A mitigation restored payment processing, after which the team continued investigating the origin of the firewall change."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "AltaPay Status",
+  "source_title": "Credit Card Payment Failures on Shopify Embedded App",
+  "source_url": "https://status.altapay.com/history/1"
+}
