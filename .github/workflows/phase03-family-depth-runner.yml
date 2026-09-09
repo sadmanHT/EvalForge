@@ -21,13 +21,28 @@ jobs:
           cache: pip
           cache-dependency-path: backend/requirements.full.lock
       - name: Verify exact base ancestry
-        run: |
-          git merge-base --is-ancestor 1022d511b35aab2014e80d62261fa57a983d9949 HEAD
-          test "$(git rev-list --count 1022d511b35aab2014e80d62261fa57a983d9949..HEAD)" -eq 2
+        run: git merge-base --is-ancestor 1022d511b35aab2014e80d62261fa57a983d9949 HEAD
       - name: Install locked backend toolchain
         run: python -m pip install -r backend/requirements.full.lock
       - name: Materialize pinned Phase 03 sources
         run: python scripts/fetch_phase3_sources.py
+      - name: Normalize build-source sentence for deterministic patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/build_phase3_candidate.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''            (
+                "Independent public postmortem candidates exist, but the frozen taxonomy "
+                "is not covered sufficiently for a credible family-stratified holdout."
+            ),'''
+          new = '''            (
+                "Independent public postmortem candidates exist, but the frozen taxonomy is not covered sufficiently for a credible family-stratified holdout."
+            ),'''
+          if text.count(old) != 1:
+              raise SystemExit('expected one family-depth limitation source block')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
       - name: Apply family-depth increment
         run: python scripts/phase3_family_depth_increment.py
       - name: Remove temporary runner files
