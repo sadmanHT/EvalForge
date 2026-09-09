@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - phase-03-family-depth-runner
+  pull_request:
+    branches:
+      - phase-03-dataset-engineering
 
 permissions:
   contents: write
