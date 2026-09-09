@@ -1,0 +1,148 @@
+name: phase03-family-depth-safe-push
+
+on:
+  push:
+    branches:
+      - phase-03-family-depth-runner
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-push:
+    if: github.event.head_commit.message != 'phase3: establish three-family candidate depth per label'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-03-family-depth-runner
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Verify exact Phase 03 base ancestry
+        run: git merge-base --is-ancestor 1022d511b35aab2014e80d62261fa57a983d9949 HEAD
+      - name: Install locked backend toolchain
+        run: python -m pip install -r backend/requirements.full.lock
+      - name: Materialize pinned Phase 03 sources
+        run: python scripts/fetch_phase3_sources.py
+      - name: Build finalized family-depth state
+        run: python scripts/phase3_family_depth_finalize.py
+      - name: Format changed Python with canonical config
+        working-directory: backend
+        run: |
+          ruff format \
+            app/data/postmortems.py \
+            tests/data/test_phase3_data.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py
+      - name: Canonical Phase 03 lint and format gate
+        working-directory: backend
+        run: |
+          ruff check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+      - name: Typecheck backend app
+        working-directory: backend
+        run: mypy app
+      - name: Focused Phase 03 tests with coverage
+        env:
+          PYTHONPATH: backend
+        run: |
+          python -m pytest backend/tests/data/test_phase3_data.py \
+            --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q
+      - name: Reproducibility and contract gates
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+      - name: Verify exact scientific blocker
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_phase3_exit.py | tee /tmp/phase03-depth-exit.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          test "$rc" -eq 2
+          grep -q '^PHASE03_EXIT_GATE=BLOCKED$' /tmp/phase03-depth-exit.txt
+          grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-depth-exit.txt
+          grep -q '^INDEPENDENT_POSTMORTEM_CANDIDATES=23$' /tmp/phase03-depth-exit.txt
+          grep -q '^SUPPORTED_MAPPING_CANDIDATES=18$' /tmp/phase03-depth-exit.txt
+          grep -q '^SUPPORTED_TAXONOMY_LABELS=6$' /tmp/phase03-depth-exit.txt
+          grep -q '^MISSING_TAXONOMY_LABELS=$' /tmp/phase03-depth-exit.txt
+          grep -q '^BLOCKER_DETAIL=original_primary_source_preservation_and_canonical_research_admission_required$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-depth-exit.txt
+          grep -q '^RESEARCH_TEST=0$' /tmp/phase03-depth-exit.txt
+      - name: Stage only validated non-workflow Phase 03 changes
+        shell: bash
+        run: |
+          git restore --source=HEAD -- .github/workflows/ci.yml
+          rm -f datasets/incident_diagnosis/raw/opssentinel/fae661fc1634aad6a3855a1dec8dcddb16a890dd/release-catalog.snapshot.json
+          rm -f datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip
+          rm scripts/phase3_family_depth_increment.py scripts/phase3_family_depth_finalize.py
+
+          git add \
+            backend/app/data/postmortems.py \
+            backend/tests/data/test_phase3_data.py \
+            configs/postmortem-candidates.json \
+            docs/data-card.md \
+            docs/phase-03-handoff.md \
+            scripts/build_phase3_candidate.py \
+            scripts/check_phase3_contract.py \
+            scripts/check_phase3_exit.py \
+            datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1 \
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate \
+            evidence/phase-03
+          git add -u -- scripts/phase3_family_depth_increment.py scripts/phase3_family_depth_finalize.py
+
+          git diff --cached --name-only > /tmp/staged.txt
+          test -s /tmp/staged.txt
+          while IFS= read -r path; do
+            case "$path" in
+              backend/app/data/postmortems.py|backend/tests/data/test_phase3_data.py|configs/postmortem-candidates.json|docs/data-card.md|docs/phase-03-handoff.md|scripts/build_phase3_candidate.py|scripts/check_phase3_contract.py|scripts/check_phase3_exit.py|scripts/phase3_family_depth_increment.py|scripts/phase3_family_depth_finalize.py)
+                ;;
+              datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/*)
+                ;;
+              datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/*)
+                ;;
+              evidence/phase-03/*)
+                ;;
+              *)
+                echo "unexpected staged path: $path" >&2
+                exit 1
+                ;;
+            esac
+          done < /tmp/staged.txt
+
+          ! grep -q '^.github/workflows/' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/opssentinel/' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/servicenow_uci/' /tmp/staged.txt
+          test -z "$(git diff --name-only)"
+          test -z "$(git ls-files --others --exclude-standard)"
+          git status --short
+      - name: Commit and push validated non-workflow tree
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'phase3: establish three-family candidate depth per label'
+          git push origin HEAD:phase-03-family-depth-runner
