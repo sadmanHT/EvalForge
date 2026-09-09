@@ -29,7 +29,7 @@ jobs:
         run: python -m pip install -r backend/requirements.full.lock
       - name: Materialize pinned Phase 03 sources
         run: python scripts/fetch_phase3_sources.py
-      - name: Normalize build-source sentence for deterministic patch
+      - name: Normalize source text for deterministic patch
         run: |
           python - <<'PY'
           import re
@@ -50,6 +50,16 @@ jobs:
           if count != 1:
               raise SystemExit(f'expected one family-depth limitation source block, found {count}')
           path.write_text(updated, encoding='utf-8')
+
+          ci = Path('.github/workflows/ci.yml')
+          ci_text = ci.read_text(encoding='utf-8')
+          old_ci = "grep -q '^BLOCKER=independent_taxonomy_coverage_insufficient$' /tmp/phase03-exit.txt"
+          new_ci = 'grep -q "^BLOCKER=independent_taxonomy_coverage_insufficient$" /tmp/phase03-exit.txt'
+          if ci_text.count(old_ci) != 1:
+              raise SystemExit(
+                  f'expected one Phase 03 CI blocker grep for normalization, found {ci_text.count(old_ci)}'
+              )
+          ci.write_text(ci_text.replace(old_ci, new_ci), encoding='utf-8')
           PY
       - name: Apply family-depth increment
         run: python scripts/phase3_family_depth_increment.py
