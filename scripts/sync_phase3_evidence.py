@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import shutil
 from pathlib import Path
 
 
@@ -34,7 +33,7 @@ def main() -> int:
     processed = root / "datasets/incident_diagnosis/processed" / VERSION
     evidence = root / "evidence/phase-03"
     for source_name, evidence_name in MIRRORS.items():
-        shutil.copy2(processed / source_name, evidence / evidence_name)
+        (evidence / evidence_name).write_bytes((processed / source_name).read_bytes())
 
     coverage = json.loads(
         (processed / "public-postmortem-candidate-coverage.json").read_text(
