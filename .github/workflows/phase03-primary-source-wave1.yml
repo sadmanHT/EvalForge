@@ -1,0 +1,122 @@
+name: phase03-primary-source-wave1
+
+on:
+  push:
+    branches:
+      - phase-03-primary-source-preservation
+
+jobs:
+  preserve-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-03-primary-source-preservation
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Verify exact validated family-depth base ancestry
+        run: git merge-base --is-ancestor 8eba31ba6c8565355413400e7c28a21bccec9698 HEAD
+      - name: Install locked backend toolchain
+        run: python -m pip install -r backend/requirements.full.lock
+      - name: Materialize pinned Phase 03 transport sources
+        run: python scripts/fetch_phase3_sources.py
+      - name: Bootstrap checksum-locked primary-source wave
+        env:
+          PYTHONPATH: backend
+        run: python scripts/preserve_phase3_primary_sources.py --bootstrap
+      - name: Rebuild processed Phase 03 candidate artifacts
+        env:
+          PYTHONPATH: backend
+        run: python scripts/build_phase3_candidate.py
+      - name: Synchronize Phase 03 evidence mirrors
+        run: python scripts/sync_phase3_evidence.py
+      - name: Format changed Python with canonical backend config
+        working-directory: backend
+        run: |
+          ruff format \
+            app/data/postmortems.py \
+            app/data/primary_sources.py \
+            tests/data/test_phase3_primary_sources.py \
+            ../scripts/preserve_phase3_primary_sources.py \
+            ../scripts/sync_phase3_evidence.py
+      - name: Canonical Phase 03 lint and format gate
+        working-directory: backend
+        run: |
+          ruff check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../scripts/preserve_phase3_primary_sources.py \
+            ../scripts/sync_phase3_evidence.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../scripts/preserve_phase3_primary_sources.py \
+            ../scripts/sync_phase3_evidence.py \
+            ../training/dataset_prep.py
+      - name: Typecheck backend data layer
+        working-directory: backend
+        run: mypy app
+      - name: Focused Phase 03 tests with coverage
+        env:
+          PYTHONPATH: backend
+        run: |
+          python -m pytest \
+            backend/tests/data/test_phase3_data.py \
+            backend/tests/data/test_phase3_primary_sources.py \
+            --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q
+      - name: Verify preservation, reproducibility and contract
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/preserve_phase3_primary_sources.py
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+      - name: Verify hard exit remains scientifically blocked
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_phase3_exit.py | tee /tmp/phase03-primary-exit.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          test "$rc" -eq 2
+          grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-primary-exit.txt
+          grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-primary-exit.txt
+          grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-primary-exit.txt
+          grep -q '^RESEARCH_TEST=0$' /tmp/phase03-primary-exit.txt
+      - name: Verify preservation progress is exact
+        env:
+          PYTHONPATH: backend
+        run: |
+          python scripts/preserve_phase3_primary_sources.py | tee /tmp/phase03-primary.txt
+          grep -q '^PRESERVED_CANDIDATES=4$' /tmp/phase03-primary.txt
+          grep -q '^PRESERVED_N_PLUS_ONE_QUERY=3$' /tmp/phase03-primary.txt
+          grep -q '^PRESERVED_DATABASE_CONNECTION_LEAK=1$' /tmp/phase03-primary.txt
+          grep -q '^PRESERVED_FAMILY_DEPTH_SUFFICIENT=false$' /tmp/phase03-primary.txt
+      - name: Remove on-demand transport payloads
+        run: |
+          rm -f datasets/incident_diagnosis/raw/opssentinel/fae661fc1634aad6a3855a1dec8dcddb16a890dd/release-catalog.snapshot.json
+          rm -f datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip
+      - name: Upload validated primary-source outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase03-primary-source-wave1
+          path: |
+            configs/postmortem-candidates.json
+            datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
+            evidence/phase-03/
