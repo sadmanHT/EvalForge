@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   validate-and-push:
-    if: github.event.head_commit.message != 'phase3: establish three-family candidate depth per label'
+    if: ${{ github.event.head_commit.message != 'phase3-family-depth-final' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -144,5 +144,5 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'phase3: establish three-family candidate depth per label'
+          git commit -m 'phase3-family-depth-final'
           git push origin HEAD:phase-03-family-depth-runner
