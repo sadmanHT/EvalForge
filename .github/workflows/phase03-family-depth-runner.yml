@@ -77,10 +77,27 @@ jobs:
             scripts/build_phase3_candidate.py \
             scripts/check_phase3_contract.py \
             scripts/check_phase3_exit.py
-      - name: Full Phase 03 lint and format scope
+      - name: Canonical Phase 03 Python lint and format scope
+        working-directory: backend
         run: |
-          python -m ruff check backend/app backend/tests scripts training
-          python -m ruff format --check backend/app backend/tests scripts training
+          ruff check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
+          ruff format --check \
+            app tests \
+            ../scripts/audit_dataset.py \
+            ../scripts/build_phase3_candidate.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/check_phase3_exit.py \
+            ../scripts/check_phase3_reproducibility.py \
+            ../scripts/fetch_phase3_sources.py \
+            ../training/dataset_prep.py
       - name: Typecheck backend app
         working-directory: backend
         run: mypy app
