@@ -60,9 +60,7 @@ def test_primary_source_plan_rejects_incomplete_source_identity() -> None:
             repository="example/repo",
             evidence_markers=["root cause"],
         )
-    with pytest.raises(
-        ValidationError, match="GitHub issue primary sources require issue_number"
-    ):
+    with pytest.raises(ValidationError, match="GitHub issue primary sources require issue_number"):
         PrimarySourcePlanEntry(
             candidate_id="candidate",
             snapshot_path="snapshot.json",

@@ -29,8 +29,7 @@ def github_issue_url(entry: PrimarySourcePlanEntry) -> str:
 
 def git_blob_raw_url(entry: PrimarySourcePlanEntry) -> str:
     return (
-        f"https://raw.githubusercontent.com/{entry.repository}/"
-        f"{entry.commit}/{entry.source_path}"
+        f"https://raw.githubusercontent.com/{entry.repository}/{entry.commit}/{entry.source_path}"
     )
 
 

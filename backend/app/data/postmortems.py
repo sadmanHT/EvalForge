@@ -59,9 +59,7 @@ class PostmortemCandidate(StrictModel):
                     "preserved original-source evidence requires path, checksum, and kind"
                 )
         elif any(value is not None for value in preservation_fields):
-            raise ValueError(
-                "primary-source preservation metadata requires preserved-source flag"
-            )
+            raise ValueError("primary-source preservation metadata requires preserved-source flag")
 
         if self.research_admitted:
             if self.decision != CandidateDecision.SUPPORTED:
@@ -131,8 +129,7 @@ def inspect_candidate_coverage(
     preserved = [
         item
         for item in index.candidates
-        if item.decision == CandidateDecision.SUPPORTED
-        and item.original_source_snapshot_preserved
+        if item.decision == CandidateDecision.SUPPORTED and item.original_source_snapshot_preserved
     ]
     decision_counts = Counter(item.decision.value for item in index.candidates)
     supported_counts = Counter(

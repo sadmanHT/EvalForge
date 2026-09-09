@@ -6,7 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 
-
 VERSION = "evalforge-incident-diagnosis-v0.1.0-candidate"
 MIRRORS = {
     "manifest.json": "candidate-manifest.json",
@@ -36,18 +35,16 @@ def main() -> int:
         (evidence / evidence_name).write_bytes((processed / source_name).read_bytes())
 
     coverage = json.loads(
-        (processed / "public-postmortem-candidate-coverage.json").read_text(
-            encoding="utf-8"
-        )
+        (processed / "public-postmortem-candidate-coverage.json").read_text(encoding="utf-8")
     )["coverage"]
     class_summary_path = evidence / "class-split-summary.json"
     class_summary = json.loads(class_summary_path.read_text(encoding="utf-8"))
     class_summary["public_postmortem_preserved_original_source_count"] = coverage[
         "preserved_original_source_count"
     ]
-    class_summary["public_postmortem_preserved_family_counts_by_root_cause_code"] = (
-        coverage["preserved_family_counts_by_root_cause_code"]
-    )
+    class_summary["public_postmortem_preserved_family_counts_by_root_cause_code"] = coverage[
+        "preserved_family_counts_by_root_cause_code"
+    ]
     class_summary["public_postmortem_preserved_family_depth_sufficient_for_split"] = coverage[
         "preserved_family_depth_sufficient_for_split"
     ]
@@ -68,7 +65,7 @@ def main() -> int:
     (evidence / "checksums.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print("PHASE03_EVIDENCE_SYNC=PASS")
-    print("PRESERVED_PRIMARY_SOURCES=" f"{coverage['preserved_original_source_count']}")
+    print(f"PRESERVED_PRIMARY_SOURCES={coverage['preserved_original_source_count']}")
     return 0
 
 
