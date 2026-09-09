@@ -34,13 +34,21 @@ jobs:
         run: python scripts/build_phase3_candidate.py
       - name: Synchronize Phase 03 evidence mirrors
         run: python scripts/sync_phase3_evidence.py
-      - name: Format changed Python with canonical backend config
+      - name: Apply canonical Ruff fixes and formatting
         working-directory: backend
         run: |
+          ruff check --fix \
+            app/data/postmortems.py \
+            app/data/primary_sources.py \
+            tests/data/test_phase3_primary_sources.py \
+            ../scripts/check_phase3_contract.py \
+            ../scripts/preserve_phase3_primary_sources.py \
+            ../scripts/sync_phase3_evidence.py
           ruff format \
             app/data/postmortems.py \
             app/data/primary_sources.py \
             tests/data/test_phase3_primary_sources.py \
+            ../scripts/check_phase3_contract.py \
             ../scripts/preserve_phase3_primary_sources.py \
             ../scripts/sync_phase3_evidence.py
       - name: Canonical Phase 03 lint and format gate
@@ -116,7 +124,15 @@ jobs:
         with:
           name: phase03-primary-source-wave1
           path: |
+            Makefile
+            backend/app/data/postmortems.py
+            backend/app/data/primary_sources.py
+            backend/tests/data/test_phase3_primary_sources.py
+            configs/phase3-primary-sources.json
             configs/postmortem-candidates.json
+            scripts/check_phase3_contract.py
+            scripts/preserve_phase3_primary_sources.py
+            scripts/sync_phase3_evidence.py
             datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/
             datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
             evidence/phase-03/
