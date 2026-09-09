@@ -62,6 +62,8 @@ jobs:
           ci.write_text(ci_text.replace(old_ci, new_ci), encoding='utf-8')
           PY
       - name: Apply family-depth increment
+        env:
+          PYTHONPATH: backend
         run: python scripts/phase3_family_depth_increment.py
       - name: Remove temporary runner files
         run: |
@@ -89,6 +91,8 @@ jobs:
           python -m pytest backend/tests/data/test_phase3_data.py \
             --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q
       - name: Reproducibility and contract
+        env:
+          PYTHONPATH: backend
         run: |
           python scripts/check_phase3_reproducibility.py
           python scripts/check_phase3_contract.py
