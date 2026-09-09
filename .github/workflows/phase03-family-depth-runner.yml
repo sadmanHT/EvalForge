@@ -85,6 +85,42 @@ jobs:
               raise SystemExit(f'expected one generated family-depth limitation block, found {text.count(old)}')
           path.write_text(text.replace(old, new), encoding='utf-8')
           PY
+      - name: Repair generated hard-exit checker to JSON coverage contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/check_phase3_exit.py')
+          text = path.read_text(encoding='utf-8')
+          old_head = '''    if not manifest.get("research_ready"):
+        print("PHASE03_EXIT_GATE=BLOCKED")
+        print("BLOCKER=independent_taxonomy_coverage_insufficient")
+        print(f"SOURCE_CANDIDATES={manifest.get('source_candidate_count', 0)}")
+'''
+          new_head = '''    if not manifest.get("research_ready"):
+        coverage_path = manifest_path.parent / "public-postmortem-candidate-coverage.json"
+        coverage = json.loads(coverage_path.read_text(encoding="utf-8"))["coverage"]
+        blocker = coverage.get("blocker", "independent_taxonomy_coverage_insufficient")
+        print("PHASE03_EXIT_GATE=BLOCKED")
+        print(f"BLOCKER={blocker}")
+        print(f"SOURCE_CANDIDATES={manifest.get('source_candidate_count', 0)}")
+'''
+          if text.count(old_head) != 1:
+              raise SystemExit(f'expected one hard-exit header block, found {text.count(old_head)}')
+          text = text.replace(old_head, new_head)
+          duplicate_load = '''        coverage_path = manifest_path.parent / "public-postmortem-candidate-coverage.json"
+        coverage = json.loads(coverage_path.read_text(encoding="utf-8"))["coverage"]
+'''
+          if text.count(duplicate_load) != 2:
+              raise SystemExit(f'expected two coverage loads before dedupe, found {text.count(duplicate_load)}')
+          first = text.find(duplicate_load)
+          second = text.find(duplicate_load, first + len(duplicate_load))
+          text = text[:second] + text[second + len(duplicate_load):]
+          if text.count('coverage.blocker') != 1:
+              raise SystemExit(f'expected one attribute-style blocker access, found {text.count("coverage.blocker")}')
+          text = text.replace('coverage.blocker', 'blocker')
+          path.write_text(text, encoding='utf-8')
+          PY
       - name: Remove temporary runner files
         run: |
           rm scripts/phase3_family_depth_increment.py
