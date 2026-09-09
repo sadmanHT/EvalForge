@@ -65,6 +65,26 @@ jobs:
         env:
           PYTHONPATH: backend
         run: python scripts/phase3_family_depth_increment.py
+      - name: Normalize generated limitation source formatting
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/build_phase3_candidate.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''            (
+                "Independent public incident candidates now provide the splitter's minimum three supported families per frozen taxonomy label, but no candidate is research-admitted until original primary-source evidence is preserved and canonical records are built."
+            ),'''
+          new = '''            (
+                "Independent public incident candidates now provide the splitter's minimum "
+                "three supported families per frozen taxonomy label, but no candidate is "
+                "research-admitted until original primary-source evidence is preserved "
+                "and canonical records are built."
+            ),'''
+          if text.count(old) != 1:
+              raise SystemExit(f'expected one generated family-depth limitation block, found {text.count(old)}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
       - name: Remove temporary runner files
         run: |
           rm scripts/phase3_family_depth_increment.py
