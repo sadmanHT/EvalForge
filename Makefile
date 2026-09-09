@@ -10,8 +10,8 @@ format:
 	cd frontend && $(NPM) run format
 
 lint:
-	cd backend && ruff check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../training/dataset_prep.py
-	cd backend && ruff format --check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../training/dataset_prep.py
+	cd backend && ruff check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py
+	cd backend && ruff format --check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py
 	cd frontend && $(NPM) run format:check
 	cd frontend && $(NPM) run lint
 
