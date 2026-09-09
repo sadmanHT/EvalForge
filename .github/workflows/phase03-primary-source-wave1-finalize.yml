@@ -1,0 +1,78 @@
+name: phase03-primary-source-wave1-finalize
+
+on:
+  push:
+    branches: [phase-03-primary-source-preservation]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  finalize:
+    if: ${{ github.event.head_commit.message != 'phase3-primary-source-wave1-final' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-03-primary-source-preservation
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Install locked backend toolchain
+        run: python -m pip install -r backend/requirements.full.lock
+      - name: Apply exact validated artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: phase03-primary-source-wave1
+          path: .
+          github-token: ${{ github.token }}
+          run-id: 34311379650
+      - name: Materialize transport-only Phase 03 inputs
+        run: python scripts/fetch_phase3_sources.py
+      - name: Re-verify artifact contracts
+        env:
+          PYTHONPATH: backend
+        run: |
+          cd backend
+          ruff check app/data/postmortems.py app/data/primary_sources.py tests/data/test_phase3_data.py tests/data/test_phase3_primary_sources.py ../scripts/check_phase3_contract.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py
+          ruff format --check app/data/postmortems.py app/data/primary_sources.py tests/data/test_phase3_data.py tests/data/test_phase3_primary_sources.py ../scripts/check_phase3_contract.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py
+          mypy app
+          cd ..
+          python -m pytest backend/tests/data/test_phase3_data.py backend/tests/data/test_phase3_primary_sources.py --cov=app.data --cov-report=term-missing --cov-fail-under=90 -q
+          python scripts/preserve_phase3_primary_sources.py
+          python scripts/check_phase3_reproducibility.py
+          python scripts/check_phase3_contract.py
+      - name: Verify scientific hard exit remains blocked
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_phase3_exit.py | tee /tmp/phase03-exit.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          test "$rc" -eq 2
+          grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-exit.txt
+          grep -q '^RESEARCH_TEST=0$' /tmp/phase03-exit.txt
+      - name: Stage permanent validated files only
+        shell: bash
+        run: |
+          rm -f datasets/incident_diagnosis/raw/opssentinel/fae661fc1634aad6a3855a1dec8dcddb16a890dd/release-catalog.snapshot.json
+          rm -f datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip
+          git add Makefile backend/app/data/postmortems.py backend/app/data/primary_sources.py backend/tests/data/test_phase3_data.py backend/tests/data/test_phase3_primary_sources.py configs/phase3-primary-sources.json configs/postmortem-candidates.json scripts/check_phase3_contract.py scripts/preserve_phase3_primary_sources.py scripts/sync_phase3_evidence.py datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1 datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate evidence/phase-03
+          git diff --cached --name-only > /tmp/staged.txt
+          test -s /tmp/staged.txt
+          ! grep -q '^.github/workflows/' /tmp/staged.txt
+          ! grep -q 'phase3_primary_source_wave1_test_migration.py' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/opssentinel/' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/servicenow_uci/' /tmp/staged.txt
+      - name: Commit exact validated artifact
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'phase3-primary-source-wave1-final'
+          git push origin HEAD:phase-03-primary-source-preservation
