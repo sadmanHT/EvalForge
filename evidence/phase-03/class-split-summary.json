@@ -1,33 +1,9 @@
 {
-  "auxiliary_source_counts": {
-    "public_postmortem_candidates": 11,
-    "public_postmortem_supported_mappings": 6,
-    "public_postmortem_supported_taxonomy_labels": 6,
-    "servicenow_uci_event_rows": 141712,
-    "servicenow_uci_incidents": 24918
-  },
-  "candidate_dataset_version": "evalforge-incident-diagnosis-v0.1.0-candidate",
-  "eligible_research_split_counts": {
-    "test": 0,
-    "train": 0,
-    "validation": 0
-  },
-  "public_postmortem_candidate_count": 23,
-  "public_postmortem_candidate_coverage": {
-    "admitted_research_record_count": 0,
-    "candidate_count": 11,
-    "missing_root_cause_codes": [],
-    "supported_mapping_count": 6,
-    "supported_root_cause_codes": [
-      "broken_payment_configuration",
-      "database_connection_leak",
-      "disk_exhaustion",
-      "memory_leak",
-      "n_plus_one_query",
-      "no_fault"
-    ]
-  },
-  "public_postmortem_preserved_family_counts_by_root_cause_code": {
+  "admission_version": "phase3-research-admission-v1",
+  "audit_warning_codes": [
+    "MISSING_DIFFICULTY_TIERS"
+  ],
+  "class_counts": {
     "broken_payment_configuration": 3,
     "database_connection_leak": 3,
     "disk_exhaustion": 3,
@@ -35,50 +11,50 @@
     "n_plus_one_query": 3,
     "no_fault": 3
   },
-  "public_postmortem_preserved_family_depth_sufficient_for_split": true,
-  "public_postmortem_preserved_original_source_count": 18,
-  "public_postmortem_research_admitted_count": 0,
-  "public_postmortem_supported_family_counts_by_root_cause_code": {
-    "broken_payment_configuration": 3,
-    "database_connection_leak": 3,
-    "disk_exhaustion": 3,
-    "memory_leak": 3,
-    "n_plus_one_query": 3,
-    "no_fault": 3
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "difficulty_counts": {
+    "unknown": 18
   },
-  "public_postmortem_supported_family_depth_sufficient_for_split": true,
-  "public_postmortem_supported_mapping_count": 18,
-  "public_postmortem_supported_taxonomy_label_count": 6,
-  "research_ready": false,
-  "servicenow_incident_field_presence_counts": {
-    "category": 24911,
-    "caused_by": 3,
-    "closed_code": 24811,
-    "cmdb_ci": 56,
-    "problem_id": 381,
-    "rfc": 179,
-    "subcategory": 24910,
-    "u_symptom": 19405
+  "family_disjointness": "PASS",
+  "independent_family_count": 18,
+  "record_count": 18,
+  "research_audit_passed": true,
+  "split_class_counts": {
+    "test": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    },
+    "train": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    },
+    "validation": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    }
   },
-  "source_candidate_count": 50,
-  "source_difficulty_counts": {
-    "adversarial": 8,
-    "compound": 8,
-    "easy": 10,
-    "hard": 12,
-    "medium": 12
+  "split_family_counts": {
+    "test": 6,
+    "train": 6,
+    "validation": 6
   },
-  "source_label_counts": {
-    "broken_payment_configuration": 9,
-    "database_connection_leak": 14,
-    "disk_exhaustion": 8,
-    "memory_leak": 7,
-    "n_plus_one_query": 11,
-    "no_fault": 1
+  "split_record_counts": {
+    "test": 6,
+    "train": 6,
+    "validation": 6
   },
-  "source_split_counts": {
-    "dev": 30,
-    "hidden_test": 10,
-    "validation": 10
-  }
+  "split_seed": 20260908,
+  "synthetic_record_count": 0
 }

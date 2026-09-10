@@ -1,5 +1,5 @@
 {
-  "candidate_index_sha256": "5925d54b77cfd4bc52909a92105f7331e300fc315f9554ee57b7ac5f05675a19",
+  "candidate_index_sha256": "e1cecd69b1add02b3a0603d2f809b6633a87e1f77b4e0f201eed228c2348a037",
   "candidates": [
     {
       "candidate_id": "altapay:2026-07-15:shopify-3ds-firewall-config",
@@ -16,7 +16,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
       "preserved_primary_source_sha256": "35724fda340daa48c15790382892a2a5ba218a6afd74ffb35ea425b35445a603",
       "proposed_root_cause_code": "broken_payment_configuration",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "fc24f46d7fddbd6e6b38b5538fa5eb1d87e665a5",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/altapay-2026-07-15-payment-configuration.snapshot.json",
       "title": "Credit Card Payment Failures on Shopify Embedded App"
@@ -36,7 +36,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/atlassian-CRUC-8168-connection-leak.primary.html",
       "preserved_primary_source_sha256": "cfaa3028a2edfff5e31be8f77fefd82d7d5c652e555ca5fe4525f49dbc0f9411",
       "proposed_root_cause_code": "database_connection_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "a48534b7bc1c89189aeade7883bc7358e65c1bd1",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/atlassian-CRUC-8168-database-connection-leak.snapshot.json",
       "title": "BoneCP connections are not returned to pool"
@@ -56,7 +56,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
       "preserved_primary_source_sha256": "df678020ec1a48872dbe897123d06edd840a422c1f1f9dd864cdb1cf9ad43193",
       "proposed_root_cause_code": "database_connection_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "5467edb9b076886304188120835957781aa60c03",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/coderden-2026-02-19-database-connection-leak.snapshot.json",
       "title": "SEV-1: Database Connection Exhaustion Incident"
@@ -76,7 +76,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
       "preserved_primary_source_sha256": "74a1dfcdab883babd8c358e2ab336b6d9397299e2468750f2f62c9f66b439fee",
       "proposed_root_cause_code": "n_plus_one_query",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "d1812b6ae5d91f71eada268a69fd4a73eb38b107",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dify-40036-n-plus-one.snapshot.json",
       "title": "Log pages extremely slow on large DB: N+1 workflow_runs loading"
@@ -96,7 +96,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dnsimple-2015-memory-leak.primary.html",
       "preserved_primary_source_sha256": "3f99f689c655b4061fde451afcdda942df94d082d76c0388ed1fee7c77f46821",
       "proposed_root_cause_code": "memory_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "b61d295df300f0d472506a16c2eecc5bf20ceda4",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dnsimple-2015-05-09-memory-leak.snapshot.json",
       "title": "Incident Report - San Jose Region and Redirector Service Outage"
@@ -116,7 +116,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/elevenlabs-2026-billing-misconfiguration.primary.html",
       "preserved_primary_source_sha256": "a7574408bb85db0b150c668a0e3688ca5d87fae15114602334c9dc011a480345",
       "proposed_root_cause_code": "broken_payment_configuration",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "13f3f456266f8bb0c0632f22aa1a672511eb3350",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/elevenlabs-2026-04-22-payment-configuration.snapshot.json",
       "title": "Payment Issues"
@@ -136,7 +136,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/fastly-2023-cloud-waf-false-alarm.primary.html",
       "preserved_primary_source_sha256": "0494cc7e7ed85f058d148e8dbdb7612deb5a3292bb019316494c03871ee79099",
       "proposed_root_cause_code": "no_fault",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "9adb1407a6bd6fdfd13db0d4d05e8334f7de5835",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/fastly-2023-02-28-no-fault.snapshot.json",
       "title": "(False Alarm) Cloud WAF Performance Issues"
@@ -156,7 +156,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
       "preserved_primary_source_sha256": "a75f2af6cb23e09f23fa1646536a188d94eb955ed35a0cf276b09d6392a06572",
       "proposed_root_cause_code": "disk_exhaustion",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "812aa6b9d54a7d316a8a855c36ce655f6ecf141e",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/git-nrw-2025-05-09-disk-exhaustion.snapshot.json",
       "title": "Incident: gitlab.git.nrw outage"
@@ -176,7 +176,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
       "preserved_primary_source_sha256": "6bedb460a3a5ee1a2711cb75c21cd715e4295223dbd81ef91a561b394aee4f14",
       "proposed_root_cause_code": "database_connection_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "3861e44ebd3167a7deff63b7a6b48127b4bf2980",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
       "title": "PostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool"
@@ -196,7 +196,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/medoc-n-plus-one.primary.md",
       "preserved_primary_source_sha256": "9f4a5cd6f31d39404b8f3ac41963ca536a4f480d2e8693ee3421a310029f9ddf",
       "proposed_root_cause_code": "n_plus_one_query",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
       "source_path": "src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md",
       "title": "It Worked in Dev. It Worked in QA. Then Production Happened."
@@ -216,7 +216,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/gitlab-2025-version-skew-false-alarm.primary.html",
       "preserved_primary_source_sha256": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58",
       "proposed_root_cause_code": "no_fault",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "922c2d4340b9c00638ff0398f1e58cada8d544e6",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/gitlab-2025-05-12-no-fault.snapshot.json",
       "title": "GitLab Versions differ across zonal clusters"
@@ -236,7 +236,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2021-payment-config.primary.html",
       "preserved_primary_source_sha256": "eea8b6dcae6709ce9505abc408f34070e95221beb6e51e27ca4f65cfd3da4697",
       "proposed_root_cause_code": "broken_payment_configuration",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "8057f42f29b92d39c0f5ad7750f2c711d8405212",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
       "title": "Payment configuration update prevented U.S. credit-card processing"
@@ -256,7 +256,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2024-mandiant-no-fault.primary.html",
       "preserved_primary_source_sha256": "ce831f782145f04586142801593b75c8c5a2615d5914896a19e5532332754fd0",
       "proposed_root_cause_code": "no_fault",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "e819f1fb774dfc5b3b6164c3c8c4d90b82a883a4",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
       "title": "Mandiant Managed Defense reported ingestion issue resolved as no degradation"
@@ -276,7 +276,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/honeycomb-2019-memory-leak.primary.html",
       "preserved_primary_source_sha256": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35",
       "proposed_root_cause_code": "memory_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "abcfd092ac43878c0324484ee8f2d61caaeea872",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/honeycomb-2019-11-06-memory-leak.snapshot.json",
       "title": "Incident Report: Running Dry on Memory Without Noticing"
@@ -296,7 +296,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
       "preserved_primary_source_sha256": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904",
       "proposed_root_cause_code": "n_plus_one_query",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "a5f4fca18506e9ca69ed047f35bdab1e1b3897e4",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/openlibrary-12432-n-plus-one.snapshot.json",
       "title": "perf: N+1 queries on thing table causing 3.8M single-row DB lookups"
@@ -376,7 +376,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/aws-2012-memory-leak.primary.html",
       "preserved_primary_source_sha256": "9ac91377227844b739a5870933a9519351a5b956e7ba219d99df3bba49857a1e",
       "proposed_root_cause_code": "memory_leak",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "76d8b745fe2e28bceca58e7bbcfc5d8f3446dd5a",
       "source_path": "data/76f27cf3-b204-40e4-942e-19657614f658.md",
       "title": "AWS US-East Region Service Event of October 22, 2012"
@@ -416,7 +416,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/tarsnap-2016-disk-full.primary.html",
       "preserved_primary_source_sha256": "e9b6e4928686b49e691de5087283ae154487672161adf121d5683516f0d01a3c",
       "proposed_root_cause_code": "disk_exhaustion",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "a91eb5b70c305a00dc1d090e2caa9019ced11c0e",
       "source_path": "data/e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb.md",
       "title": "Tarsnap outage 2016-07-24"
@@ -456,7 +456,7 @@
       "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/soundcloud-2011-binlog-disk-full.primary.html",
       "preserved_primary_source_sha256": "c771aec8541ea19540088c5cc89fbbd346d98e6f89805aac7a07d4d411819614",
       "proposed_root_cause_code": "disk_exhaustion",
-      "research_admitted": false,
+      "research_admitted": true,
       "source_blob_sha": "7bca0786b33dd9c7f50166d3bb89cbd132ce3ec1",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/soundcloud-2011-08-24-disk-exhaustion.snapshot.json",
       "title": "Doing the right thing"
@@ -484,8 +484,8 @@
   ],
   "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
   "coverage": {
-    "admitted_research_record_count": 0,
-    "blocker": "original_source_preservation_and_research_admission_required",
+    "admitted_research_record_count": 18,
+    "blocker": "none",
     "candidate_count": 24,
     "decision_counts": {
       "ambiguous_mapping": 1,
@@ -497,8 +497,8 @@
     "missing_root_cause_codes": [],
     "notes": [
       "postmortems.app is used as a pinned discovery/index source, not as primary-source ground truth",
-      "supported candidate mappings are not research-admitted until original incident evidence is preserved",
-      "preserved-source counts describe checksum-validated original-source artifacts and do not by themselves create canonical research records",
+      "research admission is explicit and requires both a supported mapping and checksum-validated preserved original-source evidence",
+      "preserved-source counts describe checksum-validated original-source artifacts; canonical research records are built separately from the explicit admission plan",
       "keyword or title matches alone are insufficient for label admission"
     ],
     "preserved_family_counts_by_root_cause_code": {
@@ -531,7 +531,7 @@
       "n_plus_one_query",
       "no_fault"
     ],
-    "taxonomy_coverage_sufficient_for_locked_holdout": false
+    "taxonomy_coverage_sufficient_for_locked_holdout": true
   },
   "license": "GPL-3.0",
   "name": "postmortems_app",
