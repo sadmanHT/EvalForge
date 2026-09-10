@@ -1,5 +1,5 @@
 {
-  "blocker": "original_source_preservation_and_research_admission_required",
+  "blocker": "none",
   "blockers": [
     "The pinned OpsSentinel BenchmarkLab release catalog is programmatically generated, so its validation/hidden-test scenarios are not independent production incident evidence.",
     "EvalForge must acquire/version independent incident families before a research validation or test split can be locked.",
@@ -23,7 +23,7 @@
   "passed_leakage_safe_research_exit": false,
   "public_postmortem_candidate_count": 24,
   "public_postmortem_missing_root_cause_codes": [],
-  "public_postmortem_research_admitted_count": 0,
+  "public_postmortem_research_admitted_count": 18,
   "public_postmortem_supported_mapping_count": 18,
   "public_postmortem_supported_root_cause_codes": [
     "broken_payment_configuration",
@@ -40,5 +40,5 @@
     "hidden_test": 10,
     "validation": 10
   },
-  "status": "BLOCKED_BENCHMARK_EXPANSION_REQUIRED"
+  "status": "CANDIDATE_REVIEW_COMPLETE_RESEARCH_DATASET_SEPARATE"
 }

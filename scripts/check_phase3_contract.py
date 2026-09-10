@@ -221,9 +221,7 @@ def main() -> int:
     if not preservation.preserved_supported_family_depth_sufficient_for_split:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_depth")
 
-    admission_plan = load_research_admission_plan(
-        root / config["research_admission_config_path"]
-    )
+    admission_plan = load_research_admission_plan(root / config["research_admission_config_path"])
     admitted = validate_research_admission_plan(
         postmortem_index,
         admission_plan,

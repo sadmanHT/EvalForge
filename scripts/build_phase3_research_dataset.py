@@ -95,7 +95,9 @@ def build_research_outputs(root: Path) -> dict[str, str]:
         candidate = candidate_by_id[candidate_id]
         snapshot = snapshots_by_candidate.get(candidate_id)
         if snapshot is None:
-            raise ValueError(f"research candidate lacks primary-source manifest entry: {candidate_id}")
+            raise ValueError(
+                f"research candidate lacks primary-source manifest entry: {candidate_id}"
+            )
         if snapshot.snapshot_sha256 != candidate.preserved_primary_source_sha256:
             raise ValueError(f"research source checksum mismatch: {candidate_id}")
         source_snapshots.append(
@@ -172,9 +174,7 @@ def build_research_outputs(root: Path) -> dict[str, str]:
     _write_json(output / "class-split-summary.json", summary)
     _write_json(output / "leakage-audit-report.json", audit.model_dump(mode="json"))
 
-    record_by_candidate = {
-        record.source_provenance.source_record_id: record for record in records
-    }
+    record_by_candidate = {record.source_provenance.source_record_id: record for record in records}
     admission_summary = {
         "admission_version": admission_plan.admission_version,
         "candidate_index_version": index.index_version,
@@ -188,15 +188,11 @@ def build_research_outputs(root: Path) -> dict[str, str]:
                 "family_id": record_by_candidate[candidate_id].incident_family_id,
                 "split": record_by_candidate[candidate_id].split.value,
                 "original_url": candidate_by_id[candidate_id].original_url,
-                "primary_source_path": candidate_by_id[
-                    candidate_id
-                ].preserved_primary_source_path,
+                "primary_source_path": candidate_by_id[candidate_id].preserved_primary_source_path,
                 "primary_source_sha256": candidate_by_id[
                     candidate_id
                 ].preserved_primary_source_sha256,
-                "primary_source_kind": candidate_by_id[
-                    candidate_id
-                ].preserved_primary_source_kind,
+                "primary_source_kind": candidate_by_id[candidate_id].preserved_primary_source_kind,
             }
             for candidate_id in sorted(admission_plan.candidate_ids)
         ],
@@ -211,7 +207,8 @@ def build_research_outputs(root: Path) -> dict[str, str]:
         ),
         (
             "Difficulty tiers remain unknown because the reviewed primary sources do not provide "
-            "a defensible common difficulty rubric; the audit reports this rather than inventing tiers."
+            "a defensible common difficulty rubric; the audit reports this rather than "
+            "inventing tiers."
         ),
         (
             "The immutable base research dataset contains zero synthetic rows. Any later synthetic "

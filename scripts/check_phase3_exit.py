@@ -56,23 +56,18 @@ def main() -> int:
         raise SystemExit("PHASE03_EXIT_GATE=FAIL manifest split counts")
 
     for split in Split:
-        labels = Counter(
-            record.root_cause_code for record in records if record.split == split
-        )
+        labels = Counter(record.root_cause_code for record in records if record.split == split)
         expected = {label: 1 for label in taxonomy.label_to_category}
         if labels != expected:
             raise SystemExit(
-                "PHASE03_EXIT_GATE=FAIL per-label family stratification "
-                f"split={split.value}"
+                f"PHASE03_EXIT_GATE=FAIL per-label family stratification split={split.value}"
             )
 
     if any(record.is_synthetic for record in records):
         raise SystemExit("PHASE03_EXIT_GATE=FAIL locked base dataset contains synthetic rows")
     if not audit.passed:
         error_codes = sorted(
-            finding.code
-            for finding in audit.findings
-            if finding.severity == FindingSeverity.ERROR
+            finding.code for finding in audit.findings if finding.severity == FindingSeverity.ERROR
         )
         raise SystemExit(f"PHASE03_EXIT_GATE=FAIL leakage audit errors={error_codes}")
 
@@ -84,8 +79,7 @@ def main() -> int:
     if len(manifest.source_snapshots) != 18:
         raise SystemExit("PHASE03_EXIT_GATE=FAIL source snapshot count")
     if not all(
-        snapshot.research_eligible_as_independent_heldout_evidence
-        and not snapshot.source_generated
+        snapshot.research_eligible_as_independent_heldout_evidence and not snapshot.source_generated
         for snapshot in manifest.source_snapshots
     ):
         raise SystemExit("PHASE03_EXIT_GATE=FAIL ineligible research source snapshot")

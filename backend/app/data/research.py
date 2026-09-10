@@ -107,7 +107,9 @@ def validate_research_admission_plan(
             "research admission requires exactly three independent families for every frozen label"
         )
 
-    admitted = {candidate.candidate_id for candidate in index.candidates if candidate.research_admitted}
+    admitted = {
+        candidate.candidate_id for candidate in index.candidates if candidate.research_admitted
+    }
     if require_applied and admitted != planned:
         raise ValueError(
             "candidate index research admission flags do not match admission plan: "
