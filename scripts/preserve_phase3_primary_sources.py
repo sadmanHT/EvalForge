@@ -39,9 +39,7 @@ def git_blob_raw_url(entry: PrimarySourcePlanEntry) -> str:
 
 def fetch_entry(entry: PrimarySourcePlanEntry) -> tuple[bytes, str]:
     headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (compatible; EvalForge-Phase03-PrimarySourcePreserver/2.0)"
-        )
+        "User-Agent": ("Mozilla/5.0 (compatible; EvalForge-Phase03-PrimarySourcePreserver/2.0)")
     }
     if entry.kind == PrimarySourceKind.GITHUB_ISSUE:
         url = github_issue_url(entry)
@@ -105,9 +103,7 @@ def bootstrap(root: Path) -> None:
     existing_snapshots: dict[str, PrimarySourceSnapshot] = {}
     if manifest_path.exists():
         existing_manifest = load_primary_source_manifest(manifest_path)
-        existing_snapshots = {
-            item.candidate_id: item for item in existing_manifest.snapshots
-        }
+        existing_snapshots = {item.candidate_id: item for item in existing_manifest.snapshots}
 
     captured_at = datetime.now(UTC).isoformat().replace("+00:00", "Z")
     snapshots: list[PrimarySourceSnapshot] = []

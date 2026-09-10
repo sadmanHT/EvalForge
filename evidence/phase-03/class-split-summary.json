@@ -28,15 +28,15 @@
     ]
   },
   "public_postmortem_preserved_family_counts_by_root_cause_code": {
-    "broken_payment_configuration": 0,
-    "database_connection_leak": 1,
-    "disk_exhaustion": 0,
-    "memory_leak": 0,
+    "broken_payment_configuration": 1,
+    "database_connection_leak": 2,
+    "disk_exhaustion": 3,
+    "memory_leak": 3,
     "n_plus_one_query": 3,
     "no_fault": 0
   },
   "public_postmortem_preserved_family_depth_sufficient_for_split": false,
-  "public_postmortem_preserved_original_source_count": 4,
+  "public_postmortem_preserved_original_source_count": 12,
   "public_postmortem_research_admitted_count": 0,
   "public_postmortem_supported_family_counts_by_root_cause_code": {
     "broken_payment_configuration": 3,

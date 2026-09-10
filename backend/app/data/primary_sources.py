@@ -49,15 +49,8 @@ class PrimarySourcePlanEntry(StrictModel):
                 raise ValueError("git-blob primary sources must not define issue or HTTP fields")
         elif self.kind == PrimarySourceKind.GITHUB_ISSUE:
             if not self.repository or self.issue_number is None:
-                raise ValueError(
-                    "GitHub issue primary sources require repository and issue_number"
-                )
-            if (
-                self.commit
-                or self.source_path
-                or self.expected_git_blob_sha
-                or self.source_url
-            ):
+                raise ValueError("GitHub issue primary sources require repository and issue_number")
+            if self.commit or self.source_path or self.expected_git_blob_sha or self.source_url:
                 raise ValueError("GitHub issue primary sources must not define git or HTTP fields")
         else:
             if not self.source_url:

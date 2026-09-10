@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full" data-site-base-url="../../../">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident: gitlab.git.nrw outage | git.nrw</title>
+    <link rel="icon" href="../../../images/icons/favicon.svg" type="image/svg+xml">
+    
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../fonts/Noto_Sans/NotoSans-Variable.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../fonts/Inter/Inter-Variable.woff2">
+    <link rel="stylesheet" href="../../../vendor/fontawesome/v6.6.0-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../css/tailwind.css">
+    
+    
+    
+    
+      
+    
+    <meta name="description" content="During the night of May 9, 2025, gitlab.git.nrw was unavailable from approximately 01:30 to 07:15 CEST.
+As a follow‑up effect of the Wednesday incident (May 7, …">
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+      
+    
+  
+
+
+
+
+
+  
+
+
+
+<meta property="og:title" content="Incident: gitlab.git.nrw outage">
+<meta property="og:description" content="During the night of May 9, 2025, gitlab.git.nrw was unavailable from approximately 01:30 to 07:15 CEST.
+As a follow‑up effect of the Wednesday incident (May 7, …">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/">
+<meta property="og:site_name" content="git.nrw">
+<meta property="og:locale" content="en">
+
+
+
+<meta property="og:image" content="https://git.nrw/images/og-default.png">
+
+<meta property="og:image:secure_url" content="https://git.nrw/images/og-default.png">
+
+
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Incident: gitlab.git.nrw outage">
+<meta name="twitter:description" content="During the night of May 9, 2025, gitlab.git.nrw was unavailable from approximately 01:30 to 07:15 CEST.
+As a follow‑up effect of the Wednesday incident (May 7, …">
+
+<meta name="twitter:image" content="https://git.nrw/images/og-default.png">
+
+
+    
+    
+    <link rel="canonical" href="../../../en/news/2025-05-09-incident-gitlab-outage/">
+
+    
+
+<script>
+  (function() {
+    
+
+    try {
+      if (localStorage.getItem('analyticsOptOut') === '1') { return; }
+    } catch (e) {   }
+
+    var _paq = window._paq = window._paq || [];
+     
+    _paq.push(['disableCookies']);
+     
+    _paq.push(['setSecureCookie', true]);
+    _paq.push(['setDoNotTrack', true]);
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    var u="https://piwik.uni-muenster.de/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', "190"]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+
+
+    
+    
+    <script src="../../../js/site-url.js"></script>
+
+    
+    <script src="../../../js/storage/consent-manager.js"></script>
+    <script src="../../../js/storage/video-consent.js"></script>
+</head>
+
+<body class="flex flex-col min-h-full"
+  data-gitlab-status-enabled="true"
+  data-gitlab-status-api-url="https://git.nrw/backend/api/v2/status"
+>
+    
+
+
+
+  
+    <meta data-pagefind-meta="section:news" />
+  
+  
+    
+  
+
+
+
+    <div class="flex-grow flex flex-col">
+        
+        <div class="site-chrome" data-site-chrome>
+            <header class="site-header bg-background-100" data-pagefind-ignore>
+  
+    
+  
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+    x-data="{ open: false }"
+  >
+    <div class="py-2 flex items-center justify-between relative z-40">
+      
+<div class="hidden lg:flex items-center space-x-8 relative z-40">
+  <a href="../../../" class="logo-button flex items-center bg-background-200 hover:bg-background-400">
+    <img src="../../../images/icons/logos/git-nrw.svg" alt="Logo" class="w-28 h-8 rounded">
+  </a>
+  
+  
+  <nav class="flex items-center space-x-4">
+    
+      
+      <a href="../../../en/" class="px-4 py-2 rounded text-gray-900 hover:bg-background-400">Home</a>
+    
+      
+      <a href="../../../en/news/" class="px-4 py-2 rounded bg-primary text-white">News</a>
+    
+
+    
+      
+      
+      
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+      
+
+
+
+
+
+
+
+<div class="relative learn-dropdown">
+  <button
+    id="learn-menu-toggle"
+    class="relative z-50 px-4 py-2 rounded flex items-center space-x-1 border border-transparent text-gray-900 hover:bg-background-400"
+    aria-expanded="false"
+    aria-haspopup="true"
+  >
+    <span>Learn</span>
+    <svg id="learn-menu-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <div
+    id="learn-dropdown-menu"
+    class="absolute left-0 -mt-px w-48 rounded-b-lg rounded-tr-lg shadow-lg bg-background-200 py-1.5 z-20 hidden opacity-0 transform -translate-y-6 transition-all duration-300 ease-out"
+  >
+    <a href="../../../en/courses/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-book-open mr-3 text-sm"></i>
+        <span>All Courses</span>
+      </div>
+    </a>
+    <a href="../../../en/use-cases/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-lightbulb mr-3 text-sm"></i>
+        <span>Use Cases</span>
+      </div>
+    </a>
+    <a href="../../../en/profile/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-user mr-3 text-sm"></i>
+        <span>Profile</span>
+      </div>
+    </a>
+    
+  </div>
+</div>
+
+<script>
+(function() {
+  const dropdownId = 'learn';
+
+  function initDropdown() {
+    const toggle = document.getElementById(dropdownId + '-menu-toggle');
+    const menu = document.getElementById(dropdownId + '-dropdown-menu');
+    const chevron = document.getElementById(dropdownId + '-menu-chevron');
+    const dropdown = document.querySelector('.' + dropdownId + '-dropdown');
+
+    if (!toggle || !menu || !dropdown) return;
+
+    let openTimeout = null;
+    let closeTimeout = null;
+    let isMenuOpen = false;
+    let openedByHover = false;
+    let lastOpenTime = 0;
+    let isAnimating = false;
+    let originalButtonClasses = toggle.className;
+
+    function openMenu(byHover = false) {
+      clearTimeout(closeTimeout);
+      if (!isMenuOpen) {
+        isMenuOpen = true;
+        openedByHover = byHover;
+        lastOpenTime = Date.now();
+        isAnimating = true;
+        
+        
+        
+        if (toggle.className.indexOf('bg-background-200') === -1) {
+             originalButtonClasses = toggle.className;
+        }
+
+        
+        
+        
+        toggle.className = 'relative z-50 px-4 py-2 flex items-center space-x-1 bg-background-200 text-gray-900 rounded-t border border-background-200';
+
+        menu.style.pointerEvents = 'none';
+        menu.classList.remove('hidden');
+        menu.offsetHeight;
+        requestAnimationFrame(() => {
+          menu.classList.remove('opacity-0', '-translate-y-6');
+          menu.classList.add('opacity-100', 'translate-y-0');
+          if (chevron) chevron.classList.add('rotate-180');
+          toggle.setAttribute('aria-expanded', 'true');
+          setTimeout(() => {
+            isAnimating = false;
+            menu.style.pointerEvents = '';
+          }, 300);
+        });
+      }
+    }
+
+    function closeMenu() {
+      clearTimeout(openTimeout);
+      if (isMenuOpen) {
+        isMenuOpen = false;
+        isAnimating = true;
+        
+        
+        toggle.className = originalButtonClasses;
+
+        menu.style.pointerEvents = 'none';
+        menu.classList.remove('opacity-100', 'translate-y-0');
+        menu.classList.add('opacity-0', '-translate-y-6');
+        if (chevron) chevron.classList.remove('rotate-180');
+        toggle.setAttribute('aria-expanded', 'false');
+        setTimeout(() => {
+          if (!isMenuOpen) {
+            menu.classList.add('hidden');
+          }
+          isAnimating = false;
+          menu.style.pointerEvents = '';
+        }, 300);
+      }
+    }
+
+    dropdown.addEventListener('mouseenter', function() {
+      clearTimeout(closeTimeout);
+      openTimeout = setTimeout(() => {
+        if (!isAnimating) openMenu(true);
+      }, 150);
+    });
+
+    dropdown.addEventListener('mouseleave', function() {
+      clearTimeout(openTimeout);
+      closeTimeout = setTimeout(() => {
+        if (!isAnimating) closeMenu();
+      }, 300);
+    });
+
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isAnimating) return;
+
+      if (isMenuOpen && openedByHover && (Date.now() - lastOpenTime) < 500) {
+        return;
+      }
+
+      if (isMenuOpen) {
+        closeMenu();
+      } else {
+        openMenu(false);
+      }
+    });
+
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        closeMenu();
+        toggle.focus();
+      }
+    });
+
+    dropdown.addEventListener('focusout', function(e) {
+      setTimeout(() => {
+        if (!dropdown.contains(document.activeElement)) {
+          closeMenu();
+        }
+      }, 100);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDropdown);
+  } else {
+    initDropdown();
+  }
+})();
+</script>
+
+    
+      
+      
+      
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+      
+
+
+
+
+
+
+
+<div class="relative support-dropdown">
+  <button
+    id="support-menu-toggle"
+    class="relative z-50 px-4 py-2 rounded flex items-center space-x-1 border border-transparent text-gray-900 hover:bg-background-400"
+    aria-expanded="false"
+    aria-haspopup="true"
+  >
+    <span>Support</span>
+    <svg id="support-menu-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+
+  <div
+    id="support-dropdown-menu"
+    class="absolute left-0 -mt-px w-48 rounded-b-lg rounded-tr-lg shadow-lg bg-background-200 py-1.5 z-20 hidden opacity-0 transform -translate-y-6 transition-all duration-300 ease-out"
+  >
+    <a href="../../../en/faq/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-circle-question mr-3 text-sm"></i>
+        <span>FAQ</span>
+      </div>
+    </a>
+    <a href="../../../en/docs/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-book mr-3 text-sm"></i>
+        <span>Documentation</span>
+      </div>
+    </a>
+    <a href="../../../en/contact/" class="block px-2 mb-1 last:mb-0">
+      <div class="px-3 py-2 rounded-md transition-colors duration-200 flex items-center text-gray-900 hover:bg-background-100 hover:text-primary-700">
+        <i class="fa-solid fa-envelope mr-3 text-sm"></i>
+        <span>Contact</span>
+      </div>
+    </a>
+    
+  </div>
+</div>
+
+<script>
+(function() {
+  const dropdownId = 'support';
+
+  function initDropdown() {
+    const toggle = document.getElementById(dropdownId + '-menu-toggle');
+    const menu = document.getElementById(dropdownId + '-dropdown-menu');
+    const chevron = document.getElementById(dropdownId + '-menu-chevron');
+    const dropdown = document.querySelector('.' + dropdownId + '-dropdown');
+
+    if (!toggle || !menu || !dropdown) return;
+
+    let openTimeout = null;
+    let closeTimeout = null;
+    let isMenuOpen = false;
+    let openedByHover = false;
+    let lastOpenTime = 0;
+    let isAnimating = false;
+    let originalButtonClasses = toggle.className;
+
+    function openMenu(byHover = false) {
+      clearTimeout(closeTimeout);
+      if (!isMenuOpen) {
+        isMenuOpen = true;
+        openedByHover = byHover;
+        lastOpenTime = Date.now();
+        isAnimating = true;
+        
+        
+        
+        if (toggle.className.indexOf('bg-background-200') === -1) {
+             originalButtonClasses = toggle.className;
+        }
+
+        
+        
+        
+        toggle.className = 'relative z-50 px-4 py-2 flex items-center space-x-1 bg-background-200 text-gray-900 rounded-t border border-background-200';
+
+        menu.style.pointerEvents = 'none';
+        menu.classList.remove('hidden');
+        menu.offsetHeight;
+        requestAnimationFrame(() => {
+          menu.classList.remove('opacity-0', '-translate-y-6');
+          menu.classList.add('opacity-100', 'translate-y-0');
+          if (chevron) chevron.classList.add('rotate-180');
+          toggle.setAttribute('aria-expanded', 'true');
+          setTimeout(() => {
+            isAnimating = false;
+            menu.style.pointerEvents = '';
+          }, 300);
+        });
+      }
+    }
+
+    function closeMenu() {
+      clearTimeout(openTimeout);
+      if (isMenuOpen) {
+        isMenuOpen = false;
+        isAnimating = true;
+        
+        
+        toggle.className = originalButtonClasses;
+
+        menu.style.pointerEvents = 'none';
+        menu.classList.remove('opacity-100', 'translate-y-0');
+        menu.classList.add('opacity-0', '-translate-y-6');
+        if (chevron) chevron.classList.remove('rotate-180');
+        toggle.setAttribute('aria-expanded', 'false');
+        setTimeout(() => {
+          if (!isMenuOpen) {
+            menu.classList.add('hidden');
+          }
+          isAnimating = false;
+          menu.style.pointerEvents = '';
+        }, 300);
+      }
+    }
+
+    dropdown.addEventListener('mouseenter', function() {
+      clearTimeout(closeTimeout);
+      openTimeout = setTimeout(() => {
+        if (!isAnimating) openMenu(true);
+      }, 150);
+    });
+
+    dropdown.addEventListener('mouseleave', function() {
+      clearTimeout(openTimeout);
+      closeTimeout = setTimeout(() => {
+        if (!isAnimating) closeMenu();
+      }, 300);
+    });
+
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isAnimating) return;
+
+      if (isMenuOpen && openedByHover && (Date.now() - lastOpenTime) < 500) {
+        return;
+      }
+
+      if (isMenuOpen) {
+        closeMenu();
+      } else {
+        openMenu(false);
+      }
+    });
+
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isMenuOpen) {
+        closeMenu();
+        toggle.focus();
+      }
+    });
+
+    dropdown.addEventListener('focusout', function(e) {
+      setTimeout(() => {
+        if (!dropdown.contains(document.activeElement)) {
+          closeMenu();
+        }
+      }, 100);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDropdown);
+  } else {
+    initDropdown();
+  }
+})();
+</script>
+
+    
+  </nav>
+</div>
+
+<div class="hidden lg:flex items-center space-x-2 flex-grow justify-end relative z-40">
+  <div class="right-menu flex items-center space-x-2 w-full max-w-sm">
+    <div class="flag-circle w-8 h-8 rounded-full border border-background-300 overflow-hidden flex items-center justify-center cursor-pointer mx-2" onclick="switchLanguage('de')">
+  
+    <img src="../../../images/icons/flags/de_DE.svg" alt="Switch language" class="h-full w-auto">
+  
+</div>
+    <div class="flex-grow">
+      
+<button
+  type="button"
+  aria-label="Open Search"
+  class="js-open-search-modal-button search-button bg-background-200 hover:bg-background-400 px-4 py-2 rounded flex items-center w-full justify-between"
+>
+  <span class="flex items-center">
+    <svg
+      class="w-5 h-5 mr-2"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      ></path>
+    </svg>
+    Search
+  </span>
+  <kbd
+    class="ml-4 text-xs font-semibold text-gray-500"
+    >/</kbd
+  >
+</button>
+
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+  <a href="https://gitlab.git.nrw" target="_blank" rel="noopener noreferrer" class="gitnrw-btn inline-flex items-center justify-center px-6 py-2 rounded font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer no-underline text-decoration-none bg-black text-white">
+    
+    gitlab.git.nrw
+    <i class="fa-solid fa-arrow-up ml-2 text-accent rotate-45"></i>
+  </a>
+
+
+
+  </div>
+</div>
+
+      
+<div class="flex lg:hidden items-center justify-between w-full h-12 relative z-50">
+  <div class=" w-full flex items-center justify-between">
+    <a href="../../../" class="logo-button flex items-center bg-background-200 hover:bg-background-300">
+      <img src="../../../images/icons/logos/git-nrw.svg" alt="Logo" class="w-24 h-7 rounded">
+    </a>
+
+    <button id="menu-toggle" class="z-50 p-2 rounded-md bg-background-200 hover:bg-background-300" aria-label="Toggle mobile menu">
+      <svg id="menu-open-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+      <svg id="menu-close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+      
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-full z-30"></div>
+    </div>
+  </div>
+</header>
+
+<script src="../../../js/header.js"></script>
+
+            
+
+
+
+
+            
+<div id="gitlab-status-banner" class="text-white px-4 py-2 text-sm flex items-center justify-center"
+  style="display: none;">
+  <i id="gitlab-status-banner-icon" class="mr-2"></i>
+  <span id="gitlab-status-banner-message" class="font-semibold"></span>
+</div>
+
+
+<div id="broadcast-banners" class="flex flex-col"></div>
+
+<script>
+  
+  window.gitlabStatusMessages = {
+    ready: "\"gitlab.git.nrw is available\"",
+    starting: "\"gitlab.git.nrw is restarting\"",
+    maintenance: "\"gitlab.git.nrw is in maintenance mode\"",
+    not_ready: "\"gitlab.git.nrw service not ready\"",
+    unreachable: "\"gitlab.git.nrw is currently unreachable\"",
+    error: "\"Unknown error fetching gitlab.git.nrw status\""
+  };
+</script>
+<script src="../../../js/gitlab-status.js"></script>
+
+        </div>
+        
+<div id="mobile-menu" class="fixed inset-0 backdrop-blur-lg bg-background-100/80 z-40 hidden lg:hidden">
+  <div class="h-full flex flex-col p-6 pt-20">
+    
+    <div class="absolute top-0 left-0 right-0 h-16 backdrop-blur-xl bg-background-100/85 shadow-sm flex items-center justify-between px-4">
+      <a href="../../../" class="logo-button flex items-center bg-background-200 hover:bg-background-300">
+        <img src="../../../images/icons/logos/git-nrw.svg" alt="Logo" class="w-24 h-7 rounded">
+      </a>
+      <button id="mobile-menu-close" class="p-2 rounded-md bg-background-200 hover:bg-background-300" aria-label="Close mobile menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    
+    <div class="mb-6 mt-3">
+      
+<button
+  type="button"
+  aria-label="Open Search"
+  class="js-open-search-modal-button search-button bg-background-200 hover:bg-background-400 px-4 py-2 rounded flex items-center w-full justify-between"
+>
+  <span class="flex items-center">
+    <svg
+      class="w-5 h-5 mr-2"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      ></path>
+    </svg>
+    Search
+  </span>
+  <kbd
+    class="ml-4 text-xs font-semibold text-gray-500"
+    >/</kbd
+  >
+</button>
+
+    </div>
+
+    
+    
+
+    <nav class="flex flex-col space-y-3">
+      
+        
+        
+        
+        <a href="../../../en/" class="mobile-nav-link text-left py-3 px-6 rounded-lg shadow-lg bg-background-200/70 text-gray-900 hover:bg-background-300/80">
+          <div class="flex items-center">
+            
+              <svg class="w-5 h-5 mr-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h2"></path>
+              </svg>
+            
+            <span class="text-lg font-medium">Home</span>
+          </div>
+        </a>
+      
+        
+        
+        
+          
+        
+        <a href="../../../en/news/" class="mobile-nav-link text-left py-3 px-6 rounded-lg shadow-lg bg-primary text-white">
+          <div class="flex items-center">
+            
+              <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+            
+            <span class="text-lg font-medium">News</span>
+          </div>
+        </a>
+      
+
+      
+        
+        
+        <div class="mb-3">
+          <div class="mobile-nav-link text-left py-3 px-6 rounded-lg shadow-lg bg-background-200/70 text-gray-900">
+            <div class="flex items-center">
+              
+                <svg class="w-5 h-5 mr-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+              
+              <span class="text-lg font-medium">Learn</span>
+            </div>
+          </div>
+          <div class="mt-2 ml-4 space-y-2">
+            
+              
+              <a href="../../../en/courses/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-book-open w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">All Courses</span>
+                </div>
+              </a>
+            
+              
+              <a href="../../../en/use-cases/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-lightbulb w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">Use Cases</span>
+                </div>
+              </a>
+            
+              
+              <a href="../../../en/profile/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-user w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">Profile</span>
+                </div>
+              </a>
+            
+          </div>
+        </div>
+      
+        
+        
+        <div class="mb-3">
+          <div class="mobile-nav-link text-left py-3 px-6 rounded-lg shadow-lg bg-background-200/70 text-gray-900">
+            <div class="flex items-center">
+              
+                <svg class="w-5 h-5 mr-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+              
+              <span class="text-lg font-medium">Support</span>
+            </div>
+          </div>
+          <div class="mt-2 ml-4 space-y-2">
+            
+              
+              <a href="../../../en/faq/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-circle-question w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">FAQ</span>
+                </div>
+              </a>
+            
+              
+              <a href="../../../en/docs/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-book w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">Documentation</span>
+                </div>
+              </a>
+            
+              
+              <a href="../../../en/contact/" class="mobile-nav-link text-left py-2 px-6 rounded-lg bg-background-100/50 text-gray-900 hover:bg-background-200/60">
+                <div class="flex items-center">
+                  <i class="fa-solid fa-envelope w-5 mr-4 text-primary text-sm"></i>
+                  <span class="text-base">Contact</span>
+                </div>
+              </a>
+            
+          </div>
+        </div>
+      
+    </nav>
+
+    <div class="mt-auto">
+      
+      <div class="flex items-center gap-2 pt-4 mb-4 border-t border-secondary/20">
+        <button id="mobile-privacy-settings"
+                class="flex items-center gap-2 text-sm text-text/60 hover:text-primary px-3 py-2 rounded-lg hover:bg-background-200/60 transition-colors">
+          <i class="fas fa-fingerprint w-4 text-center"></i>
+          <span>Privacy Settings</span>
+        </button>
+        <button id="mobile-restore-dismissed"
+                class="hidden items-center gap-2 text-sm text-text/60 hover:text-primary px-3 py-2 rounded-lg hover:bg-background-200/60 transition-colors">
+          <i class="fas fa-inbox w-4 text-center"></i>
+          <span>Hidden Messages</span>
+          <span class="mobile-dismissed-badge bg-accent/20 text-accent-800 text-xs font-bold px-1.5 py-0.5 rounded-full"></span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex-1 flex justify-start">
+          <div class="flag-circle w-8 h-8 rounded-full border border-background-300 overflow-hidden flex items-center justify-center cursor-pointer mx-2" onclick="switchLanguage('de')">
+  
+    <img src="../../../images/icons/flags/de_DE.svg" alt="Switch language" class="h-full w-auto">
+  
+</div>
+        </div>
+        <div class="flex-1 flex justify-end">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+  <a href="https://gitlab.git.nrw" target="_blank" rel="noopener noreferrer" class="gitnrw-btn inline-flex items-center justify-center px-6 py-2 rounded font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer no-underline text-decoration-none bg-black text-white">
+    
+    gitlab.git.nrw
+    <i class="fa-solid fa-arrow-up ml-2 text-accent rotate-45"></i>
+  </a>
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+   
+  #mobile-menu.backdrop-blur-lg {
+    background-color: rgba(var(--background-100-rgb, 240, 240, 240), 0.80);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
+  }
+
+  .mobile-nav-link {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('menu-toggle');
+    const overlayCloseButton = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openIcon = document.getElementById('menu-open-icon');
+    const closeIcon = document.getElementById('menu-close-icon');
+
+    function openMobileMenu() {
+      document.body.classList.add('menu-open');
+      mobileMenu.classList.remove('hidden');
+      openIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      updateDismissedButton();
+    }
+
+    function closeMobileMenu() {
+      mobileMenu.classList.add('hidden');
+      openIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      document.body.classList.remove('menu-open');
+    }
+
+    if (toggleButton && mobileMenu) {
+      toggleButton.addEventListener('click', function() {
+        if (mobileMenu.classList.contains('hidden')) {
+          openMobileMenu();
+        } else {
+          closeMobileMenu();
+        }
+      });
+    }
+
+    if (overlayCloseButton) {
+      overlayCloseButton.addEventListener('click', closeMobileMenu);
+    }
+
+    
+    const privacyBtn = document.getElementById('mobile-privacy-settings');
+    if (privacyBtn) {
+      privacyBtn.addEventListener('click', function() {
+        closeMobileMenu();
+        if (window.ConsentManager) {
+          ConsentManager.changeConsentSettings();
+        }
+      });
+    }
+
+    
+    const dismissedBtn = document.getElementById('mobile-restore-dismissed');
+    const dismissedBadge = dismissedBtn?.querySelector('.mobile-dismissed-badge');
+
+    function getDismissedCount() {
+      try {
+        const raw = localStorage.getItem('dismissed_broadcasts');
+        if (!raw) return 0;
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.length : Object.keys(parsed).length;
+      } catch { return 0; }
+    }
+
+    function updateDismissedButton() {
+      if (!dismissedBtn) return;
+      const count = getDismissedCount();
+      if (count > 0) {
+        dismissedBtn.classList.remove('hidden');
+        dismissedBtn.classList.add('flex');
+        if (dismissedBadge) dismissedBadge.textContent = count;
+      } else {
+        dismissedBtn.classList.add('hidden');
+        dismissedBtn.classList.remove('flex');
+      }
+    }
+
+    if (dismissedBtn) {
+      dismissedBtn.addEventListener('click', function() {
+        localStorage.removeItem('dismissed_broadcasts');
+        closeMobileMenu();
+        window.dispatchEvent(new CustomEvent('broadcastsRestored'));
+        if (typeof window.fetchStatus === 'function') {
+          window.fetchStatus();
+        }
+      });
+    }
+
+    updateDismissedButton();
+    window.addEventListener('dismissedBroadcastsPruned', updateDismissedButton);
+  });
+</script>
+
+        
+<div
+  id="search-modal"
+  class="hidden fixed inset-0 z-50 overflow-y-auto"
+  aria-labelledby="search-modal-title"
+  role="dialog"
+  aria-modal="true"
+  data-pagefind-ignore
+  data-labels='{&#34;all&#34;:&#34;All&#34;,&#34;docs&#34;:&#34;Docs&#34;,&#34;courses&#34;:&#34;Courses&#34;,&#34;faq&#34;:&#34;FAQ&#34;,&#34;news&#34;:&#34;News&#34;,&#34;other&#34;:&#34;Other&#34;}'
+>
+  
+  <div
+    id="search-modal-overlay"
+    class="fixed inset-0 bg-slate-900/25 backdrop-blur-sm transition-opacity"
+  ></div>
+
+  
+  <div
+    class="relative flex items-start justify-center min-h-screen pt-12 md:pt-20 px-4"
+  >
+    <div
+      id="search-modal-content-box"
+      class="relative w-full max-w-xl bg-background-100 rounded-xl shadow-2xl transform transition-all overflow-hidden"
+    >
+      
+      <div class="flex items-center border-b border-background-300">
+        <div class="pl-4 text-gray-400">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <input
+          type="search"
+          placeholder="Search for anything..."
+          autocomplete="off"
+          class="js-search-input w-full px-4 py-4 text-lg bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
+        />
+        <button
+          id="close-search-modal-button"
+          type="button"
+          aria-label="Close Search"
+          class="mr-3 p-2 text-gray-400 hover:text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <kbd class="text-xs font-sans font-semibold">ESC</kbd>
+        </button>
+      </div>
+
+      
+      <div id="search-filters" class="hidden border-b border-background-200">
+        <div class="search-filters-bar" role="toolbar" aria-label="Filter results by section">
+          
+        </div>
+      </div>
+
+      
+      <div
+        id="pagefind-search"
+        class="max-h-[60vh] overflow-y-auto p-2 md:p-4"
+      >
+        <p class="px-8 pt-4 text-center text-gray-400">Find courses, guides, and answers quickly.</p>
+      </div>
+
+      
+      <div id="search-tags-container" data-tags='adoption,agile,announcement,ansible,basics,beginner,ci-cd,cli,collaboration,containers,contribution,devops,divekit,docs,doi,email,epics,external,friendly-users,git,github,gitlab,guests,hugo,iac,incident,kanban,learning,love-data-week,markdown,minor,news,operations,outage,pilot,pipelines,project-management,scrum,status,teaching-materials,terraform,update,use-case,version control,versioning,video,'>
+        <div class="px-4 pt-4 pb-8">
+          <div class="flex flex-wrap gap-2 justify-center" id="search-tags-list">
+            
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="border-t border-background-200 bg-background-200/50 p-3 flex items-center space-x-4 text-xs text-gray-500">
+          <span class="flex items-center">
+            <kbd class="font-sans font-semibold border border-primary-100 bg-background-100 shadow-sm rounded-md px-2 py-1 mr-2">↵</kbd>
+            select
+          </span>
+          <span class="flex items-center">
+            <kbd class="font-sans font-semibold border border-primary-100 bg-background-100 shadow-sm rounded-md px-2 py-1 mr-1">↑</kbd>
+            <kbd class="font-sans font-semibold border border-primary-100 bg-background-100 shadow-sm rounded-md px-2 py-1 mr-2">↓</kbd>
+            navigate
+          </span>
+          <span class="flex items-center ml-auto">
+             <kbd class="font-sans font-semibold border border-primary-100 bg-background-100 shadow-sm rounded-md px-2 py-1 mr-2">esc</kbd>
+             close
+          </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="module">
+document.addEventListener('DOMContentLoaded', function() {
+  const openBtns = document.querySelectorAll('.js-open-search-modal-button');
+  const closeBtn = document.getElementById('close-search-modal-button');
+  const modal = document.getElementById('search-modal');
+  const ourInput = document.querySelector('.js-search-input');
+  const contentBox = document.getElementById('search-modal-content-box');
+  const resultsContainer = document.getElementById('pagefind-search');
+  const filtersContainer = document.getElementById('search-filters');
+  const filtersBar = filtersContainer.querySelector('.search-filters-bar');
+  const tagsContainer = document.getElementById('search-tags-list');
+  const tagsWrapper = document.getElementById('search-tags-container');
+  let pagefind;
+  let selectedIndex = -1;
+  let allResults = [];
+  let activeFilter = null;
+
+  
+  const labels = JSON.parse(modal.dataset.labels || '{}');
+
+  
+  
+  const esc = (s) => String(s ?? '')
+    .replaceAll('<mark>', '\x00')
+    .replaceAll('</mark>', '\x01')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('\x00', '<mark>')
+    .replaceAll('\x01', '</mark>');
+
+  
+  const SECTIONS = {
+    docs:    { label: labels.docs    || 'Docs',    icon: 'fa-solid fa-book',            badge: 'search-badge-docs',    bar: 'search-bar-docs',    pill: 'search-pill-docs' },
+    courses: { label: labels.courses || 'Courses', icon: 'fa-solid fa-graduation-cap',  badge: 'search-badge-courses', bar: 'search-bar-courses', pill: 'search-pill-courses' },
+    faq:     { label: labels.faq     || 'FAQ',     icon: 'fa-solid fa-circle-question',  badge: 'search-badge-faq',    bar: 'search-bar-faq',    pill: 'search-pill-faq' },
+    news:    { label: labels.news    || 'News',    icon: 'fa-solid fa-bullhorn',         badge: 'search-badge-news',   bar: 'search-bar-news',   pill: 'search-pill-news' },
+  };
+  const DEFAULT_SECTION = { label: labels.other || 'Other', icon: 'fa-solid fa-file-lines', badge: 'search-badge-default', bar: 'search-bar-default', pill: '' };
+
+  const getSectionConfig = (section) => SECTIONS[section] || { ...DEFAULT_SECTION, label: esc(section) || DEFAULT_SECTION.label };
+
+  
+  const tagsData = tagsWrapper.dataset.tags || '';
+  const availableTags = tagsData.split(',').filter(tag => tag.trim() !== '').sort();
+
+  const loadPagefind = async () => {
+    if (pagefind) return;
+    try {
+      pagefind = await import(window.gitNrw.siteUrl('pagefind/pagefind.js'));
+    } catch (e) {
+      console.error("Failed to load Pagefind search module:", e);
+    }
+  };
+
+  const renderTags = () => {
+    if (!tagsContainer) return;
+
+    tagsContainer.innerHTML = availableTags.map(tag => `
+      <button
+        class="tag-chip px-3 py-1 text-sm bg-background-200 hover:bg-background-300 rounded-full transition-colors cursor-pointer"
+        data-tag="${esc(tag)}"
+      >
+        #${esc(tag)}
+      </button>
+    `).join('');
+
+    
+    tagsContainer.querySelectorAll('.tag-chip').forEach(chip => {
+      chip.addEventListener('click', async (e) => {
+        const tag = e.target.dataset.tag;
+        const currentLang = document.documentElement.lang || 'en';
+        window.location.href = window.gitNrw.siteUrl(`${currentLang}/tags/${tag}/`);
+      });
+    });
+  };
+
+  
+
+  const renderFilterPills = (sectionCounts) => {
+    const totalCount = Object.values(sectionCounts).reduce((a, b) => a + b, 0);
+    if (totalCount === 0) {
+      filtersContainer.classList.add('hidden');
+      return;
+    }
+
+    filtersContainer.classList.remove('hidden');
+
+    
+    let html = `<button class="search-pill${activeFilter === null ? '' : ''}" role="button" aria-pressed="${activeFilter === null}" data-filter="">
+      <span>${labels.all || 'All'}</span>
+      <span class="search-pill-count">${totalCount}</span>
+    </button>`;
+
+    
+    const orderedSections = ['docs', 'courses', 'faq', 'news'];
+    const remaining = Object.keys(sectionCounts).filter(s => !orderedSections.includes(s)).sort();
+
+    for (const section of [...orderedSections, ...remaining]) {
+      const count = sectionCounts[section];
+      if (!count) continue;
+      const cfg = getSectionConfig(section);
+      const isActive = activeFilter === section;
+
+      html += `<button class="search-pill ${cfg.pill}" role="button" aria-pressed="${isActive}" data-filter="${section}">
+        <i class="${cfg.icon}" style="font-size:0.65rem"></i>
+        <span>${cfg.label}</span>
+        <span class="search-pill-count">${count}</span>
+      </button>`;
+    }
+
+    filtersBar.innerHTML = html;
+
+    
+    filtersBar.querySelectorAll('.search-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const filter = pill.dataset.filter;
+        activeFilter = filter === '' ? null : filter;
+        renderFilterPills(sectionCounts);
+        renderResultList();
+      });
+    });
+  };
+
+  
+
+  const renderResultItem = (data, index) => {
+    const section = data.meta.section;
+    const cfg = getSectionConfig(section);
+
+    const badge = section
+      ? `<span class="search-badge ${cfg.badge}">${cfg.label}</span>`
+      : '';
+
+    return `<li class="search-result-enter" style="animation-delay:${index * 30}ms">
+      <a href="${window.gitNrw.siteUrl(data.url)}" class="flex mb-2 bg-white rounded-lg shadow-sm overflow-hidden hover:bg-accent-50 hover:shadow-md transition-all">
+        <div class="w-1 flex-shrink-0 ${cfg.bar}"></div>
+        <div class="flex-1 p-4">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <div class="font-semibold text-gray-800 leading-snug">${esc(data.meta.title) || "Untitled"}</div>
+            ${badge}
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">${esc(data.excerpt)}</p>
+        </div>
+      </a>
+    </li>`;
+  };
+
+  
+
+  const renderResultList = () => {
+    selectedIndex = -1;
+    const filtered = activeFilter
+      ? allResults.filter(r => r.meta.section === activeFilter)
+      : allResults;
+
+    if (filtered.length === 0) {
+      resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">No results in this category.</p>';
+      return;
+    }
+
+    const html = filtered.map((data, i) => renderResultItem(data, i)).join('');
+    resultsContainer.innerHTML = `<ul>${html}</ul>`;
+  };
+
+  
+
+  const renderResults = async (query) => {
+    
+    if (!query || query.length === 0) {
+      tagsWrapper.classList.remove('hidden');
+      filtersContainer.classList.add('hidden');
+      resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">Find courses, guides, and answers quickly.</p>';
+      allResults = [];
+      activeFilter = null;
+      return;
+    } else {
+      tagsWrapper.classList.add('hidden');
+    }
+
+    if (!pagefind || query.length < 2) {
+      filtersContainer.classList.add('hidden');
+      resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">Type at least 2 characters to search.</p>';
+      return;
+    }
+
+    resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">Searching...</p>';
+    const search = await pagefind.search(query);
+
+    if (search.results.length === 0) {
+      filtersContainer.classList.add('hidden');
+      resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">No results found for your query.</p>';
+      allResults = [];
+      activeFilter = null;
+      return;
+    }
+
+    
+    allResults = await Promise.all(search.results.map(r => r.data()));
+
+    
+    const sectionCounts = {};
+    allResults.forEach(r => {
+      const section = r.meta.section || 'other';
+      sectionCounts[section] = (sectionCounts[section] || 0) + 1;
+    });
+
+    
+    if (activeFilter && !sectionCounts[activeFilter]) {
+      activeFilter = null;
+    }
+
+    renderFilterPills(sectionCounts);
+    renderResultList();
+  };
+
+  
+
+  const openModal = () => {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+      document.getElementById('menu-open-icon')?.classList.remove('hidden');
+      document.getElementById('menu-close-icon')?.classList.add('hidden');
+      document.body.classList.remove('menu-open');
+    }
+    loadPagefind();
+    renderTags();
+    modal.classList.remove('hidden');
+    ourInput.value = '';
+    tagsWrapper.classList.remove('hidden');
+    filtersContainer.classList.add('hidden');
+    resultsContainer.innerHTML = '<p class="px-8 pt-4 text-center text-gray-400">Find courses, guides, and answers quickly.</p>';
+    allResults = [];
+    activeFilter = null;
+    ourInput?.focus();
+  };
+
+  const closeModal = () => {
+    modal.classList.add('hidden');
+  };
+
+  
+
+  let debounceTimer;
+  ourInput?.addEventListener('input', (e) => {
+    selectedIndex = -1;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => renderResults(e.target.value), 200);
+  });
+
+  
+
+  const updateSelection = () => {
+    const items = resultsContainer.querySelectorAll('li > a');
+    items.forEach((item, index) => {
+      if (index === selectedIndex) {
+        item.classList.remove('bg-white');
+        item.classList.add('bg-accent-50', 'shadow-md');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.add('bg-white');
+        item.classList.remove('bg-accent-50', 'shadow-md');
+      }
+    });
+  };
+
+  ourInput?.addEventListener('keydown', (e) => {
+    const items = resultsContainer.querySelectorAll('li > a');
+    if (items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % items.length;
+      updateSelection();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+      updateSelection();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && items[selectedIndex]) {
+        items[selectedIndex].click();
+      }
+    }
+  });
+
+  
+
+  openBtns.forEach((openBtn) => openBtn.addEventListener('click', openModal));
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+    if (e.key === '/' && document.activeElement.tagName.toLowerCase() !== 'input' && document.activeElement.tagName.toLowerCase() !== 'textarea') {
+      e.preventDefault();
+      openModal();
+    }
+  });
+
+  
+  if (modal) modal.addEventListener('click', closeModal);
+  
+  if (contentBox) contentBox.addEventListener('click', (e) => e.stopPropagation());
+});
+</script>
+
+        <main class="mx-auto w-full flex-grow flex flex-col" data-pagefind-body>
+            
+
+
+
+
+
+
+
+
+<article class="container mx-auto px-4 py-10 lg:py-14 max-w-3xl">
+
+    <a href="../../../en/news/" class="inline-flex items-center gap-1.5 mb-10 text-sm text-text/55 hover:text-accent transition-colors">
+        <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i>
+        Back to News
+    </a>
+
+    <header class="mb-10">
+        <p class="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] mb-4 tabular-nums">
+            <span class="text-red-700/75">
+                Incident
+            </span>
+            <span class="mx-2 text-text/25" aria-hidden="true">•</span>
+            <time datetime="2025-05-09T09:26:00&#43;02:00" class="text-text/55">09. May 2025</time>
+            
+            <span class="mx-2 text-text/25" aria-hidden="true">•</span>
+            <span class="text-text/55">Christian Schild</span>
+            
+        </p>
+
+        <h1 class="text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.15] text-primary">
+            Incident: gitlab.git.nrw outage
+        </h1>
+
+        
+        
+    </header>
+
+    
+    
+    <dl class="mb-12 grid gap-x-8 gap-y-3 sm:grid-cols-2 md:grid-cols-3 text-sm">
+        
+        <div>
+            <dt class="text-[0.6875rem] uppercase tracking-wider text-text/50 font-medium mb-0.5">Service</dt>
+            <dd class="text-text/80">
+                gitlab.git.nrw
+                
+                <span class="ml-1 px-1.5 py-0.5 rounded bg-secondary/15 text-xs text-text/60">pilot</span>
+                
+            </dd>
+        </div>
+        
+        
+        <div>
+            <dt class="text-[0.6875rem] uppercase tracking-wider text-text/50 font-medium mb-0.5">Started</dt>
+            <dd class="text-text/80">May 9, 2025 01:30 &#43;0200</dd>
+        </div>
+        
+        
+        <div>
+            <dt class="text-[0.6875rem] uppercase tracking-wider text-text/50 font-medium mb-0.5">Resolved</dt>
+            <dd class="text-text/80">May 9, 2025 07:15 &#43;0200</dd>
+        </div>
+        
+        
+        <div>
+            <dt class="text-[0.6875rem] uppercase tracking-wider text-text/50 font-medium mb-0.5">Duration</dt>
+            <dd class="text-text/80">5h 45m</dd>
+        </div>
+        
+        
+        <div class="sm:col-span-2 md:col-span-3">
+            <dt class="text-[0.6875rem] uppercase tracking-wider text-text/50 font-medium mb-1">Affected Components</dt>
+            <dd class="flex flex-wrap gap-1.5">
+                
+                <span class="px-2 py-0.5 rounded bg-secondary/15 text-xs text-text/70">database</span>
+                
+                <span class="px-2 py-0.5 rounded bg-secondary/15 text-xs text-text/70">gitlab</span>
+                
+            </dd>
+        </div>
+        
+    </dl>
+    
+
+    
+    
+    <div class="space-y-10">
+        
+        <section>
+            <h2 class="text-lg font-semibold text-primary mb-2">Impact</h2>
+            <p class="text-text/80 leading-relaxed">Service was completely unavailable during the outage window.</p>
+        </section>
+        
+
+        
+        <section>
+            <h2 class="text-lg font-semibold text-primary mb-2">Root Cause</h2>
+            <p class="text-text/80 leading-relaxed">Database replication had silently stopped. Overnight, the remaining DB node&#39;s disk filled up with WAL transaction logs.</p>
+        </section>
+        
+
+        
+        <section>
+            <h2 class="text-lg font-semibold text-primary mb-2">Resolution</h2>
+            <p class="text-text/80 leading-relaxed">Disk space was increased and replication was restored. Improved monitoring will be implemented.</p>
+        </section>
+        
+
+        
+
+        
+        <section>
+            <h2 class="text-lg font-semibold text-primary mb-4">Follow-up Actions</h2>
+            <ul class="space-y-2.5">
+                
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 mt-1">
+                        
+                        <i class="fa-solid fa-circle-check text-primary text-sm" aria-hidden="true"></i>
+                        
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-text/80">Implement WAL size monitoring and alerting</p>
+                        
+                    </div>
+                </li>
+                
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 mt-1">
+                        
+                        <i class="fa-solid fa-circle-check text-primary text-sm" aria-hidden="true"></i>
+                        
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-text/80">Add replication health dashboard</p>
+                        
+                    </div>
+                </li>
+                
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 mt-1">
+                        
+                        <i class="fa-solid fa-circle-check text-primary text-sm" aria-hidden="true"></i>
+                        
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-text/80">Document incident response procedures</p>
+                        
+                    </div>
+                </li>
+                
+            </ul>
+        </section>
+        
+
+        
+        <section>
+            <h2 class="text-lg font-semibold text-primary mb-2">Additional Details</h2>
+            <div class="prose max-w-none text-text/80"><p>During the night of May 9, 2025, gitlab.git.nrw was unavailable from approximately 01:30 to 07:15 CEST.</p>
+<p>As a follow‑up effect of the Wednesday incident (May 7, 2025), database replication had silently stopped. Overnight, the remaining database node&rsquo;s disk filled up with WAL transaction logs, which took the service down.</p>
+<p>Disk capacity was increased and replication restored; the service has been fully available again since 07:15. As we are still in pilot, we continue to harden the platform and improve monitoring.</p>
+</div>
+        </section>
+        
+    </div>
+    
+
+    
+    <div class="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-xs">
+        
+        <div class="tags-quiet flex flex-wrap items-center gap-x-3 gap-y-1">
+            
+            
+<a href="../../../en/tags/incident" 
+   class="tag-button tag-incident">incident</a>
+            
+            
+<a href="../../../en/tags/outage" 
+   class="tag-button tag-outage">outage</a>
+            
+            
+<a href="../../../en/tags/pilot" 
+   class="tag-button tag-pilot">pilot</a>
+            
+        </div>
+        
+        <p class="flex items-center gap-3 text-text/50">
+            <span class="uppercase tracking-wider mr-1">Share</span>
+            <a href="https://twitter.com/intent/tweet?url=%2fen%2fnews%2f2025-05-09-incident-gitlab-outage%2f&text=Incident%3a%20gitlab.git.nrw%20outage"
+               target="_blank" rel="noopener"
+               class="hover:text-accent transition-colors text-sm" aria-label="Share on X">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=%2fen%2fnews%2f2025-05-09-incident-gitlab-outage%2f"
+               target="_blank" rel="noopener"
+               class="hover:text-accent transition-colors text-sm" aria-label="Share on LinkedIn">
+                <i class="fa-brands fa-linkedin"></i>
+            </a>
+            <button onclick="navigator.clipboard.writeText('\/en\/news\/2025-05-09-incident-gitlab-outage\/')"
+                    class="hover:text-accent transition-colors text-sm" aria-label="Copy link">
+                <i class="fa-solid fa-link"></i>
+            </button>
+        </p>
+    </div>
+
+    
+    
+    
+    
+    <section class="mt-14 pt-10 border-t border-secondary/20">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-text/55 mb-6">Related Updates</h2>
+        <ul class="grid gap-7 md:grid-cols-3">
+            
+            
+            <li>
+                <a href="../../../en/news/2025-05-07-incident-gitlab-outage/" class="group block">
+                    <p class="text-[0.6875rem] uppercase tracking-wider font-medium mb-1.5">
+                        <span class="text-red-700/70">
+                            Incident
+                        </span>
+                        <span class="mx-1 text-text/30" aria-hidden="true">•</span>
+                        <time class="text-text/55">07. May 2025</time>
+                    </p>
+                    <h3 class="text-base font-semibold text-primary leading-snug group-hover:text-accent transition-colors line-clamp-3">
+                        Incident: gitlab.git.nrw outage
+                    </h3>
+                </a>
+            </li>
+            
+        </ul>
+    </section>
+    
+</article>
+
+        </main>
+    </div>
+
+    <footer class="bg-background-200 text-gray-600 pt-16 pb-8" data-pagefind-ignore>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+      
+      <div class="flex-1 min-w-0">
+        <nav aria-label="Footer">
+          <div class="grid grid-cols-2 gap-x-6 gap-y-8 md:flex md:justify-between">
+            
+            <div>
+              <h4 class="font-bold mb-2"><a href="../../../en/" class="text-gray-900 hover:underline">Home</a></h4>
+              <ul class="space-y-1.5">
+                <li><a href="../../../en/about" class="text-gray-800 hover:text-gray-900">About</a></li>
+                <li><a href="../../../en/governance" class="text-gray-800 hover:text-gray-900">Governance</a></li>
+                <li><a href="../../../en/news" class="text-gray-800 hover:text-gray-900">News</a></li>
+                <li><a href="../../../en/use-cases" class="text-gray-800 hover:text-gray-900">Use Cases</a></li>
+                <li><a href="../../../en/contribute" class="text-gray-800 hover:text-gray-900">Contribute</a></li>
+                <li><a href="../../../en/brand" class="text-gray-800 hover:text-gray-900">Brand</a></li>
+                <li><a href="../../../en/tags" class="text-gray-800 hover:text-gray-900">Tags</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 class="font-bold mb-2"><a href="../../../en/courses" class="text-gray-900 hover:underline">Learning</a></h4>
+              <ul class="space-y-1.5">
+                <li><a href="../../../en/quiz" class="text-gray-800 hover:text-gray-900">Profiling Quiz</a></li>
+                <li>
+                  <a href="../../../en/courses" class="text-gray-800 hover:text-gray-900">Courses</a>
+                  <ul class="mt-1 ml-0.5 border-l border-gray-400 pl-3 space-y-1">
+                    <li><a href="../../../en/levels/beginner" class="text-gray-600 hover:text-gray-900">Beginner</a></li>
+                    <li><a href="../../../en/levels/intermediate" class="text-gray-600 hover:text-gray-900">Intermediate</a></li>
+                    <li><a href="../../../en/levels/expert" class="text-gray-600 hover:text-gray-900">Expert</a></li>
+                  </ul>
+                </li>
+                <li><a href="../../../en/roles" class="text-gray-800 hover:text-gray-900">Roles</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 class="font-bold mb-2"><a href="../../../en/contact" class="text-gray-900 hover:underline">Community &amp; Support</a></h4>
+              <ul class="space-y-1.5">
+                <li><a href="../../../en/docs" class="text-gray-800 hover:text-gray-900">Documentation</a></li>
+                <li><a href="../../../en/contact#contact" class="text-gray-800 hover:text-gray-900">Contact</a></li>
+                <li><a href="../../../en/faq" class="text-gray-800 hover:text-gray-900">FAQ</a></li>
+                <li class="pt-2"><a target="_blank" rel="noopener noreferrer" href="https://chat.git.nrw" class="text-gray-800 hover:text-gray-900 whitespace-nowrap">Community<i class="fa-solid fa-arrow-up ml-1 text-secondary-400 rotate-45"></i></a></li>
+                <li><a target="_blank" rel="noopener noreferrer" href="https://www.listserv.dfn.de/sympa/info/git.nrw-news" class="text-gray-800 hover:text-gray-900 whitespace-nowrap">Mailing List<i class="fa-solid fa-arrow-up ml-1 text-secondary-400 rotate-45"></i></a></li>
+              </ul>
+            </div>
+            
+            <div class="col-span-2 md:col-span-1">
+              <h4 class="font-bold mb-2"><a href="../../../en/legal" class="text-gray-900 hover:underline">Legal</a></h4>
+              <ul class="space-y-1.5">
+                <li><a href="../../../en/legal#imprint" class="text-gray-800 hover:text-gray-900">Imprint</a></li>
+                <li><a href="../../../en/legal#terms" class="text-gray-800 hover:text-gray-900">Terms</a></li>
+                <li><a href="../../../en/legal#privacy" class="text-gray-800 hover:text-gray-900">Privacy</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        
+        <div class="mt-20 text-gray-600 text-sm space-y-1">
+          <p><a href="../../../en/" class="underline">git.nrw,</a> created by <a href="../../../en/contribute#contributors" class="underline">contributors</a></p>
+          <p>is licensed under <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" class="underline">CC BY 4.0 <img src="../../../images/icons/cc/cc.svg" alt="CC BY 4.0" class="h-4 inline-block -mt-1"> <img src="../../../images/icons/cc/by.svg" alt="CC BY 4.0" class="h-4 inline-block -mt-1"></a></p>
+        </div>
+      </div>
+
+      
+      <div class="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-8 flex-shrink-0 lg:self-stretch">
+        <img src="../../../images/icons/logos/git-nrw.svg" alt="Logo" class="w-36 shrink-0">
+        <div class="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-8 lg:mt-auto">
+          <div class="flex flex-col items-start lg:items-end gap-1">
+            <span class="text-xs text-gray-500">supported by</span>
+            <img src="../../../images/icons/logos/dh-nrw.svg" alt="DIGITALE HOCHSCHULE NRW" class="h-10 shrink-0 opacity-90">
+          </div>
+          <div class="flex flex-col items-start lg:items-end gap-1">
+            <span class="text-xs text-gray-500">funded by</span>
+            <img src="../../../images/icons/logos/2025_ak_mkw_nrw_engl_1c.png" alt="Ministerium für Kultur und Wissenschaft des Landes Nordrhein-Westfalen" class="h-10 shrink-0 opacity-90">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    
+<div id="consent-modal-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-[10000] opacity-0 transition-opacity duration-300 p-5" style="display: none;" data-language="en">
+    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300 scale-95">
+        <div class="p-6 pb-4">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                <i class="fas fa-shield-alt text-primary"></i> 
+                Privacy &amp; Features
+            </h2>
+            <p class="text-gray-600 text-base leading-relaxed">
+                Choose which features you want to use. You can change your settings at any time.
+            </p>
+        </div>
+        
+        <div class="px-6 pb-4">
+            <div class="flex justify-end items-center mb-5">
+                <button type="button" id="consent-toggle-all-btn" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-accent border border-accent rounded-md hover:bg-accent hover:text-white transition-all duration-200 hover:-translate-y-0.5">
+                    <i class="fas fa-check-square text-xs"></i> <span>Enable all</span>
+                </button>
+            </div>
+            <div id="consent-categories" class="space-y-6">
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Learning Progress</h3>
+                    
+                    
+                    <div class="group p-4 border border-secondary rounded-lg bg-background-50 transition-all duration-200 hover:bg-background-100 hover:border-text/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer consent-category" data-category="learningProgress">
+                        <div class="flex items-start gap-3">
+                            <label class="relative inline-block w-12 h-6 mt-0.5 flex-shrink-0">
+                                <input type="checkbox" class="opacity-0 w-0 h-0 peer" data-category="learningProgress">
+                                <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-background-200 rounded-full transition-all duration-300 peer-checked:bg-accent peer-disabled:bg-accent peer-disabled:opacity-70 peer-disabled:cursor-not-allowed toggle-track">
+                                    <span class="absolute top-0.5 left-0.5 h-5 w-5 bg-white rounded-full transition-transform duration-300 toggle-thumb"></span>
+                                </span>
+                            </label>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-base font-semibold text-gray-900 mb-1 category-title">
+                                    Save Learning Progress
+                                </h4>
+                                <p class="text-sm text-gray-600 leading-relaxed category-description">
+                                    Automatically saves your position in courses and videos so you can continue seamlessly.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">External Content</h3>
+                    <div class="space-y-4">
+                        
+                        <div class="group p-4 border border-secondary rounded-lg bg-background-50 transition-all duration-200 hover:bg-background-100 hover:border-text/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer consent-category" data-category="youtube">
+                            <div class="flex items-start gap-3">
+                                <label class="relative inline-block w-12 h-6 mt-0.5 flex-shrink-0">
+                                    <input type="checkbox" class="opacity-0 w-0 h-0 peer" data-category="youtube">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-background-200 rounded-full transition-all duration-300 peer-checked:bg-accent peer-disabled:bg-accent peer-disabled:opacity-70 peer-disabled:cursor-not-allowed toggle-track">
+                                        <span class="absolute top-0.5 left-0.5 h-5 w-5 bg-white rounded-full transition-transform duration-300 toggle-thumb"></span>
+                                    </span>
+                                </label>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-base font-semibold text-gray-900 mb-1 category-title">
+                                        YouTube Videos
+                                    </h4>
+                                    <p class="text-sm text-gray-600 leading-relaxed category-description">
+                                        Enables displaying YouTube videos. Data will be transmitted to Google.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="group p-4 border border-secondary rounded-lg bg-background-50 transition-all duration-200 hover:bg-background-100 hover:border-text/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer consent-category" data-category="vimeo">
+                            <div class="flex items-start gap-3">
+                                <label class="relative inline-block w-12 h-6 mt-0.5 flex-shrink-0">
+                                    <input type="checkbox" class="opacity-0 w-0 h-0 peer" data-category="vimeo">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-background-200 rounded-full transition-all duration-300 peer-checked:bg-accent peer-disabled:bg-accent peer-disabled:opacity-70 peer-disabled:cursor-not-allowed toggle-track">
+                                        <span class="absolute top-0.5 left-0.5 h-5 w-5 bg-white rounded-full transition-transform duration-300 toggle-thumb"></span>
+                                    </span>
+                                </label>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-base font-semibold text-gray-900 mb-1 category-title">
+                                        Vimeo Videos
+                                    </h4>
+                                    <p class="text-sm text-gray-600 leading-relaxed category-description">
+                                        Enables displaying Vimeo videos. Data will be transmitted to Vimeo.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="group p-4 border border-secondary rounded-lg bg-background-50 transition-all duration-200 hover:bg-background-100 hover:border-text/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer consent-category" data-category="tibav">
+                            <div class="flex items-start gap-3">
+                                <label class="relative inline-block w-12 h-6 mt-0.5 flex-shrink-0">
+                                    <input type="checkbox" class="opacity-0 w-0 h-0 peer" data-category="tibav">
+                                    <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-background-200 rounded-full transition-all duration-300 peer-checked:bg-accent peer-disabled:bg-accent peer-disabled:opacity-70 peer-disabled:cursor-not-allowed toggle-track">
+                                        <span class="absolute top-0.5 left-0.5 h-5 w-5 bg-white rounded-full transition-transform duration-300 toggle-thumb"></span>
+                                    </span>
+                                </label>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-base font-semibold text-gray-900 mb-1 category-title">
+                                        TIB AV-Portal Videos
+                                    </h4>
+                                    <p class="text-sm text-gray-600 leading-relaxed category-description">
+                                        Enables displaying videos from the TIB AV-Portal.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Audience Measurement</h3>
+                    <div class="group p-4 border border-secondary rounded-lg bg-background-50 transition-all duration-200 hover:bg-background-100 hover:border-text/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer analytics-optout" data-optout="analytics">
+                        <div class="flex items-start gap-3">
+                            <label class="relative inline-block w-12 h-6 mt-0.5 flex-shrink-0">
+                                <input type="checkbox" class="opacity-0 w-0 h-0 peer" data-optout="analytics">
+                                <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-background-200 rounded-full transition-all duration-300 peer-checked:bg-accent toggle-track">
+                                    <span class="absolute top-0.5 left-0.5 h-5 w-5 bg-white rounded-full transition-transform duration-300 toggle-thumb"></span>
+                                </span>
+                            </label>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-base font-semibold text-gray-900 mb-1 category-title">
+                                    Anonymous Usage Statistics
+                                </h4>
+                                <p class="text-sm text-gray-600 leading-relaxed category-description">
+                                    Anonymously measures which pages are viewed so we can improve the content. Without cookies, with a truncated IP address.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 pt-4 border-t border-gray-200">
+            <div class="flex gap-3 justify-end">
+                <button type="button" id="consent-cancel-btn" class="gitnrw-btn inline-flex items-center justify-center px-6 py-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer bg-transparent text-text border border-secondary">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </button>
+                <button type="button" id="consent-save-btn" class="gitnrw-btn inline-flex items-center justify-center px-6 py-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer bg-primary text-white">
+                    <i class="fas fa-save mr-2"></i> Save selection
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+  window.consentTranslations = {
+    modal: {
+      toggleEnableAll: "Enable all",
+      toggleDisableAll: "Disable all"
+    },
+    indicator: {
+      title: "Privacy Settings",
+      hint: "Click to configure",
+      statusNotConfigured: "Not yet configured",
+      statusEnabled: "All features enabled",
+      statusDisabled: "Basic functions only"
+    },
+    common: {
+      required: "Required"
+    }
+  };
+</script>
+    
+<div id="storage-indicator" class="hidden lg:block fixed bottom-5 left-5 z-[9999] cursor-pointer transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110">
+  <div class="storage-indicator-content relative flex items-center justify-center">
+    
+    <div class="storage-indicator-icon w-10 h-10 rounded-full flex items-center justify-center text-base text-white shadow-lg transition-all duration-300">
+      <i class="fas fa-fingerprint"></i>
+    </div>
+    
+    
+    <div class="storage-indicator-tooltip absolute bottom-full left-0 mb-2.5 opacity-0 invisible translate-y-2.5 transition-all duration-300 pointer-events-none">
+      <div class="storage-tooltip-content bg-background rounded-lg p-4 shadow-xl border border-secondary min-w-[280px] text-sm leading-relaxed">
+        
+        
+        <div class="storage-tooltip-header mb-2 text-text text-base">
+          <strong class="indicator-title">Privacy Settings</strong>
+        </div>
+        
+        <div class="storage-tooltip-status mb-2 text-text opacity-70">
+          <span class="storage-status-text">Loading...</span>
+        </div>
+        
+        <div class="storage-tooltip-hint text-center mt-2">
+          <small class="indicator-hint text-text opacity-50 italic">Click to configure</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  window.storageIndicatorTranslations = {
+    indicator: {
+      title: "Privacy Settings",
+      hint: "Click to configure",
+      loading: "Loading...",
+      statusNotConfigured: "Not yet configured",
+      statusEnabled: "All features enabled",
+      statusDisabled: "Basic functions only"
+    }
+  };
+</script>
+
+
+    
+<div id="dismissed-messages-indicator"
+     class="hidden lg:block fixed bottom-5 right-5 z-[99] cursor-pointer transition-all duration-300 opacity-0 pointer-events-none"
+     aria-label="Show hidden messages"
+     role="button"
+     tabindex="0">
+
+  <div class="dismissed-indicator-content relative flex items-center justify-center">
+
+    
+    <div class="dismissed-indicator-icon w-10 h-10 rounded-full flex items-center justify-center text-base text-white shadow-lg transition-all duration-300 relative">
+      <i class="fas fa-inbox"></i>
+      
+      <span class="dismissed-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-xs font-bold flex items-center justify-center text-primary-950 shadow-md">
+        0
+      </span>
+    </div>
+
+    
+    <div class="dismissed-drawer absolute bottom-full right-0 mb-3 opacity-0 invisible translate-y-2 transition-all duration-300 pointer-events-none"
+         style="width: 340px; max-width: calc(100vw - 2.5rem);">
+
+      <div class="dismissed-drawer-content bg-background rounded-xl shadow-2xl border border-secondary overflow-hidden">
+
+        
+        <div class="dismissed-drawer-header bg-primary px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-archive text-white/80"></i>
+            <span class="drawer-title font-semibold text-white text-sm">
+              Hidden Messages
+            </span>
+          </div>
+          <span class="drawer-count-label text-white/70 text-xs">
+            <span class="drawer-count">0</span> message(s)
+          </span>
+        </div>
+
+        
+        <div class="dismissed-messages-list max-h-[320px] overflow-y-auto">
+          
+          <div class="dismissed-empty-state px-4 py-8 text-center text-text/60">
+            <i class="fas fa-inbox text-2xl mb-2 opacity-40"></i>
+            <p class="text-sm empty-text">No hidden messages</p>
+          </div>
+        </div>
+
+        
+        <div class="dismissed-drawer-footer px-4 py-3 bg-background-100 border-t border-secondary/50 flex items-center justify-between">
+          <button class="restore-all-btn text-xs text-primary hover:text-accent transition-colors flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled>
+            <i class="fas fa-redo-alt"></i>
+            <span class="restore-all-text">Restore all</span>
+          </button>
+          <span class="hint-text text-xs text-text/40 italic">Click to restore</span>
+        </div>
+
+      </div>
+
+      
+      <div class="drawer-arrow absolute -bottom-2 right-4 w-4 h-4 bg-background border-r border-b border-secondary transform rotate-45"></div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+  window.dismissedMessagesTranslations = {
+    indicator: {
+      ariaLabel: "Show hidden messages",
+      tooltip: "Hidden messages"
+    },
+    drawer: {
+      title: "Hidden Messages",
+      messagesLabel: "message(s)",
+      empty: "No hidden messages",
+      restoreAll: "Restore all",
+      hint: "Click to restore",
+      restored: "Message restored"
+    },
+    message: {
+      restore: "Restore",
+      dismissedAt: "Hidden on"
+    }
+  };
+</script>
+
+<script src="../../../js/dismissed-messages-indicator.js"></script>
+
+
+    
+    <script src="../../../js/storage/consent-modal.js"></script>
+    <script src="../../../js/storage/storage-indicator.js"></script>
+    <script src="../../../js/storage/storage-manager.js"></script>
+    <script src="../../../js/email-obfuscation.js"></script>
+
+    
+    <script src="../../../js/header-autohide.js" defer></script>
+
+    
+    
+</body>
+
+</html>
