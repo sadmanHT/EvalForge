@@ -62,6 +62,16 @@ REQUIRED_EXPANDED = REQUIRED_ANCHOR + '''    "datasets/incident_diagnosis/raw/pu
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
 '''
 
+KIND_ASSERTION_OLD = (
+    '        assert candidate.preserved_primary_source_kind in {"git_blob", "github_issue"}\n'
+)
+KIND_ASSERTION_NEW = '''        assert candidate.preserved_primary_source_kind in {
+            "git_blob",
+            "github_issue",
+            "http_document",
+        }
+'''
+
 
 def replace_once(path: Path, old: str, new: str) -> None:
     text = path.read_text(encoding="utf-8")
@@ -76,11 +86,7 @@ def main() -> int:
     contract_path = root / "scripts/check_phase3_contract.py"
 
     replace_once(test_path, PRESERVED_IDS_OLD, PRESERVED_IDS_NEW)
-    replace_once(
-        test_path,
-        'candidate.preserved_primary_source_kind in {"git_blob", "github_issue"}',
-        'candidate.preserved_primary_source_kind in {"git_blob", "github_issue", "http_document"}',
-    )
+    replace_once(test_path, KIND_ASSERTION_OLD, KIND_ASSERTION_NEW)
     replace_once(contract_path, REQUIRED_ANCHOR, REQUIRED_EXPANDED)
     replace_once(contract_path, CONTRACT_DISTRIBUTION_OLD, CONTRACT_DISTRIBUTION_NEW)
     replace_once(
