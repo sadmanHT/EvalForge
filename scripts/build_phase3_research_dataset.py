@@ -12,7 +12,11 @@ from app.data.audit import audit_dataset
 from app.data.io import write_jsonl
 from app.data.manifest import build_manifest
 from app.data.postmortems import inspect_candidate_coverage, load_candidate_index
-from app.data.primary_sources import load_primary_source_manifest
+from app.data.primary_sources import (
+    load_primary_source_manifest,
+    load_primary_source_plan,
+    validate_primary_source_preservation,
+)
 from app.data.research import (
     build_research_records_and_families,
     load_research_admission_plan,
@@ -35,30 +39,46 @@ def _sha256(path: Path) -> str:
 def build_research_outputs(root: Path) -> dict[str, str]:
     config_path = root / "configs/dataset.yaml"
     config = json.loads(config_path.read_text(encoding="utf-8"))
-    plan_path = root / "configs/phase3-research-admissions.json"
+    admission_plan_path = root / "configs/phase3-research-admissions.json"
     index_path = root / "configs/postmortem-candidates.json"
     taxonomy_path = root / "configs/label-taxonomy.yaml"
+    primary_plan_path = root / "configs/phase3-primary-sources.json"
     primary_manifest_path = (
         root
         / "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/manifest.json"
     )
 
-    plan = load_research_admission_plan(plan_path)
+    admission_plan = load_research_admission_plan(admission_plan_path)
     index = load_candidate_index(index_path)
     taxonomy = load_taxonomy(taxonomy_path)
+    primary_plan = load_primary_source_plan(primary_plan_path)
     primary_manifest = load_primary_source_manifest(primary_manifest_path)
+    preservation = validate_primary_source_preservation(
+        root,
+        index,
+        primary_plan,
+        primary_manifest,
+    )
     coverage = inspect_candidate_coverage(index, taxonomy)
 
-    if config["research_dataset_version"] != plan.dataset_version:
+    if config["research_dataset_version"] != admission_plan.dataset_version:
         raise ValueError("research dataset version disagrees with admission plan")
-    if config["split_seed"] != plan.split_seed:
+    if config["split_seed"] != admission_plan.split_seed:
         raise ValueError("research split seed disagrees with admission plan")
-    if coverage.admitted_research_record_count != len(plan.candidate_ids):
+    if preservation.preserved_candidate_count != len(admission_plan.candidate_ids):
+        raise ValueError("research admission does not cover every preserved supported family")
+    if not preservation.preserved_supported_family_depth_sufficient_for_split:
+        raise ValueError("preserved primary-source family depth is insufficient")
+    if coverage.admitted_research_record_count != len(admission_plan.candidate_ids):
         raise ValueError("candidate coverage does not reflect the explicit admission plan")
     if not coverage.taxonomy_coverage_sufficient_for_locked_holdout:
         raise ValueError("candidate coverage is not sufficient for a locked holdout")
 
-    records, families = build_research_records_and_families(index, plan, taxonomy)
+    records, families = build_research_records_and_families(
+        index,
+        admission_plan,
+        taxonomy,
+    )
     audit = audit_dataset(records, families, taxonomy, research_mode=True)
     if not audit.passed:
         raise ValueError(
@@ -71,7 +91,7 @@ def build_research_outputs(root: Path) -> dict[str, str]:
     }
     candidate_by_id = {candidate.candidate_id: candidate for candidate in index.candidates}
     source_snapshots: list[SourceSnapshot] = []
-    for candidate_id in sorted(plan.candidate_ids):
+    for candidate_id in sorted(admission_plan.candidate_ids):
         candidate = candidate_by_id[candidate_id]
         snapshot = snapshots_by_candidate.get(candidate_id)
         if snapshot is None:
@@ -91,17 +111,18 @@ def build_research_outputs(root: Path) -> dict[str, str]:
                 source_uri=candidate.original_url,
                 notes=(
                     "Independent public production-incident source admitted by explicit "
-                    f"Phase 03 plan {plan.admission_version}."
+                    f"Phase 03 plan {admission_plan.admission_version}."
                 ),
             )
         )
 
+    planned_ids = set(admission_plan.candidate_ids)
     captured_times = [
         datetime.fromisoformat(snapshot.captured_at.replace("Z", "+00:00"))
         for snapshot in primary_manifest.snapshots
-        if snapshot.candidate_id in set(plan.candidate_ids)
+        if snapshot.candidate_id in planned_ids
     ]
-    if len(captured_times) != len(plan.candidate_ids):
+    if len(captured_times) != len(admission_plan.candidate_ids):
         raise ValueError("primary-source capture timestamps are incomplete")
     generated_at = max(captured_times)
 
@@ -128,8 +149,8 @@ def build_research_outputs(root: Path) -> dict[str, str]:
     difficulty_counts = Counter(record.difficulty_tier.value for record in records)
     summary = {
         "dataset_version": version,
-        "admission_version": plan.admission_version,
-        "split_seed": plan.split_seed,
+        "admission_version": admission_plan.admission_version,
+        "split_seed": admission_plan.split_seed,
         "record_count": len(records),
         "independent_family_count": len(families),
         "synthetic_record_count": sum(record.is_synthetic for record in records),
@@ -151,36 +172,33 @@ def build_research_outputs(root: Path) -> dict[str, str]:
     _write_json(output / "class-split-summary.json", summary)
     _write_json(output / "leakage-audit-report.json", audit.model_dump(mode="json"))
 
+    record_by_candidate = {
+        record.source_provenance.source_record_id: record for record in records
+    }
     admission_summary = {
-        "admission_version": plan.admission_version,
+        "admission_version": admission_plan.admission_version,
         "candidate_index_version": index.index_version,
         "primary_source_manifest_version": primary_manifest.manifest_version,
-        "candidate_count": len(plan.candidate_ids),
+        "candidate_count": len(admission_plan.candidate_ids),
         "candidates": [
             {
                 "candidate_id": candidate_id,
                 "root_cause_code": candidate_by_id[candidate_id].proposed_root_cause_code,
-                "incident_id": next(
-                    record.incident_id
-                    for record in records
-                    if record.source_provenance.source_record_id == candidate_id
-                ),
-                "family_id": next(
-                    record.incident_family_id
-                    for record in records
-                    if record.source_provenance.source_record_id == candidate_id
-                ),
-                "split": next(
-                    record.split.value
-                    for record in records
-                    if record.source_provenance.source_record_id == candidate_id
-                ),
+                "incident_id": record_by_candidate[candidate_id].incident_id,
+                "family_id": record_by_candidate[candidate_id].incident_family_id,
+                "split": record_by_candidate[candidate_id].split.value,
                 "original_url": candidate_by_id[candidate_id].original_url,
-                "primary_source_path": candidate_by_id[candidate_id].preserved_primary_source_path,
-                "primary_source_sha256": candidate_by_id[candidate_id].preserved_primary_source_sha256,
-                "primary_source_kind": candidate_by_id[candidate_id].preserved_primary_source_kind,
+                "primary_source_path": candidate_by_id[
+                    candidate_id
+                ].preserved_primary_source_path,
+                "primary_source_sha256": candidate_by_id[
+                    candidate_id
+                ].preserved_primary_source_sha256,
+                "primary_source_kind": candidate_by_id[
+                    candidate_id
+                ].preserved_primary_source_kind,
             }
-            for candidate_id in sorted(plan.candidate_ids)
+            for candidate_id in sorted(admission_plan.candidate_ids)
         ],
     }
     _write_json(output / "research-admission-summary.json", admission_summary)
@@ -209,7 +227,7 @@ def build_research_outputs(root: Path) -> dict[str, str]:
         schema_version=config["schema_version"],
         label_taxonomy_version=config["label_taxonomy_version"],
         source_snapshots=source_snapshots,
-        split_seed=plan.split_seed,
+        split_seed=admission_plan.split_seed,
         generated_at=generated_at,
         records=records,
         families=families,
