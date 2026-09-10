@@ -10,6 +10,11 @@ from pathlib import Path
 from app.data.audit import audit_dataset
 from app.data.io import read_jsonl
 from app.data.postmortems import inspect_candidate_coverage, load_candidate_index
+from app.data.primary_sources import (
+    load_primary_source_manifest,
+    load_primary_source_plan,
+    validate_primary_source_preservation,
+)
 from app.data.schemas import IncidentFamily, IncidentRecord
 from app.data.servicenow import inspect_servicenow_archive
 from app.data.taxonomy import load_taxonomy
@@ -17,11 +22,17 @@ from app.data.taxonomy import load_taxonomy
 REQUIRED = (
     "configs/dataset.yaml",
     "configs/postmortem-candidates.json",
+    "configs/phase3-primary-sources.json",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/README.md",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/SHA256SUMS.txt",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/dispatcharr-1416.snapshot.json",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/manifest.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/medoc-n-plus-one.primary.md",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
     "datasets/incident_diagnosis/raw/README.md",
     (
         "datasets/incident_diagnosis/raw/opssentinel/"
@@ -34,11 +45,14 @@ REQUIRED = (
     "backend/app/data/audit.py",
     "backend/app/data/opssentinel.py",
     "backend/app/data/postmortems.py",
+    "backend/app/data/primary_sources.py",
     "backend/app/data/servicenow.py",
     "training/dataset_prep.py",
     "scripts/audit_dataset.py",
     "scripts/check_phase3_reproducibility.py",
     "scripts/fetch_phase3_sources.py",
+    "scripts/preserve_phase3_primary_sources.py",
+    "scripts/sync_phase3_evidence.py",
     "scripts/check_phase3_exit.py",
     "docs/data-card.md",
     "docs/phase-03-handoff.md",
@@ -141,6 +155,40 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth")
     if set(coverage.supported_family_counts_by_root_cause_code.values()) != {3}:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth_counts")
+    if coverage.preserved_original_source_count != 4:
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_preservation_count")
+    if coverage.preserved_family_counts_by_root_cause_code != {
+        "broken_payment_configuration": 0,
+        "database_connection_leak": 1,
+        "disk_exhaustion": 0,
+        "memory_leak": 0,
+        "n_plus_one_query": 3,
+        "no_fault": 0,
+    }:
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_preservation_distribution")
+    if coverage.preserved_family_depth_sufficient_for_split:
+        raise SystemExit("PHASE03_CONTRACT=FAIL premature_primary_source_family_depth")
+
+    preservation_plan = load_primary_source_plan(root / "configs/phase3-primary-sources.json")
+    preservation_manifest = load_primary_source_manifest(
+        root
+        / "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/manifest.json"
+    )
+    preservation = validate_primary_source_preservation(
+        root,
+        postmortem_index,
+        preservation_plan,
+        preservation_manifest,
+    )
+    if preservation.preserved_candidate_count != 4:
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_count")
+    if preservation.preserved_supported_family_counts_by_root_cause_code != (
+        coverage.preserved_family_counts_by_root_cause_code
+    ):
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_distribution")
+    if preservation.preserved_supported_family_depth_sufficient_for_split:
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_depth")
+
     public_snapshot_dir = (
         root / "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1"
     )
@@ -193,6 +241,7 @@ def main() -> int:
     print(f"CI_SMOKE_FAMILIES={len(families)}")
     print(f"PUBLIC_POSTMORTEM_CANDIDATES={coverage.candidate_count}")
     print(f"PUBLIC_POSTMORTEM_SUPPORTED_MAPPINGS={coverage.supported_mapping_count}")
+    print(f"PRESERVED_PRIMARY_SOURCES={preservation.preserved_candidate_count}")
     return 0
 
 

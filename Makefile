@@ -2,7 +2,7 @@ SHELL := /bin/bash
 PYTHON ?= python
 NPM ?= npm
 
-.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch
+.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch phase3-primary-source-check
 
 format:
 	cd backend && ruff check --fix app tests
@@ -10,8 +10,8 @@ format:
 	cd frontend && $(NPM) run format
 
 lint:
-	cd backend && ruff check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../training/dataset_prep.py
-	cd backend && ruff format --check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../training/dataset_prep.py
+	cd backend && ruff check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py
+	cd backend && ruff format --check app tests ../scripts/audit_dataset.py ../scripts/build_phase3_candidate.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/fetch_phase3_sources.py ../scripts/preserve_phase3_primary_sources.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py
 	cd frontend && $(NPM) run format:check
 	cd frontend && $(NPM) run lint
 
@@ -24,7 +24,7 @@ test:
 	cd frontend && $(NPM) test -- --run
 
 test-phase3:
-	cd backend && pytest tests/data/test_phase3_data.py --cov=app.data --cov-report=term-missing --cov-fail-under=90
+	cd backend && pytest tests/data/test_phase3_data.py tests/data/test_phase3_primary_sources.py --cov=app.data --cov-report=term-missing --cov-fail-under=90
 
 test-integration:
 	cd backend && pytest tests/integration -m integration
@@ -54,6 +54,9 @@ phase3-contract:
 phase3-source-fetch:
 	$(PYTHON) scripts/fetch_phase3_sources.py
 
+phase3-primary-source-check:
+	$(PYTHON) scripts/preserve_phase3_primary_sources.py
+
 phase3-exit:
 	$(PYTHON) scripts/check_phase3_exit.py
 
@@ -73,7 +76,7 @@ secrets:
 worker-smoke:
 	$(PYTHON) scripts/worker_smoke.py
 
-verify-all: lint typecheck test test-phase3 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check smoke eval-smoke frontend-build secrets
+verify-all: lint typecheck test test-phase3 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check phase3-primary-source-check smoke eval-smoke frontend-build secrets
 
 fresh-smoke:
 	docker compose down -v --remove-orphans

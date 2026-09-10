@@ -33,6 +33,9 @@ class PostmortemCandidate(StrictModel):
     evidence_summary: str = Field(min_length=1)
     decision_reason: str = Field(min_length=1)
     original_source_snapshot_preserved: bool
+    preserved_primary_source_path: str | None = Field(default=None, min_length=1)
+    preserved_primary_source_sha256: str | None = Field(default=None, min_length=64, max_length=64)
+    preserved_primary_source_kind: str | None = Field(default=None, min_length=1)
     research_admitted: bool
 
     @model_validator(mode="after")
@@ -44,6 +47,20 @@ class PostmortemCandidate(StrictModel):
             and self.mapping_basis != "narrative_root_cause"
         ):
             raise ValueError("supported mappings require narrative_root_cause basis")
+
+        preservation_fields = (
+            self.preserved_primary_source_path,
+            self.preserved_primary_source_sha256,
+            self.preserved_primary_source_kind,
+        )
+        if self.original_source_snapshot_preserved:
+            if any(value is None for value in preservation_fields):
+                raise ValueError(
+                    "preserved original-source evidence requires path, checksum, and kind"
+                )
+        elif any(value is not None for value in preservation_fields):
+            raise ValueError("primary-source preservation metadata requires preserved-source flag")
+
         if self.research_admitted:
             if self.decision != CandidateDecision.SUPPORTED:
                 raise ValueError("research admission requires a supported mapping")
@@ -78,6 +95,9 @@ class PostmortemCoverageReport(StrictModel):
     supported_root_cause_codes: list[str]
     supported_family_counts_by_root_cause_code: dict[str, int]
     supported_family_depth_sufficient_for_split: bool
+    preserved_original_source_count: int
+    preserved_family_counts_by_root_cause_code: dict[str, int]
+    preserved_family_depth_sufficient_for_split: bool
     missing_root_cause_codes: list[str]
     admitted_research_record_count: int
     taxonomy_coverage_sufficient_for_locked_holdout: bool
@@ -106,17 +126,29 @@ def inspect_candidate_coverage(
         if item.decision == CandidateDecision.SUPPORTED
     }
     admitted = [item for item in index.candidates if item.research_admitted]
+    preserved = [
+        item
+        for item in index.candidates
+        if item.decision == CandidateDecision.SUPPORTED and item.original_source_snapshot_preserved
+    ]
     decision_counts = Counter(item.decision.value for item in index.candidates)
     supported_counts = Counter(
         item.proposed_root_cause_code
         for item in index.candidates
         if item.decision == CandidateDecision.SUPPORTED
     )
+    preserved_counts = Counter(item.proposed_root_cause_code for item in preserved)
     supported_family_counts = {
         code: supported_counts.get(code, 0) for code in sorted(taxonomy_codes)
     }
+    preserved_family_counts = {
+        code: preserved_counts.get(code, 0) for code in sorted(taxonomy_codes)
+    }
     supported_family_depth_sufficient = all(
         count >= 3 for count in supported_family_counts.values()
+    )
+    preserved_family_depth_sufficient = all(
+        count >= 3 for count in preserved_family_counts.values()
     )
     missing = sorted(taxonomy_codes - supported)
     return PostmortemCoverageReport(
@@ -131,6 +163,9 @@ def inspect_candidate_coverage(
         supported_root_cause_codes=sorted(supported),
         supported_family_counts_by_root_cause_code=supported_family_counts,
         supported_family_depth_sufficient_for_split=supported_family_depth_sufficient,
+        preserved_original_source_count=len(preserved),
+        preserved_family_counts_by_root_cause_code=preserved_family_counts,
+        preserved_family_depth_sufficient_for_split=preserved_family_depth_sufficient,
         missing_root_cause_codes=missing,
         admitted_research_record_count=len(admitted),
         taxonomy_coverage_sufficient_for_locked_holdout=(
@@ -149,6 +184,10 @@ def inspect_candidate_coverage(
             (
                 "supported candidate mappings are not research-admitted until "
                 "original incident evidence is preserved"
+            ),
+            (
+                "preserved-source counts describe checksum-validated original-source "
+                "artifacts and do not by themselves create canonical research records"
             ),
             "keyword or title matches alone are insufficient for label admission",
         ],

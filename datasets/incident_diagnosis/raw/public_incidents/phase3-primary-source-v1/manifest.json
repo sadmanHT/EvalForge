@@ -1,0 +1,50 @@
+{
+  "manifest_version": "phase3-primary-source-manifest-v1",
+  "plan_version": "phase3-primary-source-preservation-v1",
+  "snapshots": [
+    {
+      "byte_length": 7031,
+      "candidate_id": "dify:issue-40036:2026-08-05:n-plus-one",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/langgenius/dify/issues/40036",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
+      "snapshot_sha256": "74a1dfcdab883babd8c358e2ab336b6d9397299e2468750f2f62c9f66b439fee",
+      "source_identity": "github_issue:langgenius/dify#40036"
+    },
+    {
+      "byte_length": 16094,
+      "candidate_id": "github:Dispatcharr:issue-1416:2026-07-06",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
+      "snapshot_sha256": "6bedb460a3a5ee1a2711cb75c21cd715e4295223dbd81ef91a561b394aee4f14",
+      "source_identity": "github_issue:Dispatcharr/Dispatcharr#1416"
+    },
+    {
+      "byte_length": 4247,
+      "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "text/plain",
+      "original_url": "https://nikhil-gautam-dev.github.io/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened/",
+      "snapshot_kind": "git_blob",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/medoc-n-plus-one.primary.md",
+      "snapshot_sha256": "9f4a5cd6f31d39404b8f3ac41963ca536a4f480d2e8693ee3421a310029f9ddf",
+      "source_identity": "git_blob:Nikhil-Gautam-dev/nikhil-gautam-dev.github.io@34d1ecc14b54166608b4197c44e1e7efc82e48b6:src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md:750ba91067e5e4d2e192a3eceffec357a58e9d77"
+    },
+    {
+      "byte_length": 10443,
+      "candidate_id": "openlibrary:issue-12432:2026-04-22:n-plus-one",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/internetarchive/openlibrary/issues/12432",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
+      "snapshot_sha256": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904",
+      "source_identity": "github_issue:internetarchive/openlibrary#12432"
+    }
+  ]
+}

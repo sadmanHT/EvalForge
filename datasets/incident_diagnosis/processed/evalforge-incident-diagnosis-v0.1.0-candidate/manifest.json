@@ -21,7 +21,7 @@
     "Supported public-postmortem candidate mappings are not research-admitted until original primary-source evidence is preserved.",
     "Keyword/title matches are not accepted as root-cause evidence; false friends and contributing factors are explicitly rejected."
   ],
-  "manifest_checksum": "e930382e74bbd28034b900fc7d575fe424eaf6e8d914e204148b3bc5a866bedd",
+  "manifest_checksum": "a3c51e47c9d34f93bfdf5e2d1dbde4028cba8427bd60614013913b9d7abc766d",
   "record_count": 0,
   "research_ready": false,
   "schema_version": "incident-schema-v1",
@@ -64,7 +64,7 @@
       "research_eligible_as_independent_heldout_evidence": false,
       "snapshot_identity_kind": "evalforge_candidate_index_sha256",
       "snapshot_path": "configs/postmortem-candidates.json",
-      "snapshot_sha256": "f21939484c37eff7f34b8ec62bf3348fd87301620eba57b7d4d689655a39c355",
+      "snapshot_sha256": "9ed5836df7c8c5da5fc4b194c0ab7e258f03225c35db641f2e794ce5559c6758",
       "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
       "source_generated": false,
       "source_license": "GPL-3.0",

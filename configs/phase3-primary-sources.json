@@ -1,0 +1,56 @@
+{
+  "plan_version": "phase3-primary-source-preservation-v1",
+  "entries": [
+    {
+      "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/medoc-n-plus-one.primary.md",
+      "kind": "git_blob",
+      "repository": "Nikhil-Gautam-dev/nikhil-gautam-dev.github.io",
+      "commit": "34d1ecc14b54166608b4197c44e1e7efc82e48b6",
+      "source_path": "src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md",
+      "expected_git_blob_sha": "750ba91067e5e4d2e192a3eceffec357a58e9d77",
+      "issue_number": null,
+      "evidence_markers": [
+        "N+1 query problem",
+        "6,000+ database calls",
+        "4 seconds"
+      ]
+    },
+    {
+      "candidate_id": "openlibrary:issue-12432:2026-04-22:n-plus-one",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
+      "kind": "github_issue",
+      "repository": "internetarchive/openlibrary",
+      "issue_number": 12432,
+      "evidence_markers": [
+        "3.8 million calls",
+        "28:1 ratio",
+        "get_many(keys)"
+      ]
+    },
+    {
+      "candidate_id": "dify:issue-40036:2026-08-05:n-plus-one",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
+      "kind": "github_issue",
+      "repository": "langgenius/dify",
+      "issue_number": 40036,
+      "evidence_markers": [
+        "N+1 pattern",
+        "~740 GB",
+        "page-1 SQL itself is sub-millisecond"
+      ]
+    },
+    {
+      "candidate_id": "github:Dispatcharr:issue-1416:2026-07-06",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
+      "kind": "github_issue",
+      "repository": "Dispatcharr/Dispatcharr",
+      "issue_number": 1416,
+      "evidence_markers": [
+        "never returned to the pool",
+        "stays pinned at 8/8",
+        "Negative control"
+      ]
+    }
+  ]
+}
