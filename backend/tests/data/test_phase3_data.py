@@ -356,7 +356,7 @@ def test_public_postmortem_candidate_coverage_is_conservative() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     coverage = inspect_candidate_coverage(index, TAXONOMY)
-    assert coverage.candidate_count == 23
+    assert coverage.candidate_count == 24
     assert coverage.supported_mapping_count == 18
     assert coverage.supported_root_cause_codes == [
         "broken_payment_configuration",
@@ -399,6 +399,24 @@ def test_postmortem_keyword_false_friends_are_not_admitted() -> None:
     assert not incident_io.research_admitted
 
 
+def test_restricted_visa_source_is_rejected_and_public_replacement_is_supported() -> None:
+    root = Path(__file__).resolve().parents[3]
+    index = load_candidate_index(root / "configs/postmortem-candidates.json")
+    by_id = {item.candidate_id: item for item in index.candidates}
+
+    visa = by_id["visa-cybersource:2026-04-28:payer-auth-misconfiguration"]
+    assert visa.decision == CandidateDecision.REJECTED
+    assert visa.mapping_basis == "public_republication_restricted"
+    assert not visa.original_source_snapshot_preserved
+    assert not visa.research_admitted
+
+    replacement = by_id["elevenlabs:2026-04-22:billing-system-misconfiguration"]
+    assert replacement.decision == CandidateDecision.SUPPORTED
+    assert replacement.proposed_root_cause_code == "broken_payment_configuration"
+    assert replacement.original_source_snapshot_preserved
+    assert not replacement.research_admitted
+
+
 def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
@@ -425,6 +443,12 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         "git-nrw:2025-05-09:wal-disk-full",
         "coderden:2026-02-19:database-connection-leak",
         "altapay:2026-07-15:shopify-3ds-firewall-config",
+        "atlassian:CRUC-8168:bonecp-connection-leak",
+        "fastly:2023-02-28:cloud-waf-false-alarm",
+        "gitlab:INC-889:2025-05-12:false-alarm-version-skew",
+        "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+        "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+        "elevenlabs:2026-04-22:billing-system-misconfiguration",
     }
     assert {
         item.candidate_id for item in supported if item.original_source_snapshot_preserved
@@ -444,6 +468,7 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         "github:Dispatcharr:issue-1416:2026-07-06": "database_connection_leak",
         "google-cloud-status:E18Caoo5X1m6dTa1PVr1": "broken_payment_configuration",
         "google-cloud-status:fLYHLzSGXGkLkAjc8MJG": "no_fault",
+        "elevenlabs:2026-04-22:billing-system-misconfiguration": "broken_payment_configuration",
     }
     for candidate_id, label in expected_normalized_snapshots.items():
         candidate = by_id[candidate_id]
@@ -453,9 +478,4 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         assert hashlib.sha1(header + snapshot).hexdigest() == candidate.source_blob_sha
         assert not candidate.research_admitted
 
-    for candidate_id in (
-        "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
-        "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
-    ):
-        assert not by_id[candidate_id].original_source_snapshot_preserved
     assert all(not item.research_admitted for item in supported)

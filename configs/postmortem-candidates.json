@@ -25,13 +25,16 @@
       "decision_reason": "Vendor issue record directly describes database connections not being returned to the pool and resulting application unresponsiveness.",
       "evidence_summary": "Atlassian tracked a Crucible production bug in which the application became unresponsive after running for a period of time. The failure was attributed to BoneCP database connections not being returned to the pool, leaving database connections unavailable to the application. Restarting the application restored service temporarily, consistent with exhausted leaked pool state. Atlassian classified the issue as a major bug and fixed it in subsequent Crucible releases.",
       "mapping_basis": "narrative_root_cause",
-      "original_source_snapshot_preserved": false,
+      "original_source_snapshot_preserved": true,
       "original_url": "https://jira.atlassian.com/browse/CRUC-8168",
       "proposed_root_cause_code": "database_connection_leak",
       "research_admitted": false,
       "source_blob_sha": "a48534b7bc1c89189aeade7883bc7358e65c1bd1",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/atlassian-CRUC-8168-database-connection-leak.snapshot.json",
-      "title": "BoneCP connections are not returned to pool"
+      "title": "BoneCP connections are not returned to pool",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/atlassian-CRUC-8168-connection-leak.primary.html",
+      "preserved_primary_source_sha256": "cfaa3028a2edfff5e31be8f77fefd82d7d5c652e555ca5fe4525f49dbc0f9411",
+      "preserved_primary_source_kind": "http_document"
     },
     {
       "candidate_id": "coderden:2026-02-19:database-connection-leak",
@@ -88,19 +91,40 @@
       "preserved_primary_source_kind": "http_document"
     },
     {
+      "candidate_id": "elevenlabs:2026-04-22:billing-system-misconfiguration",
+      "company": "ElevenLabs",
+      "decision": "supported_candidate_mapping",
+      "decision_reason": "Official first-party status incident explicitly identifies a billing-system misconfiguration as the root cause of payment-processing/subscription provisioning impact.",
+      "evidence_summary": "ElevenLabs investigated payment-processing issues affecting ElevenAPI on April 22, 2026. The official update identified a billing-system misconfiguration that delayed subscription provisioning; error rates returned to baseline and full resolution was confirmed.",
+      "mapping_basis": "narrative_root_cause",
+      "original_source_snapshot_preserved": true,
+      "original_url": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65",
+      "proposed_root_cause_code": "broken_payment_configuration",
+      "research_admitted": false,
+      "source_blob_sha": "13f3f456266f8bb0c0632f22aa1a672511eb3350",
+      "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/elevenlabs-2026-04-22-payment-configuration.snapshot.json",
+      "title": "Payment Issues",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/elevenlabs-2026-billing-misconfiguration.primary.html",
+      "preserved_primary_source_sha256": "a7574408bb85db0b150c668a0e3688ca5d87fae15114602334c9dc011a480345",
+      "preserved_primary_source_kind": "http_document"
+    },
+    {
       "candidate_id": "fastly:2023-02-28:cloud-waf-false-alarm",
       "company": "Fastly",
       "decision": "supported_candidate_mapping",
       "decision_reason": "Official status record explicitly resolves an apparent service degradation as a false alarm with no elevated errors.",
       "evidence_summary": "Fastly initially posted that it was investigating elevated Cloud WAF errors. Customer Incident Response later changed the event from degraded performance to available/informational after investigation. Fastly explicitly confirmed the status update was a false alarm and that there were no elevated Cloud WAF errors. Other locations and services were unaffected throughout the investigation.",
       "mapping_basis": "narrative_root_cause",
-      "original_source_snapshot_preserved": false,
+      "original_source_snapshot_preserved": true,
       "original_url": "https://fastly.status.page/incidents?componentId=510172",
       "proposed_root_cause_code": "no_fault",
       "research_admitted": false,
       "source_blob_sha": "9adb1407a6bd6fdfd13db0d4d05e8334f7de5835",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/fastly-2023-02-28-no-fault.snapshot.json",
-      "title": "(False Alarm) Cloud WAF Performance Issues"
+      "title": "(False Alarm) Cloud WAF Performance Issues",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/fastly-2023-cloud-waf-false-alarm.primary.html",
+      "preserved_primary_source_sha256": "0494cc7e7ed85f058d148e8dbdb7612deb5a3292bb019316494c03871ee79099",
+      "preserved_primary_source_kind": "http_document"
     },
     {
       "candidate_id": "git-nrw:2025-05-09:wal-disk-full",
@@ -165,13 +189,16 @@
       "decision_reason": "Primary production incident tracker explicitly concludes false alarm/no customer impact after a visible deployment-related distractor, matching the no_fault control semantics.",
       "evidence_summary": "GitLab opened an incident because production component versions appeared out of sync across zonal clusters after deployment. Investigation determined the condition was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited. No traffic was reaching the lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.",
       "mapping_basis": "narrative_root_cause",
-      "original_source_snapshot_preserved": false,
+      "original_source_snapshot_preserved": true,
       "original_url": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
       "proposed_root_cause_code": "no_fault",
       "research_admitted": false,
       "source_blob_sha": "922c2d4340b9c00638ff0398f1e58cada8d544e6",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/gitlab-2025-05-12-no-fault.snapshot.json",
-      "title": "GitLab Versions differ across zonal clusters"
+      "title": "GitLab Versions differ across zonal clusters",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/gitlab-2025-version-skew-false-alarm.primary.html",
+      "preserved_primary_source_sha256": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58",
+      "preserved_primary_source_kind": "http_document"
     },
     {
       "candidate_id": "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
@@ -180,13 +207,16 @@
       "decision_reason": "The official incident root-cause section directly identifies a payment configuration update as the trigger for failed credit-card payment processing, and rollback of that configuration resolved the failure.",
       "evidence_summary": "A production payment-configuration update intended for virtual credit cards prevented affected U.S. credit-card payments from processing until engineers rolled back the configuration change.",
       "mapping_basis": "narrative_root_cause",
-      "original_source_snapshot_preserved": false,
+      "original_source_snapshot_preserved": true,
       "original_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
       "proposed_root_cause_code": "broken_payment_configuration",
       "research_admitted": false,
       "source_blob_sha": "8057f42f29b92d39c0f5ad7750f2c711d8405212",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-payment-E18Caoo5X1m6dTa1PVr1.snapshot.json",
-      "title": "Payment configuration update prevented U.S. credit-card processing"
+      "title": "Payment configuration update prevented U.S. credit-card processing",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2021-payment-config.primary.html",
+      "preserved_primary_source_sha256": "eea8b6dcae6709ce9505abc408f34070e95221beb6e51e27ca4f65cfd3da4697",
+      "preserved_primary_source_kind": "http_document"
     },
     {
       "candidate_id": "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
@@ -195,13 +225,16 @@
       "decision_reason": "The final official investigation states that the suspected ingestion incident had no service degradation and no supported CrowdStrike alerts were missed, making it a defensible real-world negative-control candidate for no_fault.",
       "evidence_summary": "An operationally visible suspected ingestion issue was investigated and the final supported-service finding was healthy: no service degradation and no supported CrowdStrike alerts missed.",
       "mapping_basis": "narrative_root_cause",
-      "original_source_snapshot_preserved": false,
+      "original_source_snapshot_preserved": true,
       "original_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
       "proposed_root_cause_code": "no_fault",
       "research_admitted": false,
       "source_blob_sha": "e819f1fb774dfc5b3b6164c3c8c4d90b82a883a4",
       "source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/google-no-fault-fLYHLzSGXGkLkAjc8MJG.snapshot.json",
-      "title": "Mandiant Managed Defense reported ingestion issue resolved as no degradation"
+      "title": "Mandiant Managed Defense reported ingestion issue resolved as no degradation",
+      "preserved_primary_source_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2024-mandiant-no-fault.primary.html",
+      "preserved_primary_source_sha256": "ce831f782145f04586142801593b75c8c5a2615d5914896a19e5532332754fd0",
+      "preserved_primary_source_kind": "http_document"
     },
     {
       "candidate_id": "honeycomb:2019-11-06:running-dry-on-memory",
@@ -371,10 +404,10 @@
     {
       "candidate_id": "visa-cybersource:2026-04-28:payer-auth-misconfiguration",
       "company": "Visa Acceptance / Cybersource",
-      "decision": "supported_candidate_mapping",
-      "decision_reason": "Official payment-platform post-incident report directly attributes checkout authentication failures to a configuration misconfiguration.",
+      "decision": "rejected_as_primary_mapping",
+      "decision_reason": "The official PIR is publicly indexed but explicitly marked confidential and prohibits copying/distribution. EvalForge therefore keeps the review trace but rejects it as a primary mapping for a public immutable benchmark rather than republishing restricted text.",
       "evidence_summary": "Cybersource reported an incident affecting the Payer Authentication setup service on April 28, 2026. A configuration issue caused some authentication requests routed through one data center not to complete as expected. The root cause was a misconfiguration in the data center health-check mapping introduced during a prior change. Cardholders could see checkout errors or need to retry transactions; rollback/correction restored payer-authentication behavior.",
-      "mapping_basis": "narrative_root_cause",
+      "mapping_basis": "public_republication_restricted",
       "original_source_snapshot_preserved": false,
       "original_url": "https://support.visaacceptance.com/_entity/annotation/c9e6d35e-3744-f111-88b4-0022480ac605",
       "proposed_root_cause_code": "broken_payment_configuration",
@@ -384,7 +417,7 @@
       "title": "Post-Incident Report: Payer Authentication Setup Errors"
     }
   ],
-  "index_version": "phase3-public-postmortem-candidates-v6",
+  "index_version": "phase3-public-postmortem-candidates-v7",
   "source": {
     "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
     "license": "GPL-3.0",
