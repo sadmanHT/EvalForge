@@ -1,209 +1,180 @@
-# EvalForge Incident Diagnosis Data Card — Phase 03 Candidate
+# EvalForge Incident Diagnosis Data Card — v0.1.0
 
-**Status:** Research benchmark **not yet lockable**. All six frozen labels now have at least one defensible independent candidate mapping, but preserved original-source evidence and per-label independent family depth are still insufficient for a credible locked holdout.
-
-**Candidate dataset version:** `evalforge-incident-diagnosis-v0.1.0-candidate`  
+**Status:** Locked Phase 03 research benchmark.  
+**Research dataset version:** `evalforge-incident-diagnosis-v0.1.0`  
+**Candidate/provenance dataset:** `evalforge-incident-diagnosis-v0.1.0-candidate`  
 **Canonical schema:** `incident-schema-v1`  
 **Label taxonomy:** `1.0.0`  
-**Split seed reserved for an eligible corpus:** `20260908`
+**Research admission plan:** `phase3-research-admission-v1`  
+**Family split seed:** `20260908`
 
 ## Purpose
 
-EvalForge needs a leakage-safe incident-diagnosis benchmark for the same four primary study arms: zero-shot, RAG, fine-tuned, and combined. The independence unit is the incident family, not an individual row. Synthetic augmentation may occur only after family splitting and only from training families.
+EvalForge uses this dataset as the common leakage-safe benchmark for later zero-shot, RAG, fine-tuned, and combined incident-diagnosis experiments. The primary target is the frozen `root_cause_code`. The unit of statistical independence is the **incident family**, not a row and not a synthetic variant.
 
-## Source inventory
+Phase 03 intentionally locks the family assignment before any augmentation. Later phases may add synthetic training descendants, but they may not move families, synthesize validation/test evidence, or use test outcomes to select prompts, retrievers, calibration settings, checkpoints, or fine-tuning hyperparameters.
 
-Phase 03 tracks three primary provenance roles, with direct normalized public-incident snapshots attached to the candidate index.
+## Frozen label taxonomy
 
-| Source | Nature | Scale | EvalForge role | Primary labeled holdout eligible? |
-| --- | --- | ---: | --- | --- |
-| OpsSentinel BenchmarkLab | Programmatically generated controlled scenarios | 50 scenarios | controlled/source-candidate engineering data | No |
-| UCI dataset 498 / ServiceNow incident-management event log | Real anonymized operational incident events | 141,712 events / 24,918 incidents | real-world auxiliary/robustness corpus | No |
-| postmortems.app + directly reviewed public incidents | Public real-incident discovery plus normalized candidate snapshots | 11 conservatively reviewed candidates | independent incident candidate discovery | Not yet |
+The research corpus contains exactly three independent public production-incident families for each frozen label:
 
-### OpsSentinel controlled source
+| Root-cause code | Category | Independent families |
+| --- | --- | ---: |
+| `n_plus_one_query` | `database_behavior` | 3 |
+| `database_connection_leak` | `database_behavior` | 3 |
+| `disk_exhaustion` | `resource_exhaustion` | 3 |
+| `memory_leak` | `resource_exhaustion` | 3 |
+| `broken_payment_configuration` | `configuration` | 3 |
+| `no_fault` | `control` | 3 |
+| **Total** |  | **18** |
 
-The read-only snapshot of `sadmanHT/OpsSentinel` is pinned at commit:
+Changing these labels requires an explicit taxonomy version bump and comparability review.
 
-`fae661fc1634aad6a3855a1dec8dcddb16a890dd`
+## Source and admission policy
 
-The pinned BenchmarkLab release contains **50 programmatically generated scenarios**. EvalForge preserved a normalized semantic snapshot under:
+The candidate ledger contains **24 reviewed public-incident candidates**. Eighteen have a supported narrative root-cause mapping, all eighteen have checksum-validated primary-source preservation, and exactly those eighteen are explicitly research-admitted by `configs/phase3-research-admissions.json`.
 
-`datasets/incident_diagnosis/raw/opssentinel/fae661fc1634aad6a3855a1dec8dcddb16a890dd/release-catalog.snapshot.json`
+Preservation alone is not admission. The admission gate requires all of the following simultaneously:
 
-Snapshot SHA-256:
+- a supported mapping based on narrative root-cause evidence rather than keyword/title matching;
+- a checksum-validated preserved primary-source artifact;
+- membership in the explicit admission manifest;
+- exactly three admitted independent families for every frozen label;
+- no unsupported, unpreserved, or partially admitted candidate.
 
-`b4828ac9793d64c7850c7bbd6c262d4e7a89db0fd09346a9ed72a48f82dc8241`
+Each canonical record retains the original source URL, preserved artifact path, preservation kind, SHA-256, candidate ID, and mapping basis in its provenance/metadata. The record description and evidence are conservative human-reviewed evidence summaries, not newly inferred facts.
 
-For fresh-clone transport, the exact snapshot is losslessly stored as deterministic gzip+base64 (`release-catalog.snapshot.json.gz.b64`, SHA-256 `7c00bfd3a1a2dd01f3848153c0d06f2f8f875a0588379cf02960e120754034fb`). `scripts/fetch_phase3_sources.py` reconstructs the original JSON bytes and verifies the snapshot SHA before the cumulative gate.
+### Republication-restricted source handling
 
-No OpsSentinel file was changed.
+The Visa Acceptance / Cybersource April 28, 2026 payer-authentication PIR remains in the review ledger but is **not** research-admitted. Although publicly indexed, the source explicitly restricts copying/distribution. EvalForge therefore does not republish that primary document into the public repository. It is recorded as `rejected_as_primary_mapping` with `public_republication_restricted` as the mapping basis.
 
-#### Upstream counts
+A separate public ElevenLabs April 22, 2026 payment incident supplies the third `broken_payment_configuration` family. Its first-party status report explicitly attributes payment/subscription provisioning impact to a billing-system misconfiguration.
 
-| Upstream split | Scenarios |
-| --- | ---: |
-| dev | 30 |
-| validation | 10 |
-| hidden_test | 10 |
-| **total** | **50** |
+## Locked split
 
-These are **upstream benchmark assignments**, not EvalForge research splits.
+`backend/app/data/split.py` performs deterministic family-stratified assignment from the frozen seed `20260908`. Family IDs are created before splitting and are stable functions of the admitted candidate identities.
 
-#### Primary root-cause distribution
+Because the corpus has exactly three independent families per label, the locked assignment is intentionally balanced as follows:
 
-| Root-cause code | Count |
-| --- | ---: |
-| `database_connection_leak` | 14 |
-| `n_plus_one_query` | 11 |
-| `broken_payment_configuration` | 9 |
-| `disk_exhaustion` | 8 |
-| `memory_leak` | 7 |
-| `no_fault` | 1 |
+| Split | Independent families | Canonical records | Families per label |
+| --- | ---: | ---: | ---: |
+| train | 6 | 6 | 1 |
+| validation | 6 | 6 | 1 |
+| test | 6 | 6 | 1 |
+| **Total** | **18** | **18** | **3** |
 
-#### Difficulty distribution
+Every canonical family currently contains one independently sourced incident record. No family ID appears in more than one split.
 
-| Difficulty | Count |
-| --- | ---: |
-| easy | 10 |
-| medium | 12 |
-| hard | 12 |
-| adversarial | 8 |
-| compound | 8 |
+The actual deterministic assignment is stored in:
 
-The 50 OpsSentinel scenarios are constructed by deterministic benchmark-definition code. They are useful engineering fixtures and source candidates, but they are not independent production incident evidence. EvalForge infers generation-family identity rather than trusting individual scenario IDs. Under that stricter grouping, **three inferred generation families cross the upstream source splits**:
-
-- `opssentinel:single_noisy_dependency:n_plus_one` — dev and validation
-- `opssentinel:single_noisy_dependency:connection_leak` — dev and validation
-- `opssentinel:misleading_change_temporal:connection_leak` — validation and hidden_test
-
-Therefore the upstream dev/validation/hidden-test assignment must not be reused as the EvalForge research split.
-
-### UCI / ServiceNow real operational auxiliary source
-
-The reviewed UCI dataset 498 / ServiceNow archive is materialized at the following path by `python scripts/fetch_phase3_sources.py` (the user-provided equivalent archive remains preserved in the Phase 03 working evidence):
-
-`datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip`
-
-Canonical inner `incident_event_log.csv` SHA-256:
-
-`fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef`
-
-Two ZIP transport envelopes were independently verified to contain that exact CSV payload:
-
-- user-provided Kaggle/mirror ZIP: `3ea92768cb2cfada908dd601b057d7066127fe75dc8fe19e4abaa1c6766a6c13`
-- official UCI download verified in GitHub Actions on 2026-09-08: `6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6`
-
-EvalForge therefore treats the inner CSV checksum as the scientific snapshot identity and the ZIP checksum as a transport-envelope integrity check. Fresh CI checkouts fetch the official reviewed envelope and reject any unreviewed transport or changed CSV payload before the cumulative gate. A different CSV payload is not accepted as the same source.
-
-The source contains **141,712 event rows over 24,918 unique incidents** and 36 attributes. It is real operational data extracted from a ServiceNow instance and anonymized by the publishers. It is licensed CC BY 4.0 and identified by DOI `10.24432/C57S4H`.
-
-Incident-level field availability in the preserved archive:
-
-| Field | Incidents with a non-missing value |
-| --- | ---: |
-| `category` | 24,911 |
-| `subcategory` | 24,910 |
-| `u_symptom` | 19,405 |
-| `problem_id` | 381 |
-| `rfc` | 179 |
-| `caused_by` | 3 |
-| `closed_code` | 24,811 |
-| `cmdb_ci` | 56 |
-
-This source improves real-world coverage but **does not provide trustworthy human-readable RCA labels** for EvalForge's frozen taxonomy. The publishers omitted textual attributes and anonymized categorical values. EvalForge therefore does not guess that anonymous `Category N`, `Symptom N`, `closed_code`, `problem_id`, or RFC identifiers correspond to labels such as `memory_leak`, `n_plus_one_query`, or `database_connection_leak`.
-
-It is retained as a real-world auxiliary/robustness corpus, not as the primary labeled research holdout.
-
-### Public incident candidate discovery
-
-EvalForge pins the public `icco/postmortems` / postmortems.app discovery corpus at commit:
-
-`42bac673432f564d317dbfc30b5d400e1812c684`
-
-The candidate decision index is `configs/postmortem-candidates.json` (index SHA-256 `7f8c2bfb0651e80aa00987bd8a938b55dc1a1fadc523b5679506338e4786fc2c`). postmortems.app remains a discovery/index source rather than automatic ground truth. Directly reviewed external candidates may instead point to normalized EvalForge snapshots under `datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/`; each such snapshot has a pinned Git blob and SHA-256 checksum and explicitly records that it is not a byte-for-byte original-source archive.
-
-Eleven independent public-incident candidates have now been conservatively reviewed against the frozen taxonomy. Six are strong candidate mappings, one for every frozen label:
-
-| Candidate | Proposed label | Decision | Why |
-| --- | --- | --- | --- |
-| Amazon EBS, 2012-10-22 | `memory_leak` | supported candidate | narrative explicitly identifies progressive agent memory consumption |
-| Tarsnap, 2016-07-24 | `disk_exhaustion` | supported candidate | unbounded local log fills filesystem and service writes fail |
-| Medoc, 2026-01-11 | `n_plus_one_query` | supported candidate | firsthand production narrative explicitly identifies N+1, 6,000+ DB calls, and batching as the fix |
-| Dispatcharr #1416, 2026-07-06 | `database_connection_leak` | supported candidate | PostgreSQL connection is not returned on stream teardown; pool stays 8/8 and DB-dependent requests wedge until restart |
-| Google Cloud payments, 2021-09-22 | `broken_payment_configuration` | supported candidate | official root cause is a payment-configuration update that prevents credit-card processing until rollback |
-| Google Cloud / Mandiant, 2024-09-18 | `no_fault` | supported candidate | final official investigation reports no service degradation and no supported CrowdStrike alerts missed |
-| incident.io GKE incident | `n_plus_one_query` | rejected as primary | N+1 join is a contributing issue; persistent root cause is `anetd` CPU saturation/packet loss |
-| Twilio billing, 2013 | `broken_payment_configuration` | ambiguous | incorrect Redis configuration contributes, but the incident is a broader multi-causal chain |
-| Elastic Cloud, 2019 | `database_connection_leak` | rejected as primary | connection leaks are Kibana/remediation issues, not established DB-connection root cause |
-| Cloudflare parser incident | `memory_leak` | rejected false friend | memory disclosure from buffer over-read is not runtime memory exhaustion |
-| Skyliner, 2017 | `memory_leak` | insufficient evidence | pinned index entry is too thin for a locked family/evidence record |
-
-Candidate-level taxonomy coverage is therefore **6/6**, but this does **not** make the research benchmark ready. None of the eleven candidates is research-admitted. The three new direct snapshots are normalized semantic evidence rather than byte-for-byte originals; Amazon/Tarsnap originals are not yet preserved; Medoc is pinned to an external Git commit/blob but not yet materialized as an EvalForge original-source archive. In addition, one strong family per label is not enough to create a credible family-stratified train/validation/test split while retaining independent families in every required role.
-
-## Current canonical research counts
-
-| EvalForge research split | Eligible labeled records |
-| --- | ---: |
-| train | 0 |
-| validation | 0 |
-| test | 0 |
-
-This is intentional. EvalForge does **not** manufacture held-out labels by rebranding generated OpsSentinel scenarios or by guessing semantics from anonymized ServiceNow codes.
-
-## Required benchmark expansion
-
-Before Phase 03 can be completed, EvalForge must expand and preserve the independent postmortem corpus until the frozen taxonomy has enough trustworthy family coverage to create a meaningful non-empty validation and locked test set while retaining enough training families. The actual counts must be determined from the acquired corpus; no predetermined “50 test cases” target is forced.
-
-Each independent source incident must provide enough provenance to establish family identity, canonical root-cause label, evidence, and source eligibility. If multiple rows are descendants or variants of the same real incident, they must share one family and remain in one split.
-
-## Planned split method for an eligible corpus
-
-1. Normalize and validate canonical labels against taxonomy `1.0.0`.
-2. Assign incident-family IDs before any augmentation.
-3. Stratify deterministic family assignments by root-cause label using split seed `20260908`.
-4. Lock train/validation/test family membership.
-5. Only then generate synthetic descendants from training parents.
-6. Never select prompts, retrieval settings, calibration parameters, fine-tuning hyperparameters, or checkpoints from test outcomes.
-
-The implementation is in `backend/app/data/split.py`.
+- `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/incidents.jsonl`
+- `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/families.jsonl`
+- `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/research-admission-summary.json`
+- `datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/class-split-summary.json`
 
 ## Synthetic augmentation policy
 
-A canonical synthetic descendant must:
+The locked v0.1.0 base dataset contains **zero synthetic records**.
 
-- be in `train`;
+Any later synthetic descendant must be created only after this split and must:
+
+- belong to `train`;
 - name a valid `parent_incident_id`;
 - inherit the parent's `incident_family_id`;
 - record generator model ID and exact revision;
 - record generator prompt version;
-- have a parent that is itself an independent training record.
+- have an independent training record as its parent.
 
-Synthetic validation or test descendants are forbidden.
+Synthetic validation/test examples are prohibited. Synthetic volume never increases the number of independent families or the amount of independent held-out evidence.
 
-## Leakage audits
+## Leakage audit
 
-`python scripts/audit_dataset.py <dataset_dir> --research-mode` checks:
+The research-mode audit in `backend/app/data/audit.py` and `scripts/audit_dataset.py` checks:
 
 - cross-split family overlap;
-- exact and near-duplicate incident text across splits;
-- root-cause label/category validity;
-- synthetic parent existence and split/family consistency;
-- independently eligible source provenance for research validation/test records;
+- exact duplicate and near-duplicate incident text across splits;
+- canonical label/category validity;
+- synthetic parent existence and train/family consistency;
+- source eligibility for validation/test records;
 - forbidden held-out incident/family identifier references in training artifacts;
+- family membership/split consistency;
 - class distribution and difficulty-tier coverage.
 
-Severe imbalance and missing difficulty tiers are reported instead of silently hidden.
+The committed v0.1.0 benchmark must have **zero error-severity audit findings** before `research_ready=true` is written. The generated leakage report is archived at:
+
+`datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/leakage-audit-report.json`
+
+The only expected distribution warning is `MISSING_DIFFICULTY_TIERS`: the reviewed sources do not provide a defensible common difficulty rubric, so Phase 03 uses `unknown` rather than inventing easy/medium/hard labels.
+
+## Manifest and reproducibility
+
+The research manifest records:
+
+- dataset version;
+- canonical schema version;
+- frozen taxonomy version;
+- all 18 source snapshot identities and SHA-256 values;
+- split seed;
+- deterministic generation timestamp derived from the latest admitted primary-source capture timestamp;
+- content checksum;
+- manifest checksum;
+- record/family and split counts;
+- explicit research-ready status and limitations.
+
+Rebuilding from the same committed configs and raw public-source snapshots must reproduce byte-identical:
+
+- `incidents.jsonl`;
+- `families.jsonl`;
+- `manifest.json`;
+- `leakage-audit-report.json`;
+- `class-split-summary.json`;
+- `research-admission-summary.json`.
+
+Use:
+
+```bash
+python scripts/admit_phase3_research_records.py
+python scripts/build_phase3_research_dataset.py
+python scripts/check_phase3_research_reproducibility.py
+python scripts/check_phase3_exit.py
+make verify-all
+```
+
+The admission command above is verification-only in the committed state; mutation requires the explicit one-time `--apply` transition from candidate-index v7 to v8.
+
+## Other reviewed data sources
+
+### OpsSentinel BenchmarkLab
+
+The pinned EvalForge input references `sadmanHT/OpsSentinel` at commit `fae661fc1634aad6a3855a1dec8dcddb16a890dd`. Its 50 BenchmarkLab scenarios are programmatically generated. They remain useful controlled engineering fixtures but are **not** independent research holdout evidence and are excluded from the 18 research families. EvalForge does not modify the OpsSentinel project.
+
+The source also contains inferred generation-family overlap across its upstream dev/validation/hidden-test assignments, so those upstream split labels are not reused for EvalForge research evaluation.
+
+### UCI / ServiceNow dataset 498
+
+The auxiliary ServiceNow event log contains 141,712 events over 24,918 incidents. The canonical `incident_event_log.csv` SHA-256 is `fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef`.
+
+It is real operational data, but the anonymized categorical fields do not provide trustworthy human-readable RCA labels for EvalForge's frozen taxonomy. It is therefore retained only as an auxiliary/robustness corpus and contributes zero independent research families to v0.1.0.
+
+### Public postmortem discovery ledger
+
+The `icco/postmortems` discovery corpus is pinned at commit `42bac673432f564d317dbfc30b5d400e1812c684`. postmortems.app is used for discovery and provenance review, not as automatic label ground truth. Direct external incidents are also reviewed and normalized into the same candidate ledger. The primary source for every admitted family is separately preserved and checksum-validated.
 
 ## CI smoke data
 
-`datasets/incident_diagnosis/fixtures/ci_smoke/` is deterministic **non-research fixture data**. It exists only to test schemas, splitting/audit behavior, serialization, and augmentation lineage. It must never contribute a benchmark result.
+`datasets/incident_diagnosis/fixtures/ci_smoke/` is deterministic **non-research fixture data**. It exists only to exercise schema, split, audit, serialization, and augmentation invariants in CI. It must never contribute a benchmark result.
 
 ## Known limitations
 
-- Independent public-incident candidates now provide at least one strong candidate mapping for all six frozen labels, but none is research-admitted; original-source preservation and sufficient per-label independent family depth remain outstanding.
-- The ServiceNow/UCI corpus is real-world operational data but lacks trustworthy human-readable root-cause semantics for the frozen taxonomy.
-- The OpsSentinel BenchmarkLab catalog is generated and therefore cannot supply independent held-out evidence.
-- The upstream OpsSentinel source assignments contain inferred generation-family overlap.
-- RAG document provenance/eligibility is not implemented until its later phase; the Phase 03 dataset rules establish the held-out-family boundary it must respect.
-- No model benchmark results are produced in Phase 03.
+- **Small independent sample:** three families per label is the minimum depth that permits one independent family for each label in train, validation, and test. Leakage safety does not make this a large statistical sample.
+- **One training family per label:** later model optimization must be interpreted cautiously. Synthetic descendants may increase training examples but not independent evidence.
+- **Difficulty tiers unavailable:** all v0.1.0 records use `unknown`; this limitation is surfaced by the audit rather than concealed.
+- **Source heterogeneity:** reports vary in detail, publisher style, incident age, and operational context. Canonicalization preserves conservative evidence summaries and provenance instead of forcing unsupported metadata.
+- **No Phase 03 model results:** this phase establishes the benchmark only. It makes no claim about which model/pipeline performs best.
+- **RAG leakage boundary established, not yet indexed:** later retrieval work must exclude held-out-family historical incident material from train-time/tuning retrieval. RAG implementation belongs to a later phase.
+
+## Evaluation restrictions
+
+The test split is locked. Later phases may not choose prompts, retrieval settings, calibration parameters, checkpoints, adapters, or fine-tuning hyperparameters from test outcomes. All four primary pipelines must ultimately use the same frozen held-out incident IDs and deterministic evaluation code.
+
+No primary metric may depend on an LLM judge when deterministic root-cause labels exist. No synthetic descendant may be presented as independent validation/test evidence.
