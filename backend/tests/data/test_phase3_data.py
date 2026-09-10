@@ -417,6 +417,14 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         "github:Dispatcharr:issue-1416:2026-07-06",
         "openlibrary:issue-12432:2026-04-22:n-plus-one",
         "dify:issue-40036:2026-08-05:n-plus-one",
+        "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+        "honeycomb:2019-11-06:running-dry-on-memory",
+        "dnsimple:2015-05-09:san-jose-memory-leak",
+        "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+        "soundcloud:2011-08-24:binlog-disk-full",
+        "git-nrw:2025-05-09:wal-disk-full",
+        "coderden:2026-02-19:database-connection-leak",
+        "altapay:2026-07-15:shopify-3ds-firewall-config",
     }
     assert {
         item.candidate_id for item in supported if item.original_source_snapshot_preserved
@@ -425,7 +433,11 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         candidate = by_id[candidate_id]
         assert candidate.preserved_primary_source_path
         assert candidate.preserved_primary_source_sha256
-        assert candidate.preserved_primary_source_kind in {"git_blob", "github_issue"}
+        assert candidate.preserved_primary_source_kind in {
+            "git_blob",
+            "github_issue",
+            "http_document",
+        }
         assert not candidate.research_admitted
 
     expected_normalized_snapshots = {

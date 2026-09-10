@@ -33,6 +33,14 @@ REQUIRED = (
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/aws-2012-memory-leak.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/honeycomb-2019-memory-leak.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dnsimple-2015-memory-leak.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/tarsnap-2016-disk-full.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/soundcloud-2011-binlog-disk-full.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
     "datasets/incident_diagnosis/raw/README.md",
     (
         "datasets/incident_diagnosis/raw/opssentinel/"
@@ -155,13 +163,13 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth")
     if set(coverage.supported_family_counts_by_root_cause_code.values()) != {3}:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth_counts")
-    if coverage.preserved_original_source_count != 4:
+    if coverage.preserved_original_source_count != 12:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_preservation_count")
     if coverage.preserved_family_counts_by_root_cause_code != {
-        "broken_payment_configuration": 0,
-        "database_connection_leak": 1,
-        "disk_exhaustion": 0,
-        "memory_leak": 0,
+        "broken_payment_configuration": 1,
+        "database_connection_leak": 2,
+        "disk_exhaustion": 3,
+        "memory_leak": 3,
         "n_plus_one_query": 3,
         "no_fault": 0,
     }:
@@ -180,7 +188,7 @@ def main() -> int:
         preservation_plan,
         preservation_manifest,
     )
-    if preservation.preserved_candidate_count != 4:
+    if preservation.preserved_candidate_count != 12:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_count")
     if preservation.preserved_supported_family_counts_by_root_cause_code != (
         coverage.preserved_family_counts_by_root_cause_code

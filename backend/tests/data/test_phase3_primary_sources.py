@@ -57,15 +57,21 @@ def test_primary_source_plan_rejects_incomplete_source_identity() -> None:
             candidate_id="candidate",
             snapshot_path="snapshot.md",
             kind=PrimarySourceKind.GIT_BLOB,
-            repository="example/repo",
             evidence_markers=["root cause"],
         )
-    with pytest.raises(ValidationError, match="GitHub issue primary sources require issue_number"):
+    with pytest.raises(ValidationError, match="GitHub issue primary sources require"):
         PrimarySourcePlanEntry(
             candidate_id="candidate",
             snapshot_path="snapshot.json",
             kind=PrimarySourceKind.GITHUB_ISSUE,
             repository="example/repo",
+            evidence_markers=["root cause"],
+        )
+    with pytest.raises(ValidationError, match="HTTP document primary sources require"):
+        PrimarySourcePlanEntry(
+            candidate_id="candidate",
+            snapshot_path="snapshot.html",
+            kind=PrimarySourceKind.HTTP_DOCUMENT,
             evidence_markers=["root cause"],
         )
 
@@ -149,6 +155,31 @@ def test_github_issue_payload_validates_identity_and_markers() -> None:
         )
 
 
+def test_http_document_payload_validates_visible_text_and_url() -> None:
+    entry = PrimarySourcePlanEntry(
+        candidate_id="candidate",
+        snapshot_path="snapshot.html",
+        kind=PrimarySourceKind.HTTP_DOCUMENT,
+        source_url="https://example.invalid/postmortem",
+        evidence_markers=["slow memory leak", "service recovered"],
+    )
+    payload = (
+        b"<html><body><h1>Incident</h1><p>A slow <strong>memory leak</strong> "
+        b"caused errors.</p><script>not evidence</script><p>Service recovered.</p></body></html>"
+    )
+    validate_snapshot_payload(
+        entry,
+        original_url="https://example.invalid/postmortem",
+        payload=payload,
+    )
+    with pytest.raises(ValueError, match="HTTP document original URL mismatch"):
+        validate_snapshot_payload(
+            entry,
+            original_url="https://example.invalid/other",
+            payload=payload,
+        )
+
+
 def test_committed_primary_source_wave_is_checksum_valid_and_nonadmitted() -> None:
     root = repository_root()
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
@@ -159,12 +190,12 @@ def test_committed_primary_source_wave_is_checksum_valid_and_nonadmitted() -> No
         / "phase3-primary-source-v1/manifest.json"
     )
     report = validate_primary_source_preservation(root, index, plan, manifest)
-    assert report.preserved_candidate_count == 4
+    assert report.preserved_candidate_count == 12
     assert report.preserved_supported_family_counts_by_root_cause_code == {
-        "broken_payment_configuration": 0,
-        "database_connection_leak": 1,
-        "disk_exhaustion": 0,
-        "memory_leak": 0,
+        "broken_payment_configuration": 1,
+        "database_connection_leak": 2,
+        "disk_exhaustion": 3,
+        "memory_leak": 3,
         "n_plus_one_query": 3,
         "no_fault": 0,
     }

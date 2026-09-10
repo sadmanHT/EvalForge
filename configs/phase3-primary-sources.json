@@ -1,5 +1,5 @@
 {
-  "plan_version": "phase3-primary-source-preservation-v1",
+  "plan_version": "phase3-primary-source-preservation-v2",
   "entries": [
     {
       "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
@@ -50,6 +50,94 @@
         "never returned to the pool",
         "stays pinned at 8/8",
         "Negative control"
+      ]
+    },
+    {
+      "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/aws-2012-memory-leak.primary.html",
+      "kind": "http_document",
+      "source_url": "https://aws.amazon.com/message/680342/",
+      "evidence_markers": [
+        "latent memory leak bug",
+        "slowly consumed system memory",
+        "memory-exhausted"
+      ]
+    },
+    {
+      "candidate_id": "honeycomb:2019-11-06:running-dry-on-memory",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/honeycomb-2019-memory-leak.primary.html",
+      "kind": "http_document",
+      "source_url": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+      "evidence_markers": [
+        "slow memory leak",
+        "all backends crashed within minutes",
+        "reverted the bad commit"
+      ]
+    },
+    {
+      "candidate_id": "dnsimple:2015-05-09:san-jose-memory-leak",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dnsimple-2015-memory-leak.primary.html",
+      "kind": "http_document",
+      "source_url": "https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/",
+      "evidence_markers": [
+        "causing a slow memory leak",
+        "running out of memory",
+        "upgrading the software on our network switches"
+      ]
+    },
+    {
+      "candidate_id": "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/tarsnap-2016-disk-full.primary.html",
+      "kind": "http_document",
+      "source_url": "http://mail.tarsnap.com/tarsnap-announce/msg00035.html",
+      "evidence_markers": [
+        "filesystem becoming full",
+        "fills the filesystem",
+        "immediate shutdown"
+      ]
+    },
+    {
+      "candidate_id": "soundcloud:2011-08-24:binlog-disk-full",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/soundcloud-2011-binlog-disk-full.primary.html",
+      "kind": "http_document",
+      "source_url": "https://developers.soundcloud.com/blog/doing-the-right-thing/",
+      "evidence_markers": [
+        "3GB/min of binlogs",
+        "partition filled up from 10GB to 100GB",
+        "disk filled, the binlog corrupted"
+      ]
+    },
+    {
+      "candidate_id": "git-nrw:2025-05-09:wal-disk-full",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
+      "kind": "http_document",
+      "source_url": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/",
+      "evidence_markers": [
+        "replication had silently stopped",
+        "disk filled up with WAL transaction logs",
+        "Service was completely unavailable"
+      ]
+    },
+    {
+      "candidate_id": "coderden:2026-02-19:database-connection-leak",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
+      "kind": "http_document",
+      "source_url": "https://engineering.coderden.in/posts/database-connection-exhaustion-incident/",
+      "evidence_markers": [
+        "missing defer rows.Close()",
+        "database connection was never returned to the pool",
+        "Fixed the connection leak"
+      ]
+    },
+    {
+      "candidate_id": "altapay:2026-07-15:shopify-3ds-firewall-config",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
+      "kind": "http_document",
+      "source_url": "https://status.altapay.com/history/1",
+      "evidence_markers": [
+        "change in firewall configuration",
+        "unable to finalize their payments at checkout",
+        "payment processing is fully functional"
       ]
     }
   ]

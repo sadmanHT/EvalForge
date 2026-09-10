@@ -4,6 +4,7 @@ import hashlib
 import json
 from collections import Counter
 from enum import StrEnum
+from html.parser import HTMLParser
 from pathlib import Path
 
 from pydantic import Field, model_validator
@@ -15,35 +16,53 @@ from app.data.schemas import StrictModel
 class PrimarySourceKind(StrEnum):
     GIT_BLOB = "git_blob"
     GITHUB_ISSUE = "github_issue"
+    HTTP_DOCUMENT = "http_document"
 
 
 class PrimarySourcePlanEntry(StrictModel):
     candidate_id: str = Field(min_length=1)
     snapshot_path: str = Field(min_length=1)
     kind: PrimarySourceKind
-    repository: str = Field(min_length=3)
+    repository: str | None = Field(default=None, min_length=3)
     evidence_markers: list[str] = Field(min_length=1)
     commit: str | None = Field(default=None, min_length=40, max_length=40)
     source_path: str | None = Field(default=None, min_length=1)
     expected_git_blob_sha: str | None = Field(default=None, min_length=40, max_length=40)
     issue_number: int | None = Field(default=None, ge=1)
+    source_url: str | None = Field(default=None, min_length=1)
 
     @model_validator(mode="after")
     def validate_source_identity(self) -> PrimarySourcePlanEntry:
         if len(self.evidence_markers) != len(set(self.evidence_markers)):
             raise ValueError("primary-source evidence markers must be unique")
         if self.kind == PrimarySourceKind.GIT_BLOB:
-            if not self.commit or not self.source_path or not self.expected_git_blob_sha:
+            if (
+                not self.repository
+                or not self.commit
+                or not self.source_path
+                or not self.expected_git_blob_sha
+            ):
                 raise ValueError(
-                    "git-blob primary sources require commit, source_path, and blob SHA"
+                    "git-blob primary sources require repository, commit, source_path, and blob SHA"
                 )
-            if self.issue_number is not None:
-                raise ValueError("git-blob primary sources must not define issue_number")
+            if self.issue_number is not None or self.source_url is not None:
+                raise ValueError("git-blob primary sources must not define issue or HTTP fields")
         elif self.kind == PrimarySourceKind.GITHUB_ISSUE:
-            if self.issue_number is None:
-                raise ValueError("GitHub issue primary sources require issue_number")
-            if self.commit or self.source_path or self.expected_git_blob_sha:
-                raise ValueError("GitHub issue primary sources must not define git-blob fields")
+            if not self.repository or self.issue_number is None:
+                raise ValueError("GitHub issue primary sources require repository and issue_number")
+            if self.commit or self.source_path or self.expected_git_blob_sha or self.source_url:
+                raise ValueError("GitHub issue primary sources must not define git or HTTP fields")
+        else:
+            if not self.source_url:
+                raise ValueError("HTTP document primary sources require source_url")
+            if (
+                self.repository
+                or self.issue_number is not None
+                or self.commit
+                or self.source_path
+                or self.expected_git_blob_sha
+            ):
+                raise ValueError("HTTP document primary sources must only define source_url")
         return self
 
 
@@ -99,6 +118,26 @@ class PrimarySourcePreservationReport(StrictModel):
     candidate_ids: list[str]
 
 
+class _VisibleTextParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self._ignored_depth = 0
+        self.parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        del attrs
+        if tag.casefold() in {"script", "style"}:
+            self._ignored_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.casefold() in {"script", "style"} and self._ignored_depth:
+            self._ignored_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if not self._ignored_depth:
+            self.parts.append(data)
+
+
 def load_primary_source_plan(path: Path) -> PrimarySourcePlan:
     return PrimarySourcePlan.model_validate(json.loads(path.read_text(encoding="utf-8")))
 
@@ -117,9 +156,18 @@ def git_blob_sha(payload: bytes) -> str:
     return hashlib.sha1(header + payload).hexdigest()  # noqa: S324
 
 
+def _html_visible_text(payload: bytes) -> str:
+    parser = _VisibleTextParser()
+    parser.feed(payload.decode("utf-8", errors="replace"))
+    parser.close()
+    return " ".join(" ".join(parser.parts).split())
+
+
 def source_evidence_text(payload: bytes, kind: PrimarySourceKind) -> str:
     if kind == PrimarySourceKind.GIT_BLOB:
         return payload.decode("utf-8")
+    if kind == PrimarySourceKind.HTTP_DOCUMENT:
+        return _html_visible_text(payload)
     issue = json.loads(payload)
     title = issue.get("title")
     body = issue.get("body")
@@ -152,18 +200,25 @@ def validate_snapshot_payload(
                 f"git blob SHA mismatch for {entry.candidate_id}: "
                 f"expected={entry.expected_git_blob_sha} actual={actual_blob_sha}"
             )
-    else:
-        issue = json.loads(payload)
+    elif entry.kind == PrimarySourceKind.GITHUB_ISSUE:
+        assert entry.repository is not None
         expected_url = f"https://github.com/{entry.repository}/issues/{entry.issue_number}"
         if original_url != expected_url:
             raise ValueError(
                 f"candidate original URL mismatch for {entry.candidate_id}: "
                 f"expected={expected_url} actual={original_url}"
             )
+        issue = json.loads(payload)
         if issue.get("html_url") != expected_url:
             raise ValueError(f"GitHub issue snapshot URL mismatch for {entry.candidate_id}")
         if issue.get("number") != entry.issue_number:
             raise ValueError(f"GitHub issue snapshot number mismatch for {entry.candidate_id}")
+    else:
+        if original_url != entry.source_url:
+            raise ValueError(
+                f"HTTP document original URL mismatch for {entry.candidate_id}: "
+                f"expected={entry.source_url} actual={original_url}"
+            )
 
 
 def validate_primary_source_preservation(

@@ -1,7 +1,29 @@
 {
-  "manifest_version": "phase3-primary-source-manifest-v1",
-  "plan_version": "phase3-primary-source-preservation-v1",
+  "manifest_version": "phase3-primary-source-manifest-v2",
+  "plan_version": "phase3-primary-source-preservation-v2",
   "snapshots": [
+    {
+      "byte_length": 424841,
+      "candidate_id": "altapay:2026-07-15:shopify-3ds-firewall-config",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://status.altapay.com/history/1",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
+      "snapshot_sha256": "35724fda340daa48c15790382892a2a5ba218a6afd74ffb35ea425b35445a603",
+      "source_identity": "http_document:https://status.altapay.com/history/1"
+    },
+    {
+      "byte_length": 16555,
+      "candidate_id": "coderden:2026-02-19:database-connection-leak",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://engineering.coderden.in/posts/database-connection-exhaustion-incident/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
+      "snapshot_sha256": "df678020ec1a48872dbe897123d06edd840a422c1f1f9dd864cdb1cf9ad43193",
+      "source_identity": "http_document:https://engineering.coderden.in/posts/database-connection-exhaustion-incident/"
+    },
     {
       "byte_length": 7031,
       "candidate_id": "dify:issue-40036:2026-08-05:n-plus-one",
@@ -12,6 +34,28 @@
       "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
       "snapshot_sha256": "74a1dfcdab883babd8c358e2ab336b6d9397299e2468750f2f62c9f66b439fee",
       "source_identity": "github_issue:langgenius/dify#40036"
+    },
+    {
+      "byte_length": 24890,
+      "candidate_id": "dnsimple:2015-05-09:san-jose-memory-leak",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dnsimple-2015-memory-leak.primary.html",
+      "snapshot_sha256": "3f99f689c655b4061fde451afcdda942df94d082d76c0388ed1fee7c77f46821",
+      "source_identity": "http_document:https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/"
+    },
+    {
+      "byte_length": 79147,
+      "candidate_id": "git-nrw:2025-05-09:wal-disk-full",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
+      "snapshot_sha256": "a75f2af6cb23e09f23fa1646536a188d94eb955ed35a0cf276b09d6392a06572",
+      "source_identity": "http_document:https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/"
     },
     {
       "byte_length": 16094,
@@ -36,6 +80,17 @@
       "source_identity": "git_blob:Nikhil-Gautam-dev/nikhil-gautam-dev.github.io@34d1ecc14b54166608b4197c44e1e7efc82e48b6:src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md:750ba91067e5e4d2e192a3eceffec357a58e9d77"
     },
     {
+      "byte_length": 262626,
+      "candidate_id": "honeycomb:2019-11-06:running-dry-on-memory",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/honeycomb-2019-memory-leak.primary.html",
+      "snapshot_sha256": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35",
+      "source_identity": "http_document:https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing"
+    },
+    {
       "byte_length": 10443,
       "candidate_id": "openlibrary:issue-12432:2026-04-22:n-plus-one",
       "captured_at": "2026-09-09T04:33:37.515513Z",
@@ -45,6 +100,39 @@
       "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
       "snapshot_sha256": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904",
       "source_identity": "github_issue:internetarchive/openlibrary#12432"
+    },
+    {
+      "byte_length": 357931,
+      "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://aws.amazon.com/message/680342/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/aws-2012-memory-leak.primary.html",
+      "snapshot_sha256": "9ac91377227844b739a5870933a9519351a5b956e7ba219d99df3bba49857a1e",
+      "source_identity": "http_document:https://aws.amazon.com/message/680342/"
+    },
+    {
+      "byte_length": 10212,
+      "candidate_id": "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "http://mail.tarsnap.com/tarsnap-announce/msg00035.html",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/tarsnap-2016-disk-full.primary.html",
+      "snapshot_sha256": "e9b6e4928686b49e691de5087283ae154487672161adf121d5683516f0d01a3c",
+      "source_identity": "http_document:http://mail.tarsnap.com/tarsnap-announce/msg00035.html"
+    },
+    {
+      "byte_length": 66845,
+      "candidate_id": "soundcloud:2011-08-24:binlog-disk-full",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://developers.soundcloud.com/blog/doing-the-right-thing/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/soundcloud-2011-binlog-disk-full.primary.html",
+      "snapshot_sha256": "c771aec8541ea19540088c5cc89fbbd346d98e6f89805aac7a07d4d411819614",
+      "source_identity": "http_document:https://developers.soundcloud.com/blog/doing-the-right-thing/"
     }
   ]
 }
