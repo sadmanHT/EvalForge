@@ -25,6 +25,8 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     data_test = root / "backend/tests/data/test_phase3_data.py"
     primary_test = root / "backend/tests/data/test_phase3_primary_sources.py"
+    research_module = root / "backend/app/data/research.py"
+    research_builder = root / "scripts/build_phase3_research_dataset.py"
 
     replace_once(
         data_test,
@@ -68,6 +70,29 @@ def main() -> int:
         primary_test,
         "    assert all(not item.research_admitted for item in preserved)\n",
         "    assert all(item.research_admitted for item in preserved)\n",
+    )
+
+    replace_once(
+        research_module,
+        "    admitted = {candidate.candidate_id for candidate in index.candidates if candidate.research_admitted}\n",
+        "    admitted = {\n"
+        "        candidate.candidate_id\n"
+        "        for candidate in index.candidates\n"
+        "        if candidate.research_admitted\n"
+        "    }\n",
+    )
+    replace_once(
+        research_builder,
+        '            raise ValueError(f"research candidate lacks primary-source manifest entry: {candidate_id}")\n',
+        "            raise ValueError(\n"
+        '                f"research candidate lacks primary-source manifest entry: {candidate_id}"\n'
+        "            )\n",
+    )
+    replace_once(
+        research_builder,
+        '            "a defensible common difficulty rubric; the audit reports this rather than inventing tiers."\n',
+        '            "a defensible common difficulty rubric; the audit reports this rather than "\n'
+        '            "inventing tiers."\n',
     )
 
     print("PHASE03_RESEARCH_LOCK_EXPECTATION_MIGRATION=PASS")
