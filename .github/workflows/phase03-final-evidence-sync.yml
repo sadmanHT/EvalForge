@@ -1,0 +1,39 @@
+name: phase03-final-evidence-sync
+
+on:
+  push:
+    branches:
+      - phase-03-research-dataset-lock
+
+permissions:
+  contents: write
+
+jobs:
+  sync-evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-03-research-dataset-lock
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sync final Phase 03 evidence
+        run: python scripts/sync_phase3_evidence.py
+      - name: Stage evidence only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add evidence/phase-03
+          git diff --cached --name-only | tee /tmp/staged.txt
+          test -s /tmp/staged.txt
+          ! grep -v '^evidence/phase-03/' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/opssentinel/' /tmp/staged.txt
+          ! grep -q '^datasets/incident_diagnosis/raw/servicenow_uci/' /tmp/staged.txt
+      - name: Commit final evidence mirror
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'phase3-final-evidence-sync'
+          git push origin HEAD:phase-03-research-dataset-lock
