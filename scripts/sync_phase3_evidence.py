@@ -3,24 +3,27 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 from pathlib import Path
 
-VERSION = "evalforge-incident-diagnosis-v0.1.0-candidate"
-MIRRORS = {
+CANDIDATE_VERSION = "evalforge-incident-diagnosis-v0.1.0-candidate"
+RESEARCH_VERSION = "evalforge-incident-diagnosis-v0.1.0"
+CANDIDATE_MIRRORS = {
     "manifest.json": "candidate-manifest.json",
     "source-candidate-summary.json": "source-candidate-summary.json",
     "source-audit-report.json": "source-audit-report.json",
     "auxiliary-servicenow-summary.json": "auxiliary-servicenow-summary.json",
     "public-postmortem-candidate-coverage.json": "public-postmortem-candidate-coverage.json",
 }
-
-
-def write_json(path: Path, payload: object) -> None:
-    path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+RESEARCH_MIRRORS = {
+    "manifest.json": "research-manifest.json",
+    "leakage-audit-report.json": "leakage-audit-report.json",
+    "class-split-summary.json": "class-split-summary.json",
+    "research-admission-summary.json": "research-admission-summary.json",
+}
+DOC_MIRRORS = {
+    "docs/data-card.md": "data-card.md",
+    "docs/phase-03-handoff.md": "phase-03-handoff.md",
+}
 
 
 def main() -> int:
@@ -29,35 +32,25 @@ def main() -> int:
     args = parser.parse_args()
     root = args.root.resolve()
 
-    processed = root / "datasets/incident_diagnosis/processed" / VERSION
+    candidate = root / "datasets/incident_diagnosis/processed" / CANDIDATE_VERSION
+    research = root / "datasets/incident_diagnosis/processed" / RESEARCH_VERSION
     evidence = root / "evidence/phase-03"
-    for source_name, evidence_name in MIRRORS.items():
-        (evidence / evidence_name).write_bytes((processed / source_name).read_bytes())
+    evidence.mkdir(parents=True, exist_ok=True)
 
-    coverage = json.loads(
-        (processed / "public-postmortem-candidate-coverage.json").read_text(encoding="utf-8")
-    )["coverage"]
-    class_summary_path = evidence / "class-split-summary.json"
-    class_summary = json.loads(class_summary_path.read_text(encoding="utf-8"))
-    class_summary["public_postmortem_preserved_original_source_count"] = coverage[
-        "preserved_original_source_count"
-    ]
-    class_summary["public_postmortem_preserved_family_counts_by_root_cause_code"] = coverage[
-        "preserved_family_counts_by_root_cause_code"
-    ]
-    class_summary["public_postmortem_preserved_family_depth_sufficient_for_split"] = coverage[
-        "preserved_family_depth_sufficient_for_split"
-    ]
-    write_json(class_summary_path, class_summary)
+    for source_name, evidence_name in CANDIDATE_MIRRORS.items():
+        (evidence / evidence_name).write_bytes((candidate / source_name).read_bytes())
+    for source_name, evidence_name in RESEARCH_MIRRORS.items():
+        (evidence / evidence_name).write_bytes((research / source_name).read_bytes())
+    for source_name, evidence_name in DOC_MIRRORS.items():
+        (evidence / evidence_name).write_bytes((root / source_name).read_bytes())
 
-    checksum_names = [
-        "candidate-manifest.json",
-        "source-candidate-summary.json",
-        "source-audit-report.json",
-        "auxiliary-servicenow-summary.json",
-        "public-postmortem-candidate-coverage.json",
-        "class-split-summary.json",
-    ]
+    checksum_names = sorted(
+        [
+            *CANDIDATE_MIRRORS.values(),
+            *RESEARCH_MIRRORS.values(),
+            *DOC_MIRRORS.values(),
+        ]
+    )
     lines = [
         f"{hashlib.sha256((evidence / name).read_bytes()).hexdigest()}  {name}"
         for name in checksum_names
@@ -65,7 +58,8 @@ def main() -> int:
     (evidence / "checksums.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print("PHASE03_EVIDENCE_SYNC=PASS")
-    print(f"PRESERVED_PRIMARY_SOURCES={coverage['preserved_original_source_count']}")
+    print("RESEARCH_DATASET_VERSION=evalforge-incident-diagnosis-v0.1.0")
+    print("RESEARCH_EVIDENCE_FILES=" + str(len(checksum_names)))
     return 0
 
 
