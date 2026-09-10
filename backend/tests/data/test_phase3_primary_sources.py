@@ -190,16 +190,16 @@ def test_committed_primary_source_wave_is_checksum_valid_and_nonadmitted() -> No
         / "phase3-primary-source-v1/manifest.json"
     )
     report = validate_primary_source_preservation(root, index, plan, manifest)
-    assert report.preserved_candidate_count == 12
+    assert report.preserved_candidate_count == 18
     assert report.preserved_supported_family_counts_by_root_cause_code == {
-        "broken_payment_configuration": 1,
-        "database_connection_leak": 2,
+        "broken_payment_configuration": 3,
+        "database_connection_leak": 3,
         "disk_exhaustion": 3,
         "memory_leak": 3,
         "n_plus_one_query": 3,
-        "no_fault": 0,
+        "no_fault": 3,
     }
-    assert not report.preserved_supported_family_depth_sufficient_for_split
+    assert report.preserved_supported_family_depth_sufficient_for_split
 
     plan_ids = {entry.candidate_id for entry in plan.entries}
     preserved = [item for item in index.candidates if item.candidate_id in plan_ids]

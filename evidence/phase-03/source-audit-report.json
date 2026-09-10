@@ -21,7 +21,7 @@
   },
   "derived_generation_family_count": 29,
   "passed_leakage_safe_research_exit": false,
-  "public_postmortem_candidate_count": 23,
+  "public_postmortem_candidate_count": 24,
   "public_postmortem_missing_root_cause_codes": [],
   "public_postmortem_research_admitted_count": 0,
   "public_postmortem_supported_mapping_count": 18,

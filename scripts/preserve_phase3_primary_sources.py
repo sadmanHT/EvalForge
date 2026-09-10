@@ -181,7 +181,7 @@ def bootstrap(root: Path) -> None:
     )
 
     manifest = PrimarySourceManifest(
-        manifest_version="phase3-primary-source-manifest-v2",
+        manifest_version="phase3-primary-source-manifest-v3",
         plan_version=plan.plan_version,
         snapshots=sorted(snapshots, key=lambda item: item.candidate_id),
     )

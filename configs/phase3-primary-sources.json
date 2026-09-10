@@ -1,5 +1,5 @@
 {
-  "plan_version": "phase3-primary-source-preservation-v2",
+  "plan_version": "phase3-primary-source-preservation-v3",
   "entries": [
     {
       "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
@@ -138,6 +138,72 @@
         "change in firewall configuration",
         "unable to finalize their payments at checkout",
         "payment processing is fully functional"
+      ]
+    },
+    {
+      "candidate_id": "atlassian:CRUC-8168:bonecp-connection-leak",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/atlassian-CRUC-8168-connection-leak.primary.html",
+      "kind": "http_document",
+      "source_url": "https://jira.atlassian.com/browse/CRUC-8168",
+      "evidence_markers": [
+        "BoneCP connections are not returned to the pool",
+        "unavailability of database connections in the pool",
+        "Crucible becomes not responsive"
+      ]
+    },
+    {
+      "candidate_id": "fastly:2023-02-28:cloud-waf-false-alarm",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/fastly-2023-cloud-waf-false-alarm.primary.html",
+      "kind": "http_document",
+      "source_url": "https://fastly.status.page/incidents?componentId=510172",
+      "evidence_markers": [
+        "status update to be a false alarm",
+        "there are currently no elevated errors on Cloud WAF services",
+        "All other locations and services are unaffected"
+      ]
+    },
+    {
+      "candidate_id": "gitlab:INC-889:2025-05-12:false-alarm-version-skew",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/gitlab-2025-version-skew-false-alarm.primary.html",
+      "kind": "http_document",
+      "source_url": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+      "evidence_markers": [
+        "This turned out to be a false alarm",
+        "no traffic was reaching the lingering pod",
+        "there was no customer impact"
+      ]
+    },
+    {
+      "candidate_id": "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2021-payment-config.primary.html",
+      "kind": "http_document",
+      "source_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
+      "evidence_markers": [
+        "update to the payment configuration intended to support virtual credit cards",
+        "no credit card payments were able to be processed in the U.S. region",
+        "rollback of the configuration change"
+      ]
+    },
+    {
+      "candidate_id": "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2024-mandiant-no-fault.primary.html",
+      "kind": "http_document",
+      "source_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
+      "evidence_markers": [
+        "there was no service degradation",
+        "no supported alerts from CrowdStrike were missed",
+        "service continues to operate as intended"
+      ]
+    },
+    {
+      "candidate_id": "elevenlabs:2026-04-22:billing-system-misconfiguration",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/elevenlabs-2026-billing-misconfiguration.primary.html",
+      "kind": "http_document",
+      "source_url": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65",
+      "evidence_markers": [
+        "issues related to payment-processing",
+        "A misconfiguration in our billing system",
+        "provisioning of subscriptions to be delayed"
       ]
     }
   ]

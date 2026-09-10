@@ -41,6 +41,13 @@ REQUIRED = (
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
     "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/atlassian-CRUC-8168-connection-leak.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/fastly-2023-cloud-waf-false-alarm.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/gitlab-2025-version-skew-false-alarm.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2021-payment-config.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2024-mandiant-no-fault.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/elevenlabs-2026-billing-misconfiguration.primary.html",
+    "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/elevenlabs-2026-04-22-payment-configuration.snapshot.json",
     "datasets/incident_diagnosis/raw/README.md",
     (
         "datasets/incident_diagnosis/raw/opssentinel/"
@@ -146,7 +153,7 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_commit")
     if coverage.admitted_research_record_count != 0:
         raise SystemExit("PHASE03_CONTRACT=FAIL premature_postmortem_research_admission")
-    if coverage.candidate_count != 23 or coverage.supported_mapping_count != 18:
+    if coverage.candidate_count != 24 or coverage.supported_mapping_count != 18:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_candidate_counts")
     if set(coverage.supported_root_cause_codes) != {
         "broken_payment_configuration",
@@ -163,19 +170,12 @@ def main() -> int:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth")
     if set(coverage.supported_family_counts_by_root_cause_code.values()) != {3}:
         raise SystemExit("PHASE03_CONTRACT=FAIL postmortem_family_depth_counts")
-    if coverage.preserved_original_source_count != 12:
+    if coverage.preserved_original_source_count != 18:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_preservation_count")
-    if coverage.preserved_family_counts_by_root_cause_code != {
-        "broken_payment_configuration": 1,
-        "database_connection_leak": 2,
-        "disk_exhaustion": 3,
-        "memory_leak": 3,
-        "n_plus_one_query": 3,
-        "no_fault": 0,
-    }:
+    if set(coverage.preserved_family_counts_by_root_cause_code.values()) != {3}:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_preservation_distribution")
-    if coverage.preserved_family_depth_sufficient_for_split:
-        raise SystemExit("PHASE03_CONTRACT=FAIL premature_primary_source_family_depth")
+    if not coverage.preserved_family_depth_sufficient_for_split:
+        raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_family_depth")
 
     preservation_plan = load_primary_source_plan(root / "configs/phase3-primary-sources.json")
     preservation_manifest = load_primary_source_manifest(
@@ -188,13 +188,13 @@ def main() -> int:
         preservation_plan,
         preservation_manifest,
     )
-    if preservation.preserved_candidate_count != 12:
+    if preservation.preserved_candidate_count != 18:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_count")
     if preservation.preserved_supported_family_counts_by_root_cause_code != (
         coverage.preserved_family_counts_by_root_cause_code
     ):
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_distribution")
-    if preservation.preserved_supported_family_depth_sufficient_for_split:
+    if not preservation.preserved_supported_family_depth_sufficient_for_split:
         raise SystemExit("PHASE03_CONTRACT=FAIL primary_source_manifest_depth")
 
     public_snapshot_dir = (
@@ -211,7 +211,7 @@ def main() -> int:
             "datasets/incident_diagnosis/raw/public_incidents/phase3-candidate-v1/"
         )
     ]
-    if len(local_candidates) != 15:
+    if len(local_candidates) != 16:
         raise SystemExit("PHASE03_CONTRACT=FAIL public_snapshot_candidate_count")
     for candidate in local_candidates:
         path = root / candidate.source_path
