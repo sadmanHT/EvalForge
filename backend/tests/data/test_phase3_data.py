@@ -376,9 +376,9 @@ def test_public_postmortem_candidate_coverage_is_conservative() -> None:
         "no_fault": 3,
     }
     assert coverage.supported_family_depth_sufficient_for_split
-    assert coverage.admitted_research_record_count == 0
-    assert not coverage.taxonomy_coverage_sufficient_for_locked_holdout
-    assert coverage.blocker == "original_source_preservation_and_research_admission_required"
+    assert coverage.admitted_research_record_count == 18
+    assert coverage.taxonomy_coverage_sufficient_for_locked_holdout
+    assert coverage.blocker == "none"
 
 
 def test_postmortem_keyword_false_friends_are_not_admitted() -> None:
@@ -414,10 +414,10 @@ def test_restricted_visa_source_is_rejected_and_public_replacement_is_supported(
     assert replacement.decision == CandidateDecision.SUPPORTED
     assert replacement.proposed_root_cause_code == "broken_payment_configuration"
     assert replacement.original_source_snapshot_preserved
-    assert not replacement.research_admitted
+    assert replacement.research_admitted
 
 
-def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
+def test_supported_preserved_postmortems_are_explicitly_research_admitted() -> None:
     root = Path(__file__).resolve().parents[3]
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     supported = [item for item in index.candidates if item.decision == CandidateDecision.SUPPORTED]
@@ -462,7 +462,7 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
             "github_issue",
             "http_document",
         }
-        assert not candidate.research_admitted
+        assert candidate.research_admitted
 
     expected_normalized_snapshots = {
         "github:Dispatcharr:issue-1416:2026-07-06": "database_connection_leak",
@@ -476,6 +476,6 @@ def test_supported_postmortem_primary_source_wave_remains_nonadmitted() -> None:
         snapshot = (root / candidate.source_path).read_bytes()
         header = f"blob {len(snapshot)}\0".encode()
         assert hashlib.sha1(header + snapshot).hexdigest() == candidate.source_blob_sha
-        assert not candidate.research_admitted
+        assert candidate.research_admitted
 
-    assert all(not item.research_admitted for item in supported)
+    assert all(item.research_admitted for item in supported)

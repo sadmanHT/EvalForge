@@ -180,7 +180,7 @@ def test_http_document_payload_validates_visible_text_and_url() -> None:
         )
 
 
-def test_committed_primary_source_wave_is_checksum_valid_and_nonadmitted() -> None:
+def test_committed_primary_sources_are_checksum_valid_and_research_admitted() -> None:
     root = repository_root()
     index = load_candidate_index(root / "configs/postmortem-candidates.json")
     plan = load_primary_source_plan(root / "configs/phase3-primary-sources.json")
@@ -204,7 +204,7 @@ def test_committed_primary_source_wave_is_checksum_valid_and_nonadmitted() -> No
     plan_ids = {entry.candidate_id for entry in plan.entries}
     preserved = [item for item in index.candidates if item.candidate_id in plan_ids]
     assert all(item.original_source_snapshot_preserved for item in preserved)
-    assert all(not item.research_admitted for item in preserved)
+    assert all(item.research_admitted for item in preserved)
 
 
 def test_primary_source_verifier_rejects_manifest_plan_mismatch() -> None:

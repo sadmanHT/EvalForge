@@ -151,6 +151,20 @@ def inspect_candidate_coverage(
         count >= 3 for count in preserved_family_counts.values()
     )
     missing = sorted(taxonomy_codes - supported)
+    expected_admitted = len(taxonomy_codes) * 3
+    research_coverage_sufficient = (
+        not missing
+        and supported_family_depth_sufficient
+        and preserved_family_depth_sufficient
+        and len(admitted) >= expected_admitted
+    )
+    if research_coverage_sufficient:
+        blocker = "none"
+    elif not missing and supported_family_depth_sufficient:
+        blocker = "original_source_preservation_and_research_admission_required"
+    else:
+        blocker = "independent_taxonomy_coverage_insufficient"
+
     return PostmortemCoverageReport(
         source_repository=index.source["repository"],
         source_commit=index.source["commit"],
@@ -168,26 +182,20 @@ def inspect_candidate_coverage(
         preserved_family_depth_sufficient_for_split=preserved_family_depth_sufficient,
         missing_root_cause_codes=missing,
         admitted_research_record_count=len(admitted),
-        taxonomy_coverage_sufficient_for_locked_holdout=(
-            not missing and len(admitted) >= len(taxonomy_codes) * 3
-        ),
-        blocker=(
-            "original_source_preservation_and_research_admission_required"
-            if not missing and supported_family_depth_sufficient
-            else "independent_taxonomy_coverage_insufficient"
-        ),
+        taxonomy_coverage_sufficient_for_locked_holdout=research_coverage_sufficient,
+        blocker=blocker,
         notes=[
             (
                 "postmortems.app is used as a pinned discovery/index source, "
                 "not as primary-source ground truth"
             ),
             (
-                "supported candidate mappings are not research-admitted until "
-                "original incident evidence is preserved"
+                "research admission is explicit and requires both a supported mapping and "
+                "checksum-validated preserved original-source evidence"
             ),
             (
-                "preserved-source counts describe checksum-validated original-source "
-                "artifacts and do not by themselves create canonical research records"
+                "preserved-source counts describe checksum-validated original-source artifacts; "
+                "canonical research records are built separately from the explicit admission plan"
             ),
             "keyword or title matches alone are insufficient for label admission",
         ],

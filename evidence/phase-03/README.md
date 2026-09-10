@@ -1,9 +1,26 @@
 # Phase 03 Evidence
 
-Status: IN PROGRESS / hard exit blocked.
+Status: FINAL VALIDATION IN PROGRESS.
 
-Preserved evidence includes the candidate manifest, OpsSentinel source audit/summary, ServiceNow/UCI auxiliary summary, public-incident candidate coverage review, class/split summary, normalized direct-source candidate snapshots, and deterministic SHA-256 checksums.
+This directory mirrors the reproducible Phase 03 provenance, dataset, audit, and handoff evidence for the locked research benchmark `evalforge-incident-diagnosis-v0.1.0`.
 
-Current scientific blocker: candidate-level frozen-taxonomy coverage is now 6/6, but the research corpus is still not lockable. None of the 11 reviewed candidates is research-admitted, the direct-source snapshots are normalized rather than byte-for-byte original archives, and there are not enough independently preserved families per label to create a credible family-stratified train/validation/test split.
+The evidence set includes the candidate provenance manifest, source-candidate summary, source audit, ServiceNow/UCI auxiliary summary, public-incident candidate coverage review, locked research manifest, class/split summary, leakage audit, explicit research-admission summary, data card, Phase 03 handoff, and deterministic SHA-256 checksums for those mirrored artifacts.
 
-No OpsSentinel source was modified.
+Current locked research state:
+
+- 24 conservatively reviewed public-incident candidates;
+- 18 supported independent mappings;
+- 18 checksum-preserved public primary sources;
+- exactly 3 independent families per frozen taxonomy label;
+- 18 explicitly research-admitted records/families;
+- deterministic split seed `20260908`;
+- train / validation / test = 6 / 6 / 6;
+- one independent family per frozen label in every split;
+- zero synthetic rows in the locked base research dataset;
+- zero research leakage-audit errors;
+- candidate and research artifact reproducibility checks passing;
+- Phase 03 hard-exit check passing on the generated locked corpus.
+
+The remaining closure requirement is operational validation of the exact cleaned branch and then the exact target merge commit through the ordinary cumulative CI and fresh clean-Compose gate.
+
+OpsSentinel remains a generated auxiliary/engineering source and was not modified. The UCI/ServiceNow corpus remains auxiliary real-world operational evidence and is not relabeled into the frozen RCA taxonomy. Phase 04 has not started.

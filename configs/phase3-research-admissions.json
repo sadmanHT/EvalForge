@@ -1,0 +1,35 @@
+{
+  "admission_version": "phase3-research-admission-v1",
+  "candidate_index_version_before_admission": "phase3-public-postmortem-candidates-v7",
+  "candidate_index_version_after_admission": "phase3-public-postmortem-candidates-v8",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "split_seed": 20260908,
+  "candidate_ids": [
+    "altapay:2026-07-15:shopify-3ds-firewall-config",
+    "atlassian:CRUC-8168:bonecp-connection-leak",
+    "coderden:2026-02-19:database-connection-leak",
+    "dify:issue-40036:2026-08-05:n-plus-one",
+    "dnsimple:2015-05-09:san-jose-memory-leak",
+    "elevenlabs:2026-04-22:billing-system-misconfiguration",
+    "fastly:2023-02-28:cloud-waf-false-alarm",
+    "git-nrw:2025-05-09:wal-disk-full",
+    "github:Dispatcharr:issue-1416:2026-07-06",
+    "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+    "gitlab:INC-889:2025-05-12:false-alarm-version-skew",
+    "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+    "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+    "honeycomb:2019-11-06:running-dry-on-memory",
+    "openlibrary:issue-12432:2026-04-22:n-plus-one",
+    "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+    "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+    "soundcloud:2011-08-24:binlog-disk-full"
+  ],
+  "policy": {
+    "independence_unit": "incident_family",
+    "require_supported_mapping": true,
+    "require_preserved_primary_source": true,
+    "require_exactly_three_families_per_label": true,
+    "difficulty_policy": "unknown_unless_source_supported",
+    "synthetic_rows_in_locked_base_dataset": 0
+  }
+}

@@ -97,27 +97,27 @@ def build_outputs(root: Path) -> dict[str, str]:
         source_uri="https://postmortems.app/",
         source_license=postmortem_cfg["license"],
         notes=(
-            "Pinned independent-public-postmortem discovery index. Candidate mappings are not "
-            "research-admitted until original primary-source evidence is preserved and frozen "
-            "taxonomy coverage is sufficient."
+            "Pinned public-postmortem discovery/decision ledger. Individual supported entries "
+            "are admitted only through configs/phase3-research-admissions.json; the discovery "
+            "index itself is not independent held-out evidence."
         ),
     )
     limitations = list(inspection.blockers) + list(auxiliary_inspection.blockers)
     limitations.extend(
         [
             (
-                "Independent public incident candidates now provide the splitter's minimum "
-                "three supported families per frozen taxonomy label, but no candidate is "
-                "research-admitted until original primary-source evidence is preserved "
-                "and canonical records are built."
+                "This candidate artifact is a provenance and decision ledger, not the locked "
+                "research benchmark. The separate research dataset contains the explicitly "
+                "admitted independently sourced families."
             ),
             (
-                "Supported public-postmortem candidate mappings are not research-admitted "
-                "until original primary-source evidence is preserved."
+                "The public incident corpus contains exactly three supported and preserved "
+                "families per frozen taxonomy label; this is the minimum depth used by the "
+                "separate family-stratified research split."
             ),
             (
-                "Keyword/title matches are not accepted as root-cause evidence; false "
-                "friends and contributing factors are explicitly rejected."
+                "Keyword/title matches are not accepted as root-cause evidence; false friends, "
+                "contributing factors, and republication-restricted sources remain rejected."
             ),
         ]
     )
@@ -138,6 +138,12 @@ def build_outputs(root: Path) -> dict[str, str]:
             "public_postmortem_supported_mappings": postmortem_coverage.supported_mapping_count,
             "public_postmortem_supported_taxonomy_labels": len(
                 postmortem_coverage.supported_root_cause_codes
+            ),
+            "public_postmortem_preserved_primary_sources": (
+                postmortem_coverage.preserved_original_source_count
+            ),
+            "public_postmortem_research_admitted": (
+                postmortem_coverage.admitted_research_record_count
             ),
         },
         research_ready=False,
@@ -179,7 +185,7 @@ def build_outputs(root: Path) -> dict[str, str]:
     )
 
     source_audit = {
-        "status": "BLOCKED_BENCHMARK_EXPANSION_REQUIRED",
+        "status": "CANDIDATE_REVIEW_COMPLETE_RESEARCH_DATASET_SEPARATE",
         "passed_leakage_safe_research_exit": False,
         "source_generated_count": inspection.source_generated_count,
         "source_split_counts": inspection.source_split_counts,

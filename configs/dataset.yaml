@@ -19,20 +19,22 @@
     }
   ],
   "candidate_dataset_version": "evalforge-incident-diagnosis-v0.1.0-candidate",
-  "dataset_config_version": "phase3-dataset-config-v1",
+  "research_dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "research_admission_config_path": "configs/phase3-research-admissions.json",
+  "dataset_config_version": "phase3-dataset-config-v2",
   "generation_timestamp": "2026-09-08T16:45:00Z",
   "label_taxonomy_version": "1.0.0",
   "public_postmortem_candidate_source": {
     "candidate_index_path": "configs/postmortem-candidates.json",
     "commit": "42bac673432f564d317dbfc30b5d400e1812c684",
-    "eligibility_note": "Individual original sources require preserved primary-source evidence and sufficient frozen-taxonomy coverage before research admission.",
+    "eligibility_note": "Individual original sources require preserved primary-source evidence and explicit Phase 03 admission before entering the locked research benchmark.",
     "license": "GPL-3.0",
     "name": "postmortems_app",
     "repository": "icco/postmortems",
     "research_holdout_eligible_as_a_whole": false,
     "role": "independent_public_postmortem_candidate_discovery"
   },
-  "research_holdout_policy": "Only independently sourced incident families may enter validation/test. Generated source scenarios are not independent held-out evidence.",
+  "research_holdout_policy": "Only independently sourced incident families with checksum-verified preserved primary sources and explicit research admission may enter train/validation/test. Generated source scenarios are not independent held-out evidence.",
   "schema_version": "incident-schema-v1",
   "source_snapshot": {
     "commit": "fae661fc1634aad6a3855a1dec8dcddb16a890dd",

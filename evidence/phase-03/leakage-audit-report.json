@@ -1,0 +1,30 @@
+{
+  "class_counts": {
+    "broken_payment_configuration": 3,
+    "database_connection_leak": 3,
+    "disk_exhaustion": 3,
+    "memory_leak": 3,
+    "n_plus_one_query": 3,
+    "no_fault": 3
+  },
+  "difficulty_counts": {
+    "unknown": 18
+  },
+  "family_count": 18,
+  "findings": [
+    {
+      "code": "MISSING_DIFFICULTY_TIERS",
+      "family_ids": [],
+      "incident_ids": [],
+      "message": "dataset does not include baseline difficulty tiers: ['easy', 'hard', 'medium']",
+      "severity": "warning"
+    }
+  ],
+  "passed": true,
+  "record_count": 18,
+  "split_counts": {
+    "test": 6,
+    "train": 6,
+    "validation": 6
+  }
+}

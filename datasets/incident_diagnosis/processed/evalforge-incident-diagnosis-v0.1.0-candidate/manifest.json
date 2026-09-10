@@ -1,6 +1,8 @@
 {
   "auxiliary_source_counts": {
     "public_postmortem_candidates": 24,
+    "public_postmortem_preserved_primary_sources": 18,
+    "public_postmortem_research_admitted": 18,
     "public_postmortem_supported_mappings": 18,
     "public_postmortem_supported_taxonomy_labels": 6,
     "servicenow_uci_event_rows": 141712,
@@ -17,11 +19,11 @@
     "The upstream dev/validation/hidden-test assignments also split several inferred generation families across source splits; those assignments must not be reused.",
     "The source is a real ServiceNow operational event log, but textual attributes were omitted/anonymized and it does not expose trustworthy human-readable root-cause labels for EvalForge taxonomy mapping.",
     "Anonymous category/symptom/closure codes must not be guessed into EvalForge root-cause codes; this source is auxiliary/robustness evidence, not the primary labeled holdout.",
-    "Independent public incident candidates now provide the splitter's minimum three supported families per frozen taxonomy label, but no candidate is research-admitted until original primary-source evidence is preserved and canonical records are built.",
-    "Supported public-postmortem candidate mappings are not research-admitted until original primary-source evidence is preserved.",
-    "Keyword/title matches are not accepted as root-cause evidence; false friends and contributing factors are explicitly rejected."
+    "This candidate artifact is a provenance and decision ledger, not the locked research benchmark. The separate research dataset contains the explicitly admitted independently sourced families.",
+    "The public incident corpus contains exactly three supported and preserved families per frozen taxonomy label; this is the minimum depth used by the separate family-stratified research split.",
+    "Keyword/title matches are not accepted as root-cause evidence; false friends, contributing factors, and republication-restricted sources remain rejected."
   ],
-  "manifest_checksum": "e82ccae16a7e488d88a4ccbd8e92b9dc47ee944b278cf11376a8ebdaad617985",
+  "manifest_checksum": "e62ad8c07e33351c2ea1faea4c4b454a81bf04de40b8fab24ac435137e73a8a1",
   "record_count": 0,
   "research_ready": false,
   "schema_version": "incident-schema-v1",
@@ -60,11 +62,11 @@
     },
     {
       "accepted_transport_sha256s": [],
-      "notes": "Pinned independent-public-postmortem discovery index. Candidate mappings are not research-admitted until original primary-source evidence is preserved and frozen taxonomy coverage is sufficient.",
+      "notes": "Pinned public-postmortem discovery/decision ledger. Individual supported entries are admitted only through configs/phase3-research-admissions.json; the discovery index itself is not independent held-out evidence.",
       "research_eligible_as_independent_heldout_evidence": false,
       "snapshot_identity_kind": "evalforge_candidate_index_sha256",
       "snapshot_path": "configs/postmortem-candidates.json",
-      "snapshot_sha256": "5925d54b77cfd4bc52909a92105f7331e300fc315f9554ee57b7ac5f05675a19",
+      "snapshot_sha256": "e1cecd69b1add02b3a0603d2f809b6633a87e1f77b4e0f201eed228c2348a037",
       "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
       "source_generated": false,
       "source_license": "GPL-3.0",
