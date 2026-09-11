@@ -12,8 +12,17 @@ from typing import Any, Protocol
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.evaluation.calibration import normalize_label_sequence_log_likelihoods
-from app.evaluation.contracts import ConfidenceSource, ParseStatus, Prediction, RankedLabel
-from app.inference.prompts import BASELINE_PROMPT_VERSION, get_prompt_template, parse_baseline_output
+from app.evaluation.contracts import (
+    ConfidenceSource,
+    ParseStatus,
+    Prediction,
+    RankedLabel,
+)
+from app.inference.prompts import (
+    BASELINE_PROMPT_VERSION,
+    get_prompt_template,
+    parse_baseline_output,
+)
 
 
 class QuantizationMode(StrEnum):
@@ -200,7 +209,11 @@ class TransformersBackend:
         torch, tokenizer, model = self._require_loaded()
         self._seed(torch)
         messages = [{"role": "user", "content": prompt}]
-        rendered = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        rendered = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
         inputs = tokenizer(rendered, return_tensors="pt").to(model.device)
         started = perf_counter()
         try:
