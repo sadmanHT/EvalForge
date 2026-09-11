@@ -19,7 +19,6 @@ from app.core.experiment_config import ExperimentConfig, PipelineType
 from app.db import build_engine, sqlalchemy_database_url
 from app.models import (
     DatasetVersion,
-    Experiment,
     Incident,
     IncidentFamily,
     ModelVersion,
@@ -151,13 +150,17 @@ def test_phase3_dataset_import_round_trips_without_loss(engine: Engine) -> None:
         ).all()
         assert family_count == 18
         assert incident_count == 18
-        assert Counter(dict(split_rows)) == Counter({"train": 6, "validation": 6, "test": 6})
+        assert Counter(dict(split_rows)) == Counter(
+            {"train": 6, "validation": 6, "test": 6}
+        )
 
 
 def test_family_split_mismatch_is_rejected_by_database(engine: Engine) -> None:
     with Session(engine) as session:
         family = session.scalar(
-            select(IncidentFamily).where(IncidentFamily.dataset_version == DATASET_VERSION).limit(1)
+            select(IncidentFamily).where(
+                IncidentFamily.dataset_version == DATASET_VERSION
+            ).limit(1)
         )
         assert family is not None
         wrong_split = "validation" if family.split != "validation" else "test"
@@ -289,10 +292,12 @@ def test_repository_transaction_rolls_back_partial_creation(engine: Engine) -> N
     revision = "rollback-revision"
     with Session(engine) as session:
         repo = PersistenceRepository(session)
-        with pytest.raises(RuntimeError, match="intentional rollback"):
-            with repo.transaction():
-                repo.ensure_model_version(model_id, revision)
-                raise RuntimeError("intentional rollback")
+        with (
+            pytest.raises(RuntimeError, match="intentional rollback"),
+            repo.transaction(),
+        ):
+            repo.ensure_model_version(model_id, revision)
+            raise RuntimeError("intentional rollback")
 
     with Session(engine) as session:
         stored = session.scalar(
