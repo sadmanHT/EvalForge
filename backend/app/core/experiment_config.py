@@ -86,7 +86,7 @@ class ExperimentConfig(BaseModel):
         generation_temperature = self.generation_config.get("temperature")
         if generation_temperature is not None and float(generation_temperature) != self.temperature:
             raise ValueError("temperature disagrees with generation_config")
-        _reject_non_finite(self.model_dump(mode="json"))
+        _reject_non_finite(self.model_dump(mode="python"))
         return self
 
 
@@ -102,7 +102,7 @@ def _reject_non_finite(value: Any) -> None:
 
 
 def canonical_config_json(config: ExperimentConfig) -> str:
-    payload = config.model_dump(mode="json", exclude_none=False)
+    payload = config.model_dump(mode="python", exclude_none=False)
     _reject_non_finite(payload)
     return json.dumps(
         payload,
