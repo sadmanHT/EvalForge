@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, Protocol
@@ -29,6 +30,10 @@ class RedisQueueClient(Protocol):
     def rpush(self, name: str, *values: str) -> Any: ...
 
     def blpop(self, keys: str, timeout: int = 0) -> tuple[str, str] | None: ...
+
+
+class TaskHandler(Protocol):
+    def __call__(self, payload: dict[str, Any]) -> Any: ...
 
 
 @dataclass(frozen=True)
@@ -84,7 +89,13 @@ def get_job(client: RedisQueueClient, job_id: str) -> JobRecord | None:
     )
 
 
-def _execute(task: str, payload: dict[str, Any]) -> Any:
+def _execute(
+    task: str,
+    payload: dict[str, Any],
+    task_handlers: Mapping[str, TaskHandler] | None = None,
+) -> Any:
+    if task_handlers and task in task_handlers:
+        return task_handlers[task](payload)
     if task == "echo":
         return payload
     if task == "add":
@@ -99,7 +110,12 @@ def _execute(task: str, payload: dict[str, Any]) -> Any:
     raise ValueError(f"unknown task: {task}")
 
 
-def process_one(client: RedisQueueClient, *, timeout: int = 1) -> JobRecord | None:
+def process_one(
+    client: RedisQueueClient,
+    *,
+    timeout: int = 1,
+    task_handlers: Mapping[str, TaskHandler] | None = None,
+) -> JobRecord | None:
     queued = client.blpop(QUEUE_KEY, timeout=timeout)
     if queued is None:
         return None
@@ -110,7 +126,7 @@ def process_one(client: RedisQueueClient, *, timeout: int = 1) -> JobRecord | No
 
     client.hset(_job_key(job_id), mapping={"state": JobState.RUNNING.value})
     try:
-        result = _execute(current.task, current.payload)
+        result = _execute(current.task, current.payload, task_handlers)
     except Exception as exc:
         client.hset(
             _job_key(job_id),

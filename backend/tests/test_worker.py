@@ -42,3 +42,20 @@ def test_worker_failure_path_persists_failure_without_crashing() -> None:
     assert processed.state is JobState.FAILED
     assert processed.result is None
     assert processed.error == "RuntimeError: expected failure"
+
+
+def test_worker_dispatches_injected_long_running_handler() -> None:
+    client = _client()
+    enqueue(client, "phase6_baseline", {"split": "validation"}, job_id="unit-phase6")
+
+    def handler(payload: dict[str, Any]) -> dict[str, object]:
+        return {"accepted_split": payload["split"], "worker": True}
+
+    processed = process_one(
+        client,
+        timeout=1,
+        task_handlers={"phase6_baseline": handler},
+    )
+    assert processed is not None
+    assert processed.state is JobState.SUCCEEDED
+    assert processed.result == {"accepted_split": "validation", "worker": True}

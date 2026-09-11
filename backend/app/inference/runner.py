@@ -104,13 +104,8 @@ def _validate_adapter_contract(
     protocol: BaselineProtocol,
     allowed_labels: tuple[str, ...],
 ) -> None:
-    runtime = adapter.backend.runtime_config
-    if runtime.model_id != protocol.base_model_id:
-        raise ValueError("adapter model_id disagrees with frozen Phase 06 protocol")
-    if runtime.revision != protocol.base_model_revision:
-        raise ValueError("adapter model revision disagrees with frozen Phase 06 protocol")
-    if runtime.seed != protocol.seed:
-        raise ValueError("adapter seed disagrees with frozen Phase 06 protocol")
+    if adapter.backend.runtime_config != protocol.runtime_config:
+        raise ValueError("adapter runtime configuration disagrees with frozen Phase 06 protocol")
     if adapter.allowed_labels != allowed_labels:
         raise ValueError("adapter label order disagrees with frozen taxonomy")
     if adapter.prompt_template.version != protocol.prompt_version:

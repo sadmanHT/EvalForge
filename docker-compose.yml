@@ -64,9 +64,12 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-evalforge}:${POSTGRES_PASSWORD:-evalforge}@postgres:5432/${POSTGRES_DB:-evalforge}
       REDIS_URL: redis://redis:6379/0
+      EVALFORGE_ROOT: /app
       PYTHONUNBUFFERED: "1"
     command: ["python", "-m", "app.worker.runner"]
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
