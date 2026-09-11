@@ -193,7 +193,9 @@ class Prediction(BaseModel):
         confidence_source = payload.get("confidence_source")
         parsed_confidence: float | None = None
         parsed_source: ConfidenceSource | None = None
-        if confidence is not None or confidence_source is not None:
+        if (confidence is None) != (confidence_source is None):
+            partial_error = "invalid confidence: probability and source must be present together"
+        elif confidence is not None and confidence_source is not None:
             try:
                 parsed_confidence = float(confidence)
                 parsed_source = ConfidenceSource(str(confidence_source))
