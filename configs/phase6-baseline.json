@@ -1,0 +1,23 @@
+{
+  "protocol_version": "phase6-zero-shot-baseline-v1",
+  "state": "validation",
+  "study_id": "evalforge-incident-diagnosis-primary-v1",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "label_taxonomy_version": "1.0.0",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "prompt_version": "zero-shot-baseline-v1",
+  "output_schema_version": "root-cause-prediction-v1",
+  "generation_config": {
+    "max_new_tokens": 128,
+    "do_sample": false,
+    "temperature": 0.0
+  },
+  "confidence_method": "normalized_label_sequence_log_likelihood",
+  "calibration_version": null,
+  "seed": 20260908,
+  "evaluator_version": "phase5-evaluator-v1",
+  "ece_bins": 10,
+  "locked_test_authorized": false
+}
