@@ -140,7 +140,10 @@ def test_validation_runner_persists_every_incident_and_recomputes_metrics(engine
         snapshot = reload_evaluation(session, run_id=summary.run_id)
     assert len(predictions) == 6
     assert len({prediction.incident_id for prediction in predictions}) == 6
-    assert sum(prediction.parse_status is ParseStatus.EMPTY_OUTPUT for prediction in predictions) == 1
+    empty_count = sum(
+        prediction.parse_status is ParseStatus.EMPTY_OUTPUT for prediction in predictions
+    )
+    assert empty_count == 1
     assert snapshot.result_hash == summary.result_hash
     assert snapshot.metric_values == pytest.approx(summary.metric_values)
 
@@ -154,15 +157,17 @@ def test_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -> No
         prompt_version=protocol.prompt_version,
         generation_config=protocol.generation_config,
     )
-    with Session(engine) as session:
-        with pytest.raises(ValueError, match="locked test"):
-            run_baseline_experiment(
-                session,
-                root=ROOT,
-                protocol=protocol,
-                adapter=adapter,
-                split="test",
-                git_commit="phase6-integration",
-                hardware_runtime_descriptor="phase6-ci-fixture-no-real-model",
-                cost_rate_snapshot_version="phase6-ci-fixture-rates-v1",
-            )
+    with (
+        Session(engine) as session,
+        pytest.raises(ValueError, match="locked test"),
+    ):
+        run_baseline_experiment(
+            session,
+            root=ROOT,
+            protocol=protocol,
+            adapter=adapter,
+            split="test",
+            git_commit="phase6-integration",
+            hardware_runtime_descriptor="phase6-ci-fixture-no-real-model",
+            cost_rate_snapshot_version="phase6-ci-fixture-rates-v1",
+        )
