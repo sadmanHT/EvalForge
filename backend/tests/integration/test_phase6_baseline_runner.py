@@ -140,10 +140,10 @@ def test_validation_runner_persists_every_incident_and_recomputes_metrics(engine
         snapshot = reload_evaluation(session, run_id=summary.run_id)
     assert len(predictions) == 6
     assert len({prediction.incident_id for prediction in predictions}) == 6
-    empty_count = sum(
-        prediction.parse_status is ParseStatus.EMPTY_OUTPUT for prediction in predictions
+    invalid_json_count = sum(
+        prediction.parse_status is ParseStatus.INVALID_JSON for prediction in predictions
     )
-    assert empty_count == 1
+    assert invalid_json_count == 1
     assert snapshot.result_hash == summary.result_hash
     assert snapshot.metric_values == pytest.approx(summary.metric_values)
 
