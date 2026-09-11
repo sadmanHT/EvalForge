@@ -66,27 +66,13 @@ jobs:
       - name: Cumulative gate
         run: make verify-all
       - name: Record Phase 03 hard-exit status
-        run: |
-          set +e
-          python scripts/check_phase3_exit.py | tee /tmp/phase03-exit.txt
-          code=${PIPESTATUS[0]}
-          set -e
-          if [ "$code" -eq 2 ]; then
-            grep -q '^BLOCKER=original_source_preservation_and_research_admission_required$' /tmp/phase03-exit.txt
-            grep -q '^SUPPORTED_MAPPING_CANDIDATES=18$' /tmp/phase03-exit.txt
-            grep -q '^SUPPORTED_TAXONOMY_LABELS=6$' /tmp/phase03-exit.txt
-            grep -q '^MISSING_TAXONOMY_LABELS=$' /tmp/phase03-exit.txt
-            grep -q '^BLOCKER_DETAIL=original_primary_source_preservation_and_canonical_research_admission_required$' /tmp/phase03-exit.txt
-            grep -q '^RESEARCH_TRAIN=0$' /tmp/phase03-exit.txt
-            grep -q '^RESEARCH_VALIDATION=0$' /tmp/phase03-exit.txt
-            grep -q '^RESEARCH_TEST=0$' /tmp/phase03-exit.txt
-          elif [ "$code" -ne 0 ]; then
-            exit "$code"
-          fi
+        run: python scripts/check_phase3_exit.py | tee /tmp/phase03-exit.txt
+      - name: Record Phase 04 hard-exit status
+        run: python scripts/check_phase4_exit.py | tee /tmp/phase04-exit.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
-          name: phase03-dependency-locks
+          name: phase04-dependency-locks
           path: |
             backend/requirements.full.lock
             frontend/package-lock.json
@@ -99,6 +85,16 @@ jobs:
             datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
             docs/data-card.md
             docs/phase-03-handoff.md
+      - name: Upload Phase 04 persistence evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase04-persistence-evidence
+          path: |
+            /tmp/phase04-exit.txt
+            evidence/phase-04/
+            docs/phase-04-handoff.md
+            docs/architecture.md
+            backend/migrations/versions/0002_phase04_persistence.py
 
   clean-compose:
     runs-on: ubuntu-latest
@@ -116,22 +112,25 @@ jobs:
           python -m pip install -r backend/requirements.full.lock
           python -m pip install --no-deps -e ./backend
       - name: Fresh Compose build and smoke
+        env:
+          DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
         run: |
-          mkdir -p /tmp/phase03-clean-environment
+          mkdir -p /tmp/phase04-clean-environment
           docker compose down -v --remove-orphans
           docker compose build --no-cache
           docker compose up -d
-          python scripts/compose_health.py | tee /tmp/phase03-clean-environment/fresh-start-smoke.log
-          docker compose ps | tee /tmp/phase03-clean-environment/service-health.txt
+          python scripts/compose_health.py | tee /tmp/phase04-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase04-clean-environment/phase04-exit.log
+          docker compose ps | tee /tmp/phase04-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
-        run: docker compose logs --no-color > /tmp/phase03-clean-environment/compose.log || true
+        run: docker compose logs --no-color > /tmp/phase04-clean-environment/compose.log || true
       - name: Tear down cleanly
         if: always()
         run: docker compose down -v --remove-orphans
-      - name: Upload Phase 03 clean-environment evidence
+      - name: Upload Phase 04 clean-environment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase03-clean-environment
-          path: /tmp/phase03-clean-environment/
+          name: phase04-clean-environment
+          path: /tmp/phase04-clean-environment/
