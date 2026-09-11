@@ -347,13 +347,24 @@ class EvaluatorRegistry:
             evaluator = self._evaluators[name]
         except KeyError as exc:
             raise KeyError(f"unknown evaluator: {name}") from exc
-        upfront = float(kwargs.get("upfront_cost_usd", 0.0))
-        supporting = kwargs.get("supporting_metrics", ())
-        if not isinstance(supporting, list | tuple):
+
+        upfront_raw = kwargs.get("upfront_cost_usd", 0.0)
+        if not isinstance(upfront_raw, int | float):
+            raise TypeError("upfront_cost_usd must be numeric")
+        upfront = float(upfront_raw)
+
+        supporting_raw = kwargs.get("supporting_metrics", ())
+        if not isinstance(supporting_raw, list | tuple):
             raise TypeError("supporting_metrics must be a sequence")
+        supporting: list[SupportingMetric] = []
+        for item in supporting_raw:
+            if not isinstance(item, SupportingMetric):
+                raise TypeError("supporting_metrics entries must be SupportingMetric values")
+            supporting.append(item)
+
         return evaluator.evaluate(
             examples,
             predictions,
             upfront_cost_usd=upfront,
-            supporting_metrics=tuple(supporting),  # type: ignore[arg-type]
+            supporting_metrics=tuple(supporting),
         )
