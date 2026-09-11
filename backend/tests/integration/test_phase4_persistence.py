@@ -189,6 +189,7 @@ def test_prediction_cannot_cross_experiment_dataset_version(engine: Engine) -> N
             manifest_json={"fixture": True},
         )
         session.add(other)
+        session.flush()
         session.add(
             IncidentFamily(
                 dataset_version=other.version,
@@ -199,6 +200,7 @@ def test_prediction_cannot_cross_experiment_dataset_version(engine: Engine) -> N
                 family_metadata={},
             )
         )
+        session.flush()
         session.add(
             Incident(
                 dataset_version=other.version,
