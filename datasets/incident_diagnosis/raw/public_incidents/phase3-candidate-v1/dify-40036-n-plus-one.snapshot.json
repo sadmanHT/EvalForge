@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "A real self-hosted production Dify installation reported a roughly 740 GB PostgreSQL database, peak QPS around 100, and six API replicas.",
+    "The ordinary first log page triggered per-row workflow_runs lookups, explicitly described as an N+1 pattern, with large TOAST fields deserialized for each row.",
+    "The reporter validated that the page-1 base SQL itself was sub-millisecond and that the list-page cost came from row-by-row run-detail loading, decompression, serialization, and payload transfer.",
+    "The same report also describes a separate unindexed keyword-search full scan; this candidate is intentionally scoped only to the ordinary list-page N+1 mechanism."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "Dify GitHub",
+  "source_title": "Log pages extremely slow on large DB: N+1 workflow_runs loading",
+  "source_url": "https://github.com/langgenius/dify/issues/40036"
+}

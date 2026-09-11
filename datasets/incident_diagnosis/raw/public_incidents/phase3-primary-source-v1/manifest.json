@@ -1,0 +1,204 @@
+{
+  "manifest_version": "phase3-primary-source-manifest-v3",
+  "plan_version": "phase3-primary-source-preservation-v3",
+  "snapshots": [
+    {
+      "byte_length": 424841,
+      "candidate_id": "altapay:2026-07-15:shopify-3ds-firewall-config",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://status.altapay.com/history/1",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/altapay-2026-firewall-payment-config.primary.html",
+      "snapshot_sha256": "35724fda340daa48c15790382892a2a5ba218a6afd74ffb35ea425b35445a603",
+      "source_identity": "http_document:https://status.altapay.com/history/1"
+    },
+    {
+      "byte_length": 127153,
+      "candidate_id": "atlassian:CRUC-8168:bonecp-connection-leak",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://jira.atlassian.com/browse/CRUC-8168",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/atlassian-CRUC-8168-connection-leak.primary.html",
+      "snapshot_sha256": "cfaa3028a2edfff5e31be8f77fefd82d7d5c652e555ca5fe4525f49dbc0f9411",
+      "source_identity": "http_document:https://jira.atlassian.com/browse/CRUC-8168"
+    },
+    {
+      "byte_length": 16555,
+      "candidate_id": "coderden:2026-02-19:database-connection-leak",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://engineering.coderden.in/posts/database-connection-exhaustion-incident/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/coderden-2026-connection-leak.primary.html",
+      "snapshot_sha256": "df678020ec1a48872dbe897123d06edd840a422c1f1f9dd864cdb1cf9ad43193",
+      "source_identity": "http_document:https://engineering.coderden.in/posts/database-connection-exhaustion-incident/"
+    },
+    {
+      "byte_length": 7031,
+      "candidate_id": "dify:issue-40036:2026-08-05:n-plus-one",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/langgenius/dify/issues/40036",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dify-40036.primary.json",
+      "snapshot_sha256": "74a1dfcdab883babd8c358e2ab336b6d9397299e2468750f2f62c9f66b439fee",
+      "source_identity": "github_issue:langgenius/dify#40036"
+    },
+    {
+      "byte_length": 24890,
+      "candidate_id": "dnsimple:2015-05-09:san-jose-memory-leak",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dnsimple-2015-memory-leak.primary.html",
+      "snapshot_sha256": "3f99f689c655b4061fde451afcdda942df94d082d76c0388ed1fee7c77f46821",
+      "source_identity": "http_document:https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/"
+    },
+    {
+      "byte_length": 121409,
+      "candidate_id": "elevenlabs:2026-04-22:billing-system-misconfiguration",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/elevenlabs-2026-billing-misconfiguration.primary.html",
+      "snapshot_sha256": "a7574408bb85db0b150c668a0e3688ca5d87fae15114602334c9dc011a480345",
+      "source_identity": "http_document:https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65"
+    },
+    {
+      "byte_length": 253524,
+      "candidate_id": "fastly:2023-02-28:cloud-waf-false-alarm",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://fastly.status.page/incidents?componentId=510172",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/fastly-2023-cloud-waf-false-alarm.primary.html",
+      "snapshot_sha256": "0494cc7e7ed85f058d148e8dbdb7612deb5a3292bb019316494c03871ee79099",
+      "source_identity": "http_document:https://fastly.status.page/incidents?componentId=510172"
+    },
+    {
+      "byte_length": 79147,
+      "candidate_id": "git-nrw:2025-05-09:wal-disk-full",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/git-nrw-2025-wal-disk-full.primary.html",
+      "snapshot_sha256": "a75f2af6cb23e09f23fa1646536a188d94eb955ed35a0cf276b09d6392a06572",
+      "source_identity": "http_document:https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/"
+    },
+    {
+      "byte_length": 16094,
+      "candidate_id": "github:Dispatcharr:issue-1416:2026-07-06",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/dispatcharr-1416.primary.json",
+      "snapshot_sha256": "6bedb460a3a5ee1a2711cb75c21cd715e4295223dbd81ef91a561b394aee4f14",
+      "source_identity": "github_issue:Dispatcharr/Dispatcharr#1416"
+    },
+    {
+      "byte_length": 4247,
+      "candidate_id": "github:Nikhil-Gautam-dev:medoc-n-plus-one:2026-01-11",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "text/plain",
+      "original_url": "https://nikhil-gautam-dev.github.io/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened/",
+      "snapshot_kind": "git_blob",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/medoc-n-plus-one.primary.md",
+      "snapshot_sha256": "9f4a5cd6f31d39404b8f3ac41963ca536a4f480d2e8693ee3421a310029f9ddf",
+      "source_identity": "git_blob:Nikhil-Gautam-dev/nikhil-gautam-dev.github.io@34d1ecc14b54166608b4197c44e1e7efc82e48b6:src/content/blog/it-worked-in-dev-it-worked-in-qa-then-production-happened.md:750ba91067e5e4d2e192a3eceffec357a58e9d77"
+    },
+    {
+      "byte_length": 44838,
+      "candidate_id": "gitlab:INC-889:2025-05-12:false-alarm-version-skew",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/gitlab-2025-version-skew-false-alarm.primary.html",
+      "snapshot_sha256": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58",
+      "source_identity": "http_document:https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803"
+    },
+    {
+      "byte_length": 24941,
+      "candidate_id": "google-cloud-status:E18Caoo5X1m6dTa1PVr1",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2021-payment-config.primary.html",
+      "snapshot_sha256": "eea8b6dcae6709ce9505abc408f34070e95221beb6e51e27ca4f65cfd3da4697",
+      "source_identity": "http_document:https://status.cloud.google.com/incidents/E18Caoo5X1m6dTa1PVr1"
+    },
+    {
+      "byte_length": 22743,
+      "candidate_id": "google-cloud-status:fLYHLzSGXGkLkAjc8MJG",
+      "captured_at": "2026-09-10T11:02:07.948008Z",
+      "media_type": "text/html",
+      "original_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/google-2024-mandiant-no-fault.primary.html",
+      "snapshot_sha256": "ce831f782145f04586142801593b75c8c5a2615d5914896a19e5532332754fd0",
+      "source_identity": "http_document:https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG"
+    },
+    {
+      "byte_length": 262626,
+      "candidate_id": "honeycomb:2019-11-06:running-dry-on-memory",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/honeycomb-2019-memory-leak.primary.html",
+      "snapshot_sha256": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35",
+      "source_identity": "http_document:https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing"
+    },
+    {
+      "byte_length": 10443,
+      "candidate_id": "openlibrary:issue-12432:2026-04-22:n-plus-one",
+      "captured_at": "2026-09-09T04:33:37.515513Z",
+      "media_type": "application/json",
+      "original_url": "https://github.com/internetarchive/openlibrary/issues/12432",
+      "snapshot_kind": "github_issue",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/openlibrary-12432.primary.json",
+      "snapshot_sha256": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904",
+      "source_identity": "github_issue:internetarchive/openlibrary#12432"
+    },
+    {
+      "byte_length": 357931,
+      "candidate_id": "postmortems-app:76f27cf3-b204-40e4-942e-19657614f658",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://aws.amazon.com/message/680342/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/aws-2012-memory-leak.primary.html",
+      "snapshot_sha256": "9ac91377227844b739a5870933a9519351a5b956e7ba219d99df3bba49857a1e",
+      "source_identity": "http_document:https://aws.amazon.com/message/680342/"
+    },
+    {
+      "byte_length": 10212,
+      "candidate_id": "postmortems-app:e7d7aa93-81f7-4338-9c0b-6e6c0dcefdcb",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "http://mail.tarsnap.com/tarsnap-announce/msg00035.html",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/tarsnap-2016-disk-full.primary.html",
+      "snapshot_sha256": "e9b6e4928686b49e691de5087283ae154487672161adf121d5683516f0d01a3c",
+      "source_identity": "http_document:http://mail.tarsnap.com/tarsnap-announce/msg00035.html"
+    },
+    {
+      "byte_length": 66845,
+      "candidate_id": "soundcloud:2011-08-24:binlog-disk-full",
+      "captured_at": "2026-09-10T10:23:49.362751Z",
+      "media_type": "text/html",
+      "original_url": "https://developers.soundcloud.com/blog/doing-the-right-thing/",
+      "snapshot_kind": "http_document",
+      "snapshot_path": "datasets/incident_diagnosis/raw/public_incidents/phase3-primary-source-v1/soundcloud-2011-binlog-disk-full.primary.html",
+      "snapshot_sha256": "c771aec8541ea19540088c5cc89fbbd346d98e6f89805aac7a07d4d411819614",
+      "source_identity": "http_document:https://developers.soundcloud.com/blog/doing-the-right-thing/"
+    }
+  ]
+}

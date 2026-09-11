@@ -1,0 +1,105 @@
+{
+  "fixture_version": "phase5-golden-metrics-v1",
+  "allowed_labels": [
+    "n_plus_one_query",
+    "database_connection_leak",
+    "disk_exhaustion",
+    "memory_leak",
+    "broken_payment_configuration",
+    "no_fault"
+  ],
+  "label_to_category": {
+    "n_plus_one_query": "database_behavior",
+    "database_connection_leak": "database_behavior",
+    "disk_exhaustion": "resource_exhaustion",
+    "memory_leak": "resource_exhaustion",
+    "broken_payment_configuration": "configuration",
+    "no_fault": "control"
+  },
+  "ece_bins": 5,
+  "upfront_cost_usd": 0.1,
+  "examples": [
+    {"incident_id": "golden-1", "split": "test", "root_cause_code": "n_plus_one_query", "root_cause_category": "database_behavior"},
+    {"incident_id": "golden-2", "split": "test", "root_cause_code": "database_connection_leak", "root_cause_category": "database_behavior"},
+    {"incident_id": "golden-3", "split": "test", "root_cause_code": "memory_leak", "root_cause_category": "resource_exhaustion"},
+    {"incident_id": "golden-4", "split": "test", "root_cause_code": "no_fault", "root_cause_category": "control"}
+  ],
+  "predictions": [
+    {
+      "incident_id": "golden-1",
+      "predicted_root_cause_code": "n_plus_one_query",
+      "ranked_labels": [
+        {"label": "n_plus_one_query", "score": 0.7, "probability": 0.7},
+        {"label": "database_connection_leak", "score": 0.1, "probability": 0.1},
+        {"label": "disk_exhaustion", "score": 0.05, "probability": 0.05}
+      ],
+      "label_probabilities": {"n_plus_one_query": 0.7, "database_connection_leak": 0.1, "disk_exhaustion": 0.05, "memory_leak": 0.05, "broken_payment_configuration": 0.05, "no_fault": 0.05},
+      "confidence_probability": 0.7,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "latency_ms": 100.0,
+      "cost_usd": 0.01,
+      "raw_model_output": "golden fixture 1",
+      "parse_status": "OK"
+    },
+    {
+      "incident_id": "golden-2",
+      "predicted_root_cause_code": "n_plus_one_query",
+      "ranked_labels": [
+        {"label": "n_plus_one_query", "score": 0.6, "probability": 0.6},
+        {"label": "database_connection_leak", "score": 0.2, "probability": 0.2},
+        {"label": "disk_exhaustion", "score": 0.05, "probability": 0.05}
+      ],
+      "label_probabilities": {"n_plus_one_query": 0.6, "database_connection_leak": 0.2, "disk_exhaustion": 0.05, "memory_leak": 0.05, "broken_payment_configuration": 0.05, "no_fault": 0.05},
+      "confidence_probability": 0.6,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "latency_ms": 200.0,
+      "cost_usd": 0.02,
+      "raw_model_output": "golden fixture 2",
+      "parse_status": "OK"
+    },
+    {
+      "incident_id": "golden-3",
+      "predicted_root_cause_code": "memory_leak",
+      "ranked_labels": [
+        {"label": "memory_leak", "score": 0.7, "probability": 0.7},
+        {"label": "disk_exhaustion", "score": 0.1, "probability": 0.1},
+        {"label": "n_plus_one_query", "score": 0.05, "probability": 0.05}
+      ],
+      "label_probabilities": {"n_plus_one_query": 0.05, "database_connection_leak": 0.05, "disk_exhaustion": 0.1, "memory_leak": 0.7, "broken_payment_configuration": 0.05, "no_fault": 0.05},
+      "confidence_probability": 0.7,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "latency_ms": 300.0,
+      "cost_usd": 0.03,
+      "raw_model_output": "golden fixture 3",
+      "parse_status": "OK"
+    },
+    {
+      "incident_id": "golden-4",
+      "predicted_root_cause_code": "no_fault",
+      "ranked_labels": [
+        {"label": "no_fault", "score": 0.7, "probability": 0.7},
+        {"label": "broken_payment_configuration", "score": 0.1, "probability": 0.1},
+        {"label": "n_plus_one_query", "score": 0.05, "probability": 0.05}
+      ],
+      "label_probabilities": {"n_plus_one_query": 0.05, "database_connection_leak": 0.05, "disk_exhaustion": 0.05, "memory_leak": 0.05, "broken_payment_configuration": 0.1, "no_fault": 0.7},
+      "confidence_probability": 0.7,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "latency_ms": 400.0,
+      "cost_usd": 0.04,
+      "raw_model_output": "golden fixture 4",
+      "parse_status": "OK"
+    }
+  ],
+  "expected": {
+    "primary.exact_accuracy": 0.75,
+    "supporting.hierarchical_accuracy": 1.0,
+    "supporting.top3_accuracy": 1.0,
+    "calibration.normalized_multiclass_brier": 0.1675,
+    "calibration.ece": 0.075,
+    "latency.p50_ms": 250.0,
+    "latency.p95_ms": 385.0,
+    "cost.marginal_mean_usd": 0.025,
+    "cost.amortized_mean_usd": 0.05,
+    "quality.parse_failure_rate": 0.0
+  }
+}

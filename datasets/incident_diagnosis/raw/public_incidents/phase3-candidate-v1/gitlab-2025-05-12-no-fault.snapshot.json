@@ -1,0 +1,19 @@
+{
+  "normalized_facts": [
+    "GitLab opened an incident because production component versions appeared out of sync across zonal clusters after deployment.",
+    "Investigation determined the condition was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited.",
+    "No traffic was reaching the lingering pod and GitLab explicitly reported no customer impact.",
+    "Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault."
+  ],
+  "observed_at": "2026-09-09T02:45:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "GitLab Infrastructure Production",
+  "source_title": "GitLab Versions differ across zonal clusters",
+  "source_url": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803"
+}

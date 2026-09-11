@@ -1,0 +1,27 @@
+{
+  "normalized_facts": [
+    "Under normal live-stream use, database-dependent player API requests periodically timed out or returned 504 while a version endpoint that did not require the database remained healthy.",
+    "The report traced the failure to a PostgreSQL connection checked out from a bounded per-worker pool and not returned on the live-stream teardown or channel-switch path.",
+    "After enough leaked connections accumulated, the eight-connection worker pool remained pinned at capacity even after all streams ended, and database-dependent requests stayed blocked until restart.",
+    "The report supplied a deterministic concurrent-stream reproduction plus a negative control in which short database reads recycled connections and did not reproduce the wedge.",
+    "The issue was automatically closed because it was not opened from the required repository template; the closure comment did not dispute the technical diagnosis."
+  ],
+  "observed_at": "2026-09-08T21:36:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte GitHub issue content.",
+    "It is sufficient for candidate review provenance but not for research admission under the Phase 03 original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_event": {
+    "closed_at": "2026-07-06T15:16:52Z",
+    "created_at": "2026-07-06T15:16:37Z",
+    "issue_number": 1416,
+    "state": "closed",
+    "state_reason": "completed"
+  },
+  "source_publisher": "Dispatcharr/Dispatcharr GitHub repository",
+  "source_title": "[Bug]: player_api.php / XC API hangs (504) under streaming load — PostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool",
+  "source_url": "https://github.com/Dispatcharr/Dispatcharr/issues/1416"
+}

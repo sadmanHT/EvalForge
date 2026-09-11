@@ -4,12 +4,13 @@
 This script must be run on the intended connected GPU development/training environment.
 It deliberately does not substitute a mock/tiny model.
 """
+
 from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import platform
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = json.loads((ROOT / "configs/model.yaml").read_text(encoding="utf-8"))
@@ -47,7 +48,11 @@ def validate_smoke_payload(payload: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--load-in-4bit", action="store_true", help="Use bitsandbytes 4-bit loading on a compatible CUDA GPU.")
+    parser.add_argument(
+        "--load-in-4bit",
+        action="store_true",
+        help="Use bitsandbytes 4-bit loading on a compatible CUDA GPU.",
+    )
     args = parser.parse_args()
 
     try:
@@ -55,7 +60,9 @@ def main() -> int:
         import transformers
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError as exc:
-        raise SystemExit("Install torch and transformers in the intended GPU environment before running this hard gate.") from exc
+        raise SystemExit(
+            "Install torch and transformers in the intended GPU environment before running this hard gate."
+        ) from exc
 
     model_id = MODEL["base_model_id"]
     revision = MODEL["base_model_revision"]
@@ -68,9 +75,12 @@ def main() -> int:
     if args.load_in_4bit:
         try:
             from transformers import BitsAndBytesConfig
+
             load_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
         except Exception as exc:
-            raise RuntimeError("4-bit smoke requested but bitsandbytes/quantization support is unavailable") from exc
+            raise RuntimeError(
+                "4-bit smoke requested but bitsandbytes/quantization support is unavailable"
+            ) from exc
     else:
         load_kwargs["torch_dtype"] = "auto"
 

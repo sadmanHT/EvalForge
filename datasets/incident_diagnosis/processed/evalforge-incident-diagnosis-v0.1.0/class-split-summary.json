@@ -1,0 +1,60 @@
+{
+  "admission_version": "phase3-research-admission-v1",
+  "audit_warning_codes": [
+    "MISSING_DIFFICULTY_TIERS"
+  ],
+  "class_counts": {
+    "broken_payment_configuration": 3,
+    "database_connection_leak": 3,
+    "disk_exhaustion": 3,
+    "memory_leak": 3,
+    "n_plus_one_query": 3,
+    "no_fault": 3
+  },
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "difficulty_counts": {
+    "unknown": 18
+  },
+  "family_disjointness": "PASS",
+  "independent_family_count": 18,
+  "record_count": 18,
+  "research_audit_passed": true,
+  "split_class_counts": {
+    "test": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    },
+    "train": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    },
+    "validation": {
+      "broken_payment_configuration": 1,
+      "database_connection_leak": 1,
+      "disk_exhaustion": 1,
+      "memory_leak": 1,
+      "n_plus_one_query": 1,
+      "no_fault": 1
+    }
+  },
+  "split_family_counts": {
+    "test": 6,
+    "train": 6,
+    "validation": 6
+  },
+  "split_record_counts": {
+    "test": 6,
+    "train": 6,
+    "validation": 6
+  },
+  "split_seed": 20260908,
+  "synthetic_record_count": 0
+}

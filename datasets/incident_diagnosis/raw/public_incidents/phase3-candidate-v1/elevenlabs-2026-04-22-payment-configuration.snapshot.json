@@ -1,0 +1,18 @@
+{
+  "normalized_facts": [
+    "ElevenLabs investigated payment-processing issues affecting ElevenAPI on April 22, 2026.",
+    "The official incident update identified the root cause as a misconfiguration in the billing system.",
+    "The misconfiguration delayed provisioning of subscriptions; error rates returned to baseline before full resolution was confirmed."
+  ],
+  "observed_at": "2026-09-10T00:00:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot, not byte-for-byte original source content.",
+    "It supports candidate review provenance only; research admission requires the separate preserved primary-source artifact."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_publisher": "ElevenLabs",
+  "source_title": "Payment Issues",
+  "source_url": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65"
+}

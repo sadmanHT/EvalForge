@@ -10,7 +10,7 @@ on:
 jobs:
   verify-all:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -39,6 +39,8 @@ jobs:
       REDIS_URL: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v4
+      - name: Materialize pinned Phase 03 external source
+        run: python scripts/fetch_phase3_sources.py
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -63,13 +65,47 @@ jobs:
           test -f frontend/package-lock.json
       - name: Cumulative gate
         run: make verify-all
+      - name: Record Phase 03 hard-exit status
+        run: python scripts/check_phase3_exit.py | tee /tmp/phase03-exit.txt
+      - name: Record Phase 04 hard-exit status
+        run: python scripts/check_phase4_exit.py | tee /tmp/phase04-exit.txt
+      - name: Record Phase 05 hard-exit status
+        run: python scripts/check_phase5_exit.py | tee /tmp/phase05-exit.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
-          name: phase02-dependency-locks
+          name: phase05-dependency-locks
           path: |
             backend/requirements.full.lock
             frontend/package-lock.json
+      - name: Upload Phase 03 dataset evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase03-dataset-evidence
+          path: |
+            evidence/phase-03/
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
+            docs/data-card.md
+            docs/phase-03-handoff.md
+      - name: Upload Phase 04 persistence evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase04-persistence-evidence
+          path: |
+            /tmp/phase04-exit.txt
+            evidence/phase-04/
+            docs/phase-04-handoff.md
+            docs/architecture.md
+            backend/migrations/versions/0002_phase04_persistence.py
+      - name: Upload Phase 05 evaluation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-evaluation-evidence
+          path: |
+            /tmp/phase05-exit.txt
+            evidence/phase-05/
+            docs/evaluation-methodology.md
+            backend/tests/fixtures/phase5/golden_metrics.json
 
   clean-compose:
     runs-on: ubuntu-latest
@@ -87,22 +123,27 @@ jobs:
           python -m pip install -r backend/requirements.full.lock
           python -m pip install --no-deps -e ./backend
       - name: Fresh Compose build and smoke
+        env:
+          DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
         run: |
-          mkdir -p evidence/phase-02
+          mkdir -p /tmp/phase05-clean-environment
           docker compose down -v --remove-orphans
           docker compose build --no-cache
           docker compose up -d
-          python scripts/compose_health.py | tee evidence/phase-02/fresh-start-smoke.log
-          docker compose ps | tee evidence/phase-02/service-health.txt
+          python scripts/compose_health.py | tee /tmp/phase05-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase05-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase05-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase05-clean-environment/phase05-exit.log
+          docker compose ps | tee /tmp/phase05-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
-        run: docker compose logs --no-color > evidence/phase-02/compose.log || true
+        run: docker compose logs --no-color > /tmp/phase05-clean-environment/compose.log || true
       - name: Tear down cleanly
         if: always()
         run: docker compose down -v --remove-orphans
-      - name: Upload fresh-start evidence
+      - name: Upload Phase 05 clean-environment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase02-fresh-start
-          path: evidence/phase-02/
+          name: phase05-clean-environment
+          path: /tmp/phase05-clean-environment/

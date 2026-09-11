@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_sEjNzo9c8KB8Njj2rXSGhjyyuShmO820Ii2DNYS3igL',{
+    api_host:'https://app.posthog.com',
+    autocapture: {
+      event_allowlist: ['click'], // DOM events from this list ['click', 'change', 'submit']
+      element_allowlist: ['button', 'a'] // DOM elements from this list ['a', 'button', 'form', 'input', 'select', 'textarea', 'label']
+    },
+    disable_session_recording: true
+  })
+</script>
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L4ZSEESS96"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L4ZSEESS96');
+</script>
+
+
+  <title>
+  
+    Incident Report - San Jose Region and Redirector Service Outage (May 9th, 2015) - DNSimple Blog
+  
+  </title>
+  <meta name="description" content="Last Friday our San Jose region and Redirector service suffered an outage along with our Europe region being under a Denial of Service attack. Here is what happened and what we're doing about it.">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+
+  
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:title" content="Incident Report - San Jose Region and Redirector Service Outage (May 9th, 2015)">
+    <meta property="og:type" content="website">
+
+    
+    <meta property="og:url" content="https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/">
+    <meta property="og:description" content="Last Friday our San Jose region and Redirector service suffered an outage along with our Europe region being under a Denial of Service attack. Here is what happened and what we're doing about it.">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Feed" href="https://blog.dnsimple.com/feed.xml">
+  <link rel="canonical" href="https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/">
+  
+  
+
+  <script src="https://dnsimple.com/components/marketing.js"></script>
+</head>
+
+<body>
+  <div class="bg-navy"></div>
+<dnsimple-marketing-banner padding-left="64" max-width="1536"></dnsimple-marketing-banner>
+
+<div class="mw9 center pv3 ph3 ph3-m ph5-ns">
+  <div class="flex flex-wrap justify-between items-center">
+    <div class="flex items-center pv2">
+      <div class="flex-shrink-0">
+        <div class="flex flex-wrap justify-center">
+          <a href="/" title="DNSimple Blog"
+            ><img src="/assets/images/dnsimple-logo-blog-dark.svg" class="v-mid pr3-ns pr2" style="width: 172px"
+          /></a>
+          <dnsimple-marketing-hiring></dnsimple-marketing-hiring>
+        </div>
+      </div>
+
+      <input type="search" name="q" value="" id="input-search" class="dn dib-ns w4-ns w-100-l input-search input-reset outline-0 ba br-pill b--black-20 pv2 ph3 ml2-ns" placeholder="Search..." autocomplete="off">
+    </div>
+
+    <nav class="pv2">
+      <div class="dn dib-l">
+        <a href="/all/" class="mr2-s mr3 link black-60 hover-black ttu b link-nav">All</a>
+        <a href="/category/features/" class="mr2 mr3-l link black-60 hover-black ttu b link-nav">Features</a>
+        <a href="/category/engineering/" class="mr2 mr3-l link black-60 hover-black ttu b link-nav">Engineering</a>
+        <a href="/category/learning/" class="mr2 mr3-l link black-60 hover-black ttu b link-nav">Learning</a>
+        <a href="/category/culture/" class="mr2 mr3-l link black-60 hover-black ttu b link-nav">Culture</a>
+      </div>
+
+      <div class="dual-cta-container">
+        <a href="https://dnsimple.com/signup?utm_source=blog&utm_medium=web&utm_content=cta-header" class="primary">Get Started</a>
+        <a href="https://dnsimple.com/enterprises?utm_source=blog&utm_medium=web&utm_content=cta-header#contact-sales" class="secondary">Contact Sales</a>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<div id="main">
+    <div class="mw9 center mt4">
+      <div class="pv5 ph3 ph5-ns br3-ns bg-navy" style="background:linear-gradient(to bottom right, rgba(32, 1, 144, 0.8), rgba(99, 32, 255, 0.8));">
+      
+      <div class="mw8 center pv4 pv4-m pv6-ns ph3">
+        <span class="tracked ttu f7 white-70">Status</span>
+        <h1 class="ma0 f1 f1-m  lh-solid white">Incident Report - San Jose Region and Redirector Service Outage (May 9th, 2015)</h1>
+        <div class="pt3">
+          <img class="br-100 v-mid mr2 ba bw1 b--white w3" src="https://secure.gravatar.com/avatar/700eacfd79780dfbd6453c971cadafb8?s=180" alt="Aaron Kalin's profile picture" title="Aaron Kalin">
+          <span class="white-70">Aaron Kalin</span>
+          <span class="white-40">on <time datetime="2015-05-13">May 13, 2015</time></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mw7 center ph3 pt5">
+    <div class="f5 f4-ns lh-copy">
+      <p>On Friday evening (Saturday morning for Europe), the San Jose data center suddenly stopped responding along with our Redirector service. All of our customers that were using URL records for redirects or attempting to resolve DNS in that area would have seen an outage or very slow lookups. Right about the same time, a Denial of Service attack was in progress causing slow or unresponsive DNS queries on one of our DNS servers in the Europe region. The following post will outline what happened in detail along with how we are responding to help prevent outages like this in the future.</p>
+
+<h2 id="what-happened">What happened?</h2>
+
+<p>At 2:29 UTC on May 9th, we began receiving alerts from our monitoring system that DNS lookups of dnsimple.com were failing lookup. This alert kept resolving itself and re-triggering, indicating a potential network problem because lookups were failing every so many times. Initially, we were unaware of an attack and assumed it was regional networking issues that needed ot be escalated to our hosting provider.</p>
+
+<p>About 3 minutes later, a separate monitor for our Redirector service suddenly alerted. This is when we were paged again and more DNSimple employees joined chat to observe what was happening with the Redirector service. It was shortly after this alert that we realized none of the systems in the San Jose data center were responding. We alerted our hosting provider who acknowledged the issue at the time and they were already investigating. They had identified a network switch which was suddenly not responding, so none of our servers in the San Jose data center would have internet connectivity. This is also where we had our redirector service hosted at the time, so any customers with URL records were suddenly experiencing outages. Customers who were attempting to query our DNS servers in this region were automatically sent to other regions, increasing response time for lookups.</p>
+
+<p>Minutes into the realization that the entire data center was down, we began to search for alternative redirectors we could use until the servers return to service. Before this outage, we were rebuilding the redirector and zone server services to have at least one in every data center in the event of an outage like this, but we did not have any online at the time. About an hour into the outage is when we attempted to rebuild a redirector since we still did not have an ETA from our hosting provider about the network switch coming back online.</p>
+
+<p>At approximately 4:39 UTC, the network switch had been rebooted and was answering traffic normally. This resolved the monitoring check for the Redirector service and we upgraded the status of the Redirector service to "Monitoring" on our status page. Around this time, we were still seeing the DNS checks in the Amsterdam region continuing to cycle and we contacted our DDoS protection provider, CloudFlare, about the issue. It was then that we had confirmation a Denial of Service attack was in progress in Amsterdam, which was triggering these alerts of lookup failures.</p>
+
+<p>Around 5:13 UTC we stopped receiving alerts from our monitoring system and we got a message from CloudFlare about the issue being resolved and network access was restored to normal service. Roughly 5 hours after this whole issue started, we updated our status page to all systems clear.</p>
+
+<h2 id="why-did-it-happen">Why did it happen?</h2>
+
+<p>Our hosting provider later identified the cause of the network switch failure as some packets from our monitoring checks getting stuck in the network switch, causing a slow memory leak. Eventually, this would lead to the network switch running out of memory to be able to process incoming packets leading to the failure we experienced. Unfortunately, this was also the region where our redirector service was currently hosted so when the network switch stopped working, so did the redirector because it was unreachable from the internet. As for the Denial of Service attack, we have not gotten any reason of why it happened, which is sadly par for the course with Denial of Service attacks.</p>
+
+<h2 id="how-did-we-respond-and-recover">How did we respond and recover?</h2>
+
+<p>When it appeared the network issues in San Jose were not going to be resolved easily, we began rebuilding a redirector server in the Ashburn, VA data center as a backup measure. By the time it was ready, the network issue had been resolved by the hosting staff. As for the Denial of Service attack, this was largely the work of CloudFlare and is why we have them for this protection service. Their response to the attack was quick and it was mitigated fairly quickly.</p>
+
+<h2 id="how-might-we-prevent-similar-issues-from-occurring-again">How might we prevent similar issues from occurring again?</h2>
+
+<p>Before this outage began, we had already identified this type of situation as a potential disaster scenario. Our plan was and still is to setup every data center we can as a potential disaster fall back in the event this happens. This is something the operations team at DNSimple plans for as a disaster scenario, think "What if this data center falls off the map?". Our hosting provider is also going to be upgrading the software on our network switches to prevent the memory leak issue we mentioned earlier. This will require a little downtime while they upgrade, so please keep an eye on <a href="http://dnsimplestatus.com/">our status page</a> for updates about when we will schedule these outages for the upgrades.</p>
+
+<p>The same goes for our DDoS protection that started to be put in place <a href="/2014/12/incident-report-ddos/">after our outage in December</a> and for its first realistic test seemed to work better than expected. The network was degraded in performance, but it was not completely down as it was in December. We will be adding this protection to additional name servers worldwide in order to mitigate future attacks.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This type of situation very rarely happens and we did not put disaster recover plans in place fast enough to respond to this outage. For that, we are very sorry the recovery from this situation was not as fast as it should have been. We are already working very hard to prevent this in the future. Please <a href="https://dnsimple.com/contact">let us know</a> if there is anything we can help you with regarding the use of our service or have any concerns of your own.</p>
+
+      <p class="pt3 i">
+        Share on <a href="http://twitter.com/share?text=Incident Report - San Jose Region and Redirector Service Outage (May 9th, 2015)&amp;url=https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/" title="Tweet this post" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">Twitter</a>
+        and <a href="https://www.facebook.com/sharer/sharer.php?u=https://blog.dnsimple.com/2015/05/incident-report-san-jose-region-and-redirector-outage/" title="Share on Facebook" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">Facebook</a>
+      </p>
+      <div class="flex items-center pv5 f5">
+        <img class="br-100 v-mid mr3 ba bw1 b--white w3" src="https://secure.gravatar.com/avatar/700eacfd79780dfbd6453c971cadafb8?s=180" alt="Aaron Kalin's profile picture" title="Aaron Kalin">
+        <div class="dib">
+          <h4 class="ma0">Aaron Kalin</h4>
+          <p class="ma0 measure">Software and Server maintainer by day, board and video game geek by night.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mw8 center pv5 tc bg-white br3">
+    <p class="ph2 f4 measure center"><strong>We think domain management should be easy.</strong> <br>That's why we continue building DNSimple.</p>
+<a href="https://dnsimple.com?utm_source=blog&utm_medium=web&utm_content=cta-callout" class="dib link dim br3 ph4 pv3 white bg-red b">Try us free for 30 days</a>
+<div class="center">
+  <img src="/assets/images/rating.png" alt="4.5 stars" class="db pt3 w4 center">
+  <p class="ma0"><strong>4.5</strong> out of 5 stars.</p>
+  <p class="ma0">Based on <a class="link blue underline" href="https://www.trustpilot.com/review/dnsimple.com" target="_blank">Trustpilot.com</a> and <a class="link blue underline" href="https://www.g2.com/products/dnsimple/reviews" target="_blank">G2.com</a> reviews.</p>
+</div>
+
+  </div>
+
+  <div class="bg-whitee">
+  <div class="mw9 center pv5 ph3 ph5-ns">
+    <div class="flex flex-wrap justify-between">
+      
+
+      
+        
+          <div class="w-100 w-30-ns">
+            
+<a href="/2025/11/entra-sso/" class="link post-link black">
+  <div class="pv4">
+    
+      <span class="f7 tracked ttu">Features</span>
+    
+    <h2 class="f3 lh-title ma0 measure"><span>Microsoft Entra SSO Now Available for Enterprise Domain Management</span></h2>
+    <p class="lh-copy measure">Enterprise customers can now use Microsoft Entra (formerly Azure AD) as a single sign-on provider, streamlining team access and strengthening security for domain and DNS management.</p>
+    <div class="">
+      <img class="br-100 v-mid" src="https://www.gravatar.com/avatar/1bc49d51d0629e579155761efef84c12?s=40" alt="Dallas Read's profile picture" title="Dallas Read">
+      <span>Dallas Read</span>
+    </div>
+  </div>
+</a>
+
+
+          </div>
+        
+      
+        
+          <div class="w-100 w-30-ns">
+            
+<a href="/2017/08/debugging-dns/" class="link post-link black">
+  <div class="pv4">
+    
+      <span class="f7 tracked ttu">Learning</span>
+    
+    <h2 class="f3 lh-title ma0 measure"><span>Debugging DNS</span></h2>
+    <p class="lh-copy measure">In this post we share some tips and tools you can use to troubleshoot DNS issues on your own like a pro.</p>
+    <div class="">
+      <img class="br-100 v-mid" src="https://s.gravatar.com/avatar/4c50caee0c6a446a0b60f827a2a1e5e5?s=40" alt="Ole Michaelis's profile picture" title="Ole Michaelis">
+      <span>Ole Michaelis</span>
+    </div>
+  </div>
+</a>
+
+
+          </div>
+        
+      
+        
+          <div class="w-100 w-30-ns">
+            
+<a href="/2026/08/building-our-fully-independent-dns-edge/" class="link post-link black">
+  <div class="pv4">
+    
+      <span class="f7 tracked ttu">Engineering</span>
+    
+    <h2 class="f3 lh-title ma0 measure"><span>How We Built a Fully Independent DNS Cache Edge</span></h2>
+    <p class="lh-copy measure">Living on the (cache) edge: DNSimple operates its own cache edge, with full query visibility and no black-box between nameserver and customer.</p>
+    <div class="">
+      <img class="br-100 v-mid" src="https://gravatar.com/avatar/5053aea182c8ef63755af8e024a16110674a944d3fefa4d435e4f4ba59f22e69?s=40" alt="Jonathan Temple's profile picture" title="Jonathan Temple">
+      <span>Jonathan Temple</span>
+    </div>
+  </div>
+</a>
+
+
+          </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+  <footer class="bg-near-black bg-pipes pt5 pb5 white-80">
+    <div class="mw9 center pa3 ph5-ns">
+      <div class="flex flex-wrap justify-between">
+        <div class="w-100 w-70-l pb5 tc tl-ns">
+          <img src="/assets/images/dnsimple-logo-light.svg" alt="DNSimple Help">
+          <h2 class="white ma0 pt2 pb2 b">Get Help From Developers</h2>
+          <p class="measure">Everyone at DNSimple enjoys writing blog posts.<br>We love simplifying your domain management, too.<br></p>
+          <a href="https://dnsimple.com?utm_source=blog&utm_medium=web&utm_content=cta-footer" class="link dim br2 ph4 pv3 mb2 dib white bg-blue hover-white b">Start your 30-day free trial today</a>
+
+          <div class="social-media flex justify-start-ns justify-center items-center pv4">
+  <!-- twitter / x -->
+  <a href="https://twitter.com/dnsimple" rel="noopener noreferrer" aria-label="Visit us on X" target="_blank" class="grow mr4">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 512 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
+      />
+    </svg>
+  </a>
+
+  <!-- youtube -->
+  <a
+    href="https://www.youtube.com/channel/UC_BHoTHFiZ1GTo3-rkfjHkA"
+    aria-label="Visit us on YouTube"
+    rel="noopener noreferrer"
+    target="_blank"
+    class="grow mr4"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="36" viewBox="0 0 576 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"
+      />
+    </svg>
+  </a>
+
+  <!-- linkedin -->
+  <a href="https://www.linkedin.com/company/dnsimple/" target="_blank" rel="noopener noreferrer" class="grow mr4">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="28" viewBox="0 0 448 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z"
+      />
+    </svg>
+  </a>
+
+  <!-- bluesky -->
+  <a href="https://bsky.app/profile/dnsimple.bsky.social" aria-label="Visit us on Blue Sky Social" rel="noopener noreferrer" target="_blank" class="grow mr4">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 512 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M111.8 62.2C170.2 105.9 233 194.7 256 242.4c23-47.6 85.8-136.4 144.2-180.2c42.1-31.6 110.3-56 110.3 21.8c0 15.5-8.9 130.5-14.1 149.2C478.2 298 412 314.6 353.1 304.5c102.9 17.5 129.1 75.5 72.5 133.5c-107.4 110.2-154.3-27.6-166.3-62.9l0 0c-1.7-4.9-2.6-7.8-3.3-7.8s-1.6 3-3.3 7.8l0 0c-12 35.3-59 173.1-166.3 62.9c-56.5-58-30.4-116 72.5-133.5C100 314.6 33.8 298 15.7 233.1C10.4 214.4 1.5 99.4 1.5 83.9c0-77.8 68.2-53.4 110.3-21.8z"
+      />
+    </svg>
+  </a>
+
+  <!-- facebook -->
+  <a href="https://www.facebook.com/dnsimple" aria-label="Visit us on Facebook" rel="noopener noreferrer" target="_blank" class="grow mr4">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="20" viewBox="0 0 320 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"
+      />
+    </svg>
+  </a>
+
+  <!-- mastodon -->
+  <a href="https://dnsimple.social/@trusty" aria-label="Visit us on Mastodon" rel="noopener noreferrer" target="_blank" class="grow mr4">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="28" viewBox="0 0 448 512">
+      <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+      <path
+        fill="#888888"
+        d="M433 179.1c0-97.2-63.7-125.7-63.7-125.7-62.5-28.7-228.6-28.4-290.5 0 0 0-63.7 28.5-63.7 125.7 0 115.7-6.6 259.4 105.6 289.1 40.5 10.7 75.3 13 103.3 11.4 50.8-2.8 79.3-18.1 79.3-18.1l-1.7-36.9s-36.3 11.4-77.1 10.1c-40.4-1.4-83-4.4-89.6-54a102.5 102.5 0 0 1 -.9-13.9c85.6 20.9 158.7 9.1 178.8 6.7 56.1-6.7 105-41.3 111.2-72.9 9.8-49.8 9-121.5 9-121.5zm-75.1 125.2h-46.6v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.3V197c0-58.5-64-56.6-64-6.9v114.2H90.2c0-122.1-5.2-147.9 18.4-175 25.9-28.9 79.8-30.8 103.8 6.1l11.6 19.5 11.6-19.5c24.1-37.1 78.1-34.8 103.8-6.1 23.7 27.3 18.4 53 18.4 175z"
+      />
+    </svg>
+  </a>
+</div>
+
+
+        </div>
+        <div class="w-100 w-30-l tc tl-ns">
+          <nav>
+            <a href="https://dnsimple.com?utm_source=blog&utm_medium=web&utm_content=link-footer" class="pb2 db link white-80 hover-white">DNSimple.com</a>
+            <a href="https://support.dnsimple.com/" class="pb2 db link white-80 hover-white">Support</a>
+            <a href="https://dnsimple.com/contact" class="pb2 db link white-80 hover-white">Contact</a>
+            <a href="http://dnsimplestatus.com/" class="pb2 db link white-80 hover-white">Status</a>
+            <a href="https://developer.dnsimple.com/" class="db link white-80 hover-white">API</a>
+          </nav>
+
+          <div class="pv3">
+            <p class="mb2">Get the latest news in your inbox</p>
+            <form action="https://forms.userlist.com/2b6c11f8-1ca3-441d-98bf-f828ff571917/submissions"
+      method="POST"
+      accept-charset="UTF-8"
+      onsubmit="this['fields[subscribed_to_blog_at]'].value = new Date().toISOString()">
+  <input type="hidden" name="fields[subscribed_to_blog]" value="true">
+  <input type="hidden" name="fields[subscribed_to_blog_at]" value="">
+  <label for="email" class="dib mb2">Enter your email</label>
+  <div class="relative w-100">
+    <input type="email" name="fields[email]" value="" placeholder="you@dnsimple.com" class="input-reset pa2 outline-0 ba b--black-20 br2 w-100 bg-white-10 white" required autocomplete="email">
+    <input type="submit" name="btnSubmit" value="→"aria-label="Subscribe to blog" class="button-reset btn-subscribe gray">
+  </div>
+</form>
+
+          </div>
+
+          <p class="white-50 pt4 f6">&copy; 2026 DNSimple Corporation</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Drip -->
+<script type="text/javascript">
+  var _dcq = _dcq || [];
+  var _dcs = _dcs || {}; 
+  _dcs.account = '9686301';
+  
+  (function() {
+    var dc = document.createElement('script');
+    dc.type = 'text/javascript'; dc.async = true; 
+    dc.src = '//tag.getdrip.com/9686301.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(dc, s);
+  })();
+</script>
+  <script src="/dist/main.js"></script>
+</body>
+</html>

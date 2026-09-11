@@ -1,0 +1,23 @@
+{
+  "normalized_facts": [
+    "Google posted an investigation for reported Mandiant Managed Defense ingestion issues involving some CrowdStrike Falcon integrations.",
+    "The final engineering investigation concluded that there was no service degradation during the reported period.",
+    "The final update also states that no supported CrowdStrike alerts were missed during the period.",
+    "EvalForge treats this only as a candidate real-world negative-control family: an operationally visible suspected incident whose supported system scope was ultimately found healthy."
+  ],
+  "observed_at": "2026-09-08T21:36:00Z",
+  "provenance_limitations": [
+    "This file is an EvalForge normalized semantic snapshot of the official Google Cloud Service Health entry, not a byte-for-byte copy of the page.",
+    "The no_fault mapping is limited to the final supported-service scope described by the source and remains non-admitted pending the Phase 03 control-family policy and original-source preservation gate."
+  ],
+  "research_admission_eligible": false,
+  "snapshot_format": "evalforge-normalized-public-incident-v1",
+  "snapshot_kind": "normalized_semantic_snapshot",
+  "source_event": {
+    "incident_end": "2024-09-20T14:51:00-07:00",
+    "incident_start": "2024-09-18T12:40:00-07:00"
+  },
+  "source_publisher": "Google Cloud Service Health / Mandiant Managed Defense",
+  "source_title": "Reported CrowdStrike Falcon ingestion issue investigation",
+  "source_url": "https://status.cloud.google.com/incidents/fLYHLzSGXGkLkAjc8MJG"
+}

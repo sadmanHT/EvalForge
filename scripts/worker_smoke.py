@@ -15,7 +15,11 @@ def wait_for_terminal(client: Any, job_id: str, timeout: float = 15.0) -> Any:
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         record = get_job(client, job_id)
-        if record is not None and record.state in {JobState.SUCCEEDED, JobState.FAILED, JobState.CANCELED}:
+        if record is not None and record.state in {
+            JobState.SUCCEEDED,
+            JobState.FAILED,
+            JobState.CANCELED,
+        }:
             return record
         time.sleep(0.1)
     raise TimeoutError(f"job did not reach a terminal state: {job_id}")

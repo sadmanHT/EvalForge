@@ -1,0 +1,84 @@
+{
+  "auxiliary_source_counts": {
+    "public_postmortem_candidates": 24,
+    "public_postmortem_preserved_primary_sources": 18,
+    "public_postmortem_research_admitted": 18,
+    "public_postmortem_supported_mappings": 18,
+    "public_postmortem_supported_taxonomy_labels": 6,
+    "servicenow_uci_event_rows": 141712,
+    "servicenow_uci_incidents": 24918
+  },
+  "content_checksum": "e3085091cab048e336765650dcea5b5247f1e342c846d17b67a0dbe7c74128e6",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0-candidate",
+  "family_count": 0,
+  "generated_at": "2026-09-08T16:45:00Z",
+  "label_taxonomy_version": "1.0.0",
+  "limitations": [
+    "The pinned OpsSentinel BenchmarkLab release catalog is programmatically generated, so its validation/hidden-test scenarios are not independent production incident evidence.",
+    "EvalForge must acquire/version independent incident families before a research validation or test split can be locked.",
+    "The upstream dev/validation/hidden-test assignments also split several inferred generation families across source splits; those assignments must not be reused.",
+    "The source is a real ServiceNow operational event log, but textual attributes were omitted/anonymized and it does not expose trustworthy human-readable root-cause labels for EvalForge taxonomy mapping.",
+    "Anonymous category/symptom/closure codes must not be guessed into EvalForge root-cause codes; this source is auxiliary/robustness evidence, not the primary labeled holdout.",
+    "This candidate artifact is a provenance and decision ledger, not the locked research benchmark. The separate research dataset contains the explicitly admitted independently sourced families.",
+    "The public incident corpus contains exactly three supported and preserved families per frozen taxonomy label; this is the minimum depth used by the separate family-stratified research split.",
+    "Keyword/title matches are not accepted as root-cause evidence; false friends, contributing factors, and republication-restricted sources remain rejected."
+  ],
+  "manifest_checksum": "e62ad8c07e33351c2ea1faea4c4b454a81bf04de40b8fab24ac435137e73a8a1",
+  "record_count": 0,
+  "research_ready": false,
+  "schema_version": "incident-schema-v1",
+  "source_candidate_count": 50,
+  "source_snapshots": [
+    {
+      "accepted_transport_sha256s": [],
+      "notes": "Generated controlled benchmark source; not independent held-out evidence.",
+      "research_eligible_as_independent_heldout_evidence": false,
+      "snapshot_identity_kind": null,
+      "snapshot_path": "datasets/incident_diagnosis/raw/opssentinel/fae661fc1634aad6a3855a1dec8dcddb16a890dd/release-catalog.snapshot.json",
+      "snapshot_sha256": "b4828ac9793d64c7850c7bbd6c262d4e7a89db0fd09346a9ed72a48f82dc8241",
+      "source_commit": "fae661fc1634aad6a3855a1dec8dcddb16a890dd",
+      "source_generated": true,
+      "source_license": null,
+      "source_name": "OpsSentinel BenchmarkLab release catalog",
+      "source_repository": "sadmanHT/OpsSentinel",
+      "source_uri": null
+    },
+    {
+      "accepted_transport_sha256s": [
+        "3ea92768cb2cfada908dd601b057d7066127fe75dc8fe19e4abaa1c6766a6c13",
+        "6294e29a311647306bfdfc85783f7df66517c197b9cd49aa5ee36ba9c525d1d6"
+      ],
+      "notes": "Real operational auxiliary corpus. Human-readable RCA text is unavailable, so anonymous categories must not be mapped to EvalForge root-cause labels.",
+      "research_eligible_as_independent_heldout_evidence": false,
+      "snapshot_identity_kind": "zip_member_sha256:incident_event_log.csv",
+      "snapshot_path": "datasets/incident_diagnosis/raw/servicenow_uci/uci-498/incident-management-process-enriched-event-log.zip",
+      "snapshot_sha256": "fd184bbfd62329cfe093e99da2ea7071905f2ead91900b448eb2635870821bef",
+      "source_commit": "uci-498",
+      "source_generated": false,
+      "source_license": "CC BY 4.0",
+      "source_name": "servicenow_uci_incident_event_log",
+      "source_repository": "https://doi.org/10.24432/C57S4H",
+      "source_uri": "https://doi.org/10.24432/C57S4H"
+    },
+    {
+      "accepted_transport_sha256s": [],
+      "notes": "Pinned public-postmortem discovery/decision ledger. Individual supported entries are admitted only through configs/phase3-research-admissions.json; the discovery index itself is not independent held-out evidence.",
+      "research_eligible_as_independent_heldout_evidence": false,
+      "snapshot_identity_kind": "evalforge_candidate_index_sha256",
+      "snapshot_path": "configs/postmortem-candidates.json",
+      "snapshot_sha256": "e1cecd69b1add02b3a0603d2f809b6633a87e1f77b4e0f201eed228c2348a037",
+      "source_commit": "42bac673432f564d317dbfc30b5d400e1812c684",
+      "source_generated": false,
+      "source_license": "GPL-3.0",
+      "source_name": "postmortems_app",
+      "source_repository": "icco/postmortems",
+      "source_uri": "https://postmortems.app/"
+    }
+  ],
+  "split_counts": {
+    "test": 0,
+    "train": 0,
+    "validation": 0
+  },
+  "split_seed": 20260908
+}
