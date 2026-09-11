@@ -7,11 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.data.io import read_jsonl
-from app.data.schemas import (
-    DatasetManifest,
-    IncidentFamily as DataFamily,
-    IncidentRecord,
-)
+from app.data.schemas import DatasetManifest, IncidentFamily as DataFamily, IncidentRecord
 from app.models import DatasetVersion, Incident, IncidentFamily
 
 
