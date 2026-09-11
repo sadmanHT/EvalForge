@@ -171,9 +171,7 @@ def test_metric_helpers_reject_ambiguous_or_incomplete_inputs() -> None:
     with pytest.raises(MetricInputError, match="allowed_labels"):
         normalized_multiclass_brier_score([example], [prediction], allowed_labels=[])
 
-    wrong_labels = prediction.model_copy(
-        update={"label_probabilities": {"a": 0.5, "b": 0.5}}
-    )
+    wrong_labels = prediction.model_copy(update={"label_probabilities": {"a": 0.5, "b": 0.5}})
     with pytest.raises(MetricInputError, match="exactly match"):
         normalized_multiclass_brier_score(
             [example],
