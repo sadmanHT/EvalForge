@@ -6,6 +6,8 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from app.models import Base
+
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -14,7 +16,7 @@ sqlalchemy_url = os.environ.get("DATABASE_URL", config.get_main_option("sqlalche
 if sqlalchemy_url.startswith("postgresql://"):
     sqlalchemy_url = sqlalchemy_url.replace("postgresql://", "postgresql+psycopg://", 1)
 config.set_main_option("sqlalchemy.url", sqlalchemy_url)
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
