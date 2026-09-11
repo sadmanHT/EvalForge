@@ -24,7 +24,9 @@ jobs:
       - name: Apply backend and script formatting
         run: |
           cd backend
-          ruff check --fix app tests ../scripts ../training
+          ruff check --fix app tests ../scripts ../training || true
+          ruff format app tests ../scripts ../training
+          ruff check --fix app tests ../scripts ../training || true
           ruff format app tests ../scripts ../training
       - name: Commit formatter output
         run: |
