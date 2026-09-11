@@ -35,11 +35,7 @@ DATASET_VERSION = "evalforge-incident-diagnosis-v0.1.0"
 class FixtureBackend:
     def __init__(self, labels: tuple[str, ...], fail_incident_marker: str) -> None:
         protocol = load_baseline_protocol(ROOT)
-        self._runtime_config = RuntimeConfig(
-            model_id=protocol.base_model_id,
-            revision=protocol.base_model_revision,
-            seed=protocol.seed,
-        )
+        self._runtime_config = protocol.runtime_config
         self.labels = labels
         self.fail_incident_marker = fail_incident_marker
         self.calls_by_prompt: dict[str, int] = {}

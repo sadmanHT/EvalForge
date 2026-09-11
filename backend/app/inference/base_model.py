@@ -47,6 +47,13 @@ class RuntimeConfig(BaseModel):
     device: str = "auto"
     dtype: str = "auto"
     quantization: QuantizationMode = QuantizationMode.NONE
+    bnb_4bit_use_double_quant: bool = False
+
+    @model_validator(mode="after")
+    def validate_quantization_contract(self) -> RuntimeConfig:
+        if self.quantization is QuantizationMode.NONE and self.bnb_4bit_use_double_quant:
+            raise ValueError("double quantization requires a bitsandbytes 4-bit runtime")
+        return self
 
 
 class GenerationConfig(BaseModel):
@@ -139,11 +146,17 @@ class TransformersBackend:
             "low_cpu_mem_usage": True,
         }
         if self.runtime_config.quantization is QuantizationMode.BITSANDBYTES_4BIT_NF4:
+            compute_dtype = torch.float16
+            if self.runtime_config.dtype != "auto":
+                compute_dtype = getattr(torch, self.runtime_config.dtype, None)
+                if compute_dtype is None:
+                    raise InferenceError(f"unsupported torch dtype: {self.runtime_config.dtype}")
             try:
                 load_kwargs["quantization_config"] = transformers.BitsAndBytesConfig(
                     load_in_4bit=True,
                     bnb_4bit_quant_type="nf4",
-                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_compute_dtype=compute_dtype,
+                    bnb_4bit_use_double_quant=self.runtime_config.bnb_4bit_use_double_quant,
                 )
             except Exception as exc:
                 raise InferenceError(
@@ -254,6 +267,7 @@ class TransformersBackend:
                 "device": str(model.device),
                 "dtype": self.runtime_config.dtype,
                 "quantization": self.runtime_config.quantization.value,
+                "bnb_4bit_use_double_quant": self.runtime_config.bnb_4bit_use_double_quant,
                 "seed": self.runtime_config.seed,
             },
         )

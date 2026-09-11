@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from app.inference.base_model import QuantizationMode
 from app.inference.protocol import (
     BaselineProtocol,
     ProtocolState,
@@ -20,6 +21,9 @@ def test_committed_protocol_is_validation_only_and_deterministic() -> None:
     assert protocol.state is ProtocolState.VALIDATION
     assert protocol.locked_test_authorized is False
     assert protocol.assert_split_allowed("validation") == "validation"
+    assert protocol.runtime_config.quantization is QuantizationMode.BITSANDBYTES_4BIT_NF4
+    assert protocol.runtime_config.dtype == "float16"
+    assert protocol.runtime_config.bnb_4bit_use_double_quant is True
     with pytest.raises(ValueError, match="locked test"):
         protocol.assert_split_allowed("test")
     first = protocol.scientific_config_hash()
@@ -41,6 +45,19 @@ def test_locked_test_requires_frozen_authorized_protocol() -> None:
     invalid["locked_test_authorized"] = True
     with pytest.raises(ValueError, match="requires a frozen protocol"):
         BaselineProtocol.model_validate(invalid)
+
+
+def test_protocol_rejects_runtime_identity_drift() -> None:
+    protocol = load_baseline_protocol(ROOT)
+    for field, value, message in (
+        ("model_id", "other/model", "runtime model_id"),
+        ("revision", "other-revision", "runtime revision"),
+        ("seed", 7, "runtime seed"),
+    ):
+        payload = protocol.model_dump(mode="json")
+        payload["runtime_config"][field] = value
+        with pytest.raises(ValueError, match=message):
+            BaselineProtocol.model_validate(payload)
 
 
 def test_experiment_config_captures_protocol_and_runtime_identity() -> None:

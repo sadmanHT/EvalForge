@@ -7,6 +7,15 @@
   "label_taxonomy_version": "1.0.0",
   "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
   "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "runtime_config": {
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+    "seed": 20260908,
+    "device": "auto",
+    "dtype": "float16",
+    "quantization": "bitsandbytes_4bit_nf4",
+    "bnb_4bit_use_double_quant": true
+  },
   "prompt_version": "zero-shot-baseline-v1",
   "output_schema_version": "root-cause-prediction-v1",
   "generation_config": {

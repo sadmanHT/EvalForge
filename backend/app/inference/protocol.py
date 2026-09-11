@@ -9,7 +9,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.core.experiment_config import ExperimentConfig, PipelineType
-from app.inference.base_model import GenerationConfig
+from app.inference.base_model import GenerationConfig, RuntimeConfig
 
 BASELINE_PROTOCOL_PATH = Path("configs/phase6-baseline.json")
 
@@ -30,6 +30,7 @@ class BaselineProtocol(BaseModel):
     label_taxonomy_version: str = Field(min_length=1)
     base_model_id: str = Field(min_length=1)
     base_model_revision: str = Field(min_length=1)
+    runtime_config: RuntimeConfig
     prompt_version: str = Field(min_length=1)
     output_schema_version: str = Field(min_length=1)
     generation_config: GenerationConfig
@@ -44,6 +45,12 @@ class BaselineProtocol(BaseModel):
     def validate_freeze_state(self) -> BaselineProtocol:
         if self.locked_test_authorized and self.state is not ProtocolState.FROZEN:
             raise ValueError("locked test authorization requires a frozen protocol")
+        if self.runtime_config.model_id != self.base_model_id:
+            raise ValueError("runtime model_id must match the frozen base model")
+        if self.runtime_config.revision != self.base_model_revision:
+            raise ValueError("runtime revision must match the frozen base model revision")
+        if self.runtime_config.seed != self.seed:
+            raise ValueError("runtime seed must match the protocol seed")
         return self
 
     def assert_split_allowed(self, split: str) -> Literal["validation", "test"]:
@@ -67,6 +74,7 @@ class BaselineProtocol(BaseModel):
             "label_taxonomy_version": self.label_taxonomy_version,
             "base_model_id": self.base_model_id,
             "base_model_revision": self.base_model_revision,
+            "runtime_config": self.runtime_config.model_dump(mode="json"),
             "prompt_version": self.prompt_version,
             "output_schema_version": self.output_schema_version,
             "generation_config": self.generation_config.model_dump(mode="json"),
