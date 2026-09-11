@@ -11,6 +11,8 @@ COPY backend/pyproject.toml ./pyproject.toml
 COPY backend/app ./app
 COPY backend/alembic.ini ./alembic.ini
 COPY backend/migrations ./migrations
+COPY configs/model.yaml ./configs/model.yaml
+COPY datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0 ./datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0
 
 RUN pip install --no-cache-dir -r requirements.full.lock \
     && pip install --no-cache-dir --no-deps .
