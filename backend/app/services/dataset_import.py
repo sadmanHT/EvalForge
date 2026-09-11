@@ -43,6 +43,8 @@ def import_phase3_dataset(session: Session, root: Path, dataset_version: str) ->
         manifest_json=manifest_payload,
     )
     session.add(row)
+    session.flush()
+
     for family in families:
         session.add(
             IncidentFamily(
@@ -54,6 +56,8 @@ def import_phase3_dataset(session: Session, root: Path, dataset_version: str) ->
                 family_metadata=family.metadata,
             )
         )
+    session.flush()
+
     for record in records:
         session.add(
             Incident(
@@ -72,6 +76,7 @@ def import_phase3_dataset(session: Session, root: Path, dataset_version: str) ->
             )
         )
     session.flush()
+
     family_count = session.scalar(
         select(func.count())
         .select_from(IncidentFamily)
