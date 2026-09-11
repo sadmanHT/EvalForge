@@ -9,6 +9,7 @@ from typing import Literal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.experiment_config import experiment_config_hash
 from app.evaluation.contracts import EvaluationExample, Prediction
 from app.evaluation.harness import EvaluationHarness
 from app.evaluation.persistence import persist_evaluation, score_stored_run
@@ -18,7 +19,7 @@ from app.inference.protocol import (
     build_experiment_config,
     load_taxonomy,
 )
-from app.models import Experiment, Incident, Run
+from app.models import Incident, Run
 from app.repositories import PersistenceRepository
 
 
@@ -143,10 +144,11 @@ def run_baseline_experiment(
         hardware_runtime_descriptor=hardware_runtime_descriptor,
         cost_rate_snapshot_version=cost_rate_snapshot_version,
     )
+    canonical_config_hash = experiment_config_hash(config)
     scientific_hash = protocol.scientific_config_hash()
     repo = PersistenceRepository(session)
     requested_experiment_id = experiment_id or _stable_id(
-        "experiment", protocol.protocol_version, config.config_hash
+        "experiment", protocol.protocol_version, canonical_config_hash
     )
     experiment = repo.create_experiment(requested_experiment_id, config, status="running")
     if experiment.status not in {"planned", "queued", "running"}:
