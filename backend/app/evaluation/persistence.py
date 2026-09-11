@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import Literal
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -24,10 +25,22 @@ from app.models import (
     Prediction as PredictionRow,
 )
 
+EvaluationSplit = Literal["train", "validation", "test"]
+
 
 def _stable_id(prefix: str, *parts: str) -> str:
     digest = hashlib.sha256(":".join(parts).encode()).hexdigest()[:24]
     return f"{prefix}-{digest}"
+
+
+def _evaluation_split(value: str) -> EvaluationSplit:
+    if value == "train":
+        return "train"
+    if value == "validation":
+        return "validation"
+    if value == "test":
+        return "test"
+    raise ValueError(f"unsupported evaluation split: {value}")
 
 
 @dataclass(frozen=True)
@@ -57,8 +70,7 @@ def persist_evaluation(
         raise ValueError("evaluation dataset_version disagrees with experiment")
     if experiment.kb_version != kb_version:
         raise ValueError("evaluation kb_version disagrees with experiment")
-    if split not in {"train", "validation", "test"}:
-        raise ValueError("evaluation split must be train, validation, or test")
+    _evaluation_split(split)
     if result.prediction_count != len(predictions):
         raise ValueError("evaluation result prediction count does not match predictions")
 
@@ -84,9 +96,9 @@ def persist_evaluation(
         prediction_id = _stable_id("prediction", run_id, prediction.incident_id)
         prediction_id_by_incident[prediction.incident_id] = prediction_id
         payload = canonical_prediction_payload(prediction)
-        row = session.get(PredictionRow, prediction_id)
-        if row is None:
-            row = PredictionRow(
+        prediction_row = session.get(PredictionRow, prediction_id)
+        if prediction_row is None:
+            prediction_row = PredictionRow(
                 prediction_id=prediction_id,
                 run_id=run_id,
                 experiment_id=experiment_id,
@@ -99,9 +111,9 @@ def persist_evaluation(
                 output_json=payload,
                 latency_ms=prediction.latency_ms,
             )
-            session.add(row)
+            session.add(prediction_row)
             session.flush()
-        elif row.output_json != payload:
+        elif prediction_row.output_json != payload:
             raise ValueError("persisted prediction identity was reused with different payload")
 
     for metric in result.metrics:
@@ -110,8 +122,8 @@ def persist_evaluation(
         metadata["evaluation_result_hash"] = result.result_hash
         if metric.name == "calibration.ece":
             metadata["reliability"] = list(result.reliability)
-        row = session.get(MetricRow, metric_id)
-        if row is None:
+        metric_row = session.get(MetricRow, metric_id)
+        if metric_row is None:
             session.add(
                 MetricRow(
                     metric_id=metric_id,
@@ -123,7 +135,7 @@ def persist_evaluation(
                     metric_metadata=metadata,
                 )
             )
-        elif row.value != metric.value or row.metric_metadata != metadata:
+        elif metric_row.value != metric.value or metric_row.metric_metadata != metadata:
             raise ValueError("persisted metric identity was reused with different value/metadata")
 
     for failure in result.failures:
@@ -133,8 +145,8 @@ def persist_evaluation(
         metadata = dict(failure.annotation.metadata)
         metadata["source"] = failure.annotation.source.value
         metadata["evaluation_result_hash"] = result.result_hash
-        row = session.get(FailureAnnotationRow, annotation_id)
-        if row is None:
+        failure_row = session.get(FailureAnnotationRow, annotation_id)
+        if failure_row is None:
             session.add(
                 FailureAnnotationRow(
                     failure_annotation_id=annotation_id,
@@ -146,9 +158,9 @@ def persist_evaluation(
                 )
             )
         elif (
-            row.failure_code != code
-            or row.notes != failure.annotation.notes
-            or row.annotation_metadata != metadata
+            failure_row.failure_code != code
+            or failure_row.notes != failure.annotation.notes
+            or failure_row.annotation_metadata != metadata
         ):
             raise ValueError("persisted failure identity was reused with different annotation")
     session.flush()
@@ -223,7 +235,7 @@ def score_stored_run(
     examples = [
         EvaluationExample(
             incident_id=incident_id,
-            split=by_id[incident_id].split,
+            split=_evaluation_split(by_id[incident_id].split),
             root_cause_code=by_id[incident_id].root_cause_code,
             root_cause_category=by_id[incident_id].root_cause_category,
             relevant_chunk_ids=tuple(references.get(incident_id, ())),
