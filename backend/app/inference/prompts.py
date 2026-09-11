@@ -43,8 +43,10 @@ _BASELINE_TEMPLATE = PromptTemplate(
         "You are classifying the root cause of a production incident.\n"
         "Choose exactly one root_cause_code from this frozen label set: {allowed_labels}.\n"
         "Return exactly one JSON object with this schema: "
-        '{{"root_cause_code":"<one allowed label>","reasoning":"<brief evidence-based explanation>"}}.\n'
-        "Do not add markdown fences, prose before the JSON, retrieval citations, or labels outside the set.\n\n"
+        '{"root_cause_code":"<one allowed label>",'
+        '"reasoning":"<brief evidence-based explanation>"}.\n'
+        "Do not add markdown fences, prose before the JSON, retrieval citations, "
+        "or labels outside the set.\n\n"
         "Incident title: {title}\n"
         "Incident description: {description}\n"
     ),
