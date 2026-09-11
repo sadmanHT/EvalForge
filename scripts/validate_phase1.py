@@ -2,14 +2,19 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from contracts.phase1 import load_json_yaml, validate_label_taxonomy, validate_model_config, validate_study_config
+from contracts.phase1 import (
+    load_json_yaml,
+    validate_label_taxonomy,
+    validate_model_config,
+    validate_study_config,
+)
 
 REQUIRED_ARTIFACTS = [
     "docs/research-protocol.md",
@@ -81,7 +86,13 @@ def main() -> int:
             fail(f"{filename} does not cover required topic: {topic}")
 
     # Phase 01 scientific artifacts must not ship with unresolved placeholder claims.
-    for relative in ["docs/research-protocol.md", "docs/model-selection.md", "docs/architecture.md", "docs/quality-gates.md", "datasets/schema.md"]:
+    for relative in [
+        "docs/research-protocol.md",
+        "docs/model-selection.md",
+        "docs/architecture.md",
+        "docs/quality-gates.md",
+        "datasets/schema.md",
+    ]:
         text = (ROOT / relative).read_text(encoding="utf-8")
         for token in ("[TODO]", "[TBD]", "[X]%", "[Y]%", "PLACEHOLDER_RESULT"):
             if token in text:

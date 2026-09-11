@@ -6,18 +6,24 @@ GPU/runtime evidence, internal evidence integrity, and the preserved evidence-bu
 checksums. It accepts the current nested Kaggle evidence schema and retains read
 compatibility with the earlier flat schema so historical evidence remains inspectable.
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from contracts.phase1 import canonical_label_ids, load_json_yaml, validate_model_config, validate_study_config
+from contracts.phase1 import (
+    canonical_label_ids,
+    load_json_yaml,
+    validate_model_config,
+    validate_study_config,
+)
 
 
 class GateError(ValueError):
@@ -124,7 +130,9 @@ def validate_smoke_evidence(
             raise GateError(f"model smoke evidence {field} does not match the frozen revision")
     load_mode = _require_nonempty_string(load_mode, "model.load_mode")
 
-    nested_hardware = evidence.get("hardware") if isinstance(evidence.get("hardware"), dict) else None
+    nested_hardware = (
+        evidence.get("hardware") if isinstance(evidence.get("hardware"), dict) else None
+    )
     if nested_hardware is not None:
         gpu = nested_hardware.get("gpu_name")
         vram_gib = nested_hardware.get("gpu_vram_gib")
@@ -180,7 +188,9 @@ def validate_smoke_evidence(
             raise GateError("smoke evidence canonical_root_cause_codes does not match taxonomy")
 
         claimed_evidence_hash = evidence.get("evidence_sha256")
-        if not isinstance(claimed_evidence_hash, str) or claimed_evidence_hash != _canonical_evidence_hash(evidence):
+        if not isinstance(
+            claimed_evidence_hash, str
+        ) or claimed_evidence_hash != _canonical_evidence_hash(evidence):
             raise GateError("model-smoke.json internal evidence_sha256 is missing or invalid")
 
         if evidence.get("gate") != "exact_frozen_model_structured_output_smoke":
@@ -213,7 +223,9 @@ def main() -> int:
         fail("model-smoke.json must contain an object")
 
     try:
-        gpu, vram_gib, code, load_mode = validate_smoke_evidence(evidence, model, taxonomy, evidence_dir)
+        gpu, vram_gib, code, load_mode = validate_smoke_evidence(
+            evidence, model, taxonomy, evidence_dir
+        )
     except GateError as exc:
         fail(str(exc))
 

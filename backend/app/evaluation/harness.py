@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
-from typing import Mapping, Sequence
 
 from app.evaluation.contracts import EvaluationExample, ParseStatus, Prediction
 from app.evaluation.failure_taxonomy import (
@@ -151,7 +151,9 @@ class EvaluationHarness:
         if set(example_by_id) != set(prediction_by_id):
             raise ValueError("examples and predictions must cover exactly the same incident IDs")
         ordered_examples = [example_by_id[incident_id] for incident_id in sorted(example_by_id)]
-        ordered_predictions = [prediction_by_id[incident_id] for incident_id in sorted(prediction_by_id)]
+        ordered_predictions = [
+            prediction_by_id[incident_id] for incident_id in sorted(prediction_by_id)
+        ]
         if not ordered_examples:
             raise ValueError("evaluation requires at least one prediction")
 

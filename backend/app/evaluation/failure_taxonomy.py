@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from enum import StrEnum
-from typing import Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.evaluation.contracts import EvaluationExample, ParseStatus, Prediction
-
 
 FAILURE_TAXONOMY_VERSION = "phase5-failure-taxonomy-v1"
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -11,11 +11,17 @@ from app.evaluation.contracts import EvaluationExample, Prediction, canonical_pr
 from app.evaluation.harness import EvaluationHarness, EvaluationResult
 from app.models import (
     Experiment,
-    FailureAnnotation as FailureAnnotationRow,
     Incident,
-    Metric as MetricRow,
-    Prediction as PredictionRow,
     Run,
+)
+from app.models import (
+    FailureAnnotation as FailureAnnotationRow,
+)
+from app.models import (
+    Metric as MetricRow,
+)
+from app.models import (
+    Prediction as PredictionRow,
 )
 
 
@@ -151,7 +157,9 @@ def persist_evaluation(
 
 def reload_evaluation(session: Session, *, run_id: str) -> PersistedEvaluationSnapshot:
     predictions = session.scalars(
-        select(PredictionRow).where(PredictionRow.run_id == run_id).order_by(PredictionRow.incident_id)
+        select(PredictionRow)
+        .where(PredictionRow.run_id == run_id)
+        .order_by(PredictionRow.incident_id)
     ).all()
     metrics = session.scalars(
         select(MetricRow).where(MetricRow.run_id == run_id).order_by(MetricRow.name)
@@ -184,7 +192,9 @@ def reload_evaluation(session: Session, *, run_id: str) -> PersistedEvaluationSn
 
 def load_canonical_predictions(session: Session, *, run_id: str) -> tuple[Prediction, ...]:
     rows = session.scalars(
-        select(PredictionRow).where(PredictionRow.run_id == run_id).order_by(PredictionRow.incident_id)
+        select(PredictionRow)
+        .where(PredictionRow.run_id == run_id)
+        .order_by(PredictionRow.incident_id)
     ).all()
     if not rows:
         raise ValueError(f"no stored predictions for run: {run_id}")
@@ -202,7 +212,9 @@ def score_stored_run(
     predictions = load_canonical_predictions(session, run_id=run_id)
     incident_ids = [prediction.incident_id for prediction in predictions]
     rows = session.scalars(
-        select(Incident).where(Incident.incident_id.in_(incident_ids)).order_by(Incident.incident_id)
+        select(Incident)
+        .where(Incident.incident_id.in_(incident_ids))
+        .order_by(Incident.incident_id)
     ).all()
     by_id = {row.incident_id: row for row in rows}
     if set(by_id) != set(incident_ids):

@@ -32,7 +32,9 @@ DATASET_VERSION = "evalforge-incident-diagnosis-v0.1.0"
 def _alembic_config() -> Config:
     config = Config(str(BACKEND / "alembic.ini"))
     config.set_main_option("script_location", str(BACKEND / "migrations"))
-    config.set_main_option("sqlalchemy.url", sqlalchemy_database_url(Settings.from_env().database_url))
+    config.set_main_option(
+        "sqlalchemy.url", sqlalchemy_database_url(Settings.from_env().database_url)
+    )
     return config
 
 
@@ -89,7 +91,9 @@ def engine() -> Engine:
     engine.dispose()
 
 
-def _canonical_fixture(engine: Engine) -> tuple[list[EvaluationExample], list[Prediction], EvaluationHarness]:
+def _canonical_fixture(
+    engine: Engine,
+) -> tuple[list[EvaluationExample], list[Prediction], EvaluationHarness]:
     labels, categories = _taxonomy()
     with Session(engine) as session:
         incidents = session.scalars(
@@ -112,7 +116,9 @@ def _canonical_fixture(engine: Engine) -> tuple[list[EvaluationExample], list[Pr
         probabilities[incident.root_cause_code] = 0.7
         ranked = tuple(
             RankedLabel(label=label, score=probabilities[label], probability=probabilities[label])
-            for label in sorted(labels, key=lambda label: (probabilities[label], label), reverse=True)
+            for label in sorted(
+                labels, key=lambda label: (probabilities[label], label), reverse=True
+            )
         )
         predictions.append(
             Prediction(

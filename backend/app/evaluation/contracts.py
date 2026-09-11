@@ -106,7 +106,9 @@ class Prediction(BaseModel):
             if not math.isclose(total, 1.0, rel_tol=0.0, abs_tol=1e-9):
                 raise ValueError("label probabilities must sum to one")
         if self.total_tokens is not None:
-            known_parts = [part for part in (self.input_tokens, self.output_tokens) if part is not None]
+            known_parts = [
+                part for part in (self.input_tokens, self.output_tokens) if part is not None
+            ]
             if len(known_parts) == 2 and self.total_tokens != sum(known_parts):
                 raise ValueError("total_tokens must equal input_tokens + output_tokens")
         return self
@@ -209,7 +211,9 @@ class Prediction(BaseModel):
             ranked_labels=tuple(ranked),
             confidence_probability=parsed_confidence,
             confidence_source=parsed_source,
-            reasoning=payload.get("reasoning") if isinstance(payload.get("reasoning"), str) else None,
+            reasoning=payload.get("reasoning")
+            if isinstance(payload.get("reasoning"), str)
+            else None,
             evidence_citations=tuple(
                 item for item in payload.get("evidence_citations", []) if isinstance(item, str)
             )

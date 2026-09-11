@@ -3,8 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
 
 class CalibrationError(ValueError):
@@ -30,7 +30,9 @@ def normalize_label_sequence_log_likelihoods(
         raise CalibrationError("log-likelihood labels must exactly match allowed_labels")
     scores = [float(label_log_likelihoods[label]) for label in labels]
     normalizer = _logsumexp(scores)
-    probabilities = {label: math.exp(score - normalizer) for label, score in zip(labels, scores, strict=True)}
+    probabilities = {
+        label: math.exp(score - normalizer) for label, score in zip(labels, scores, strict=True)
+    }
     total = sum(probabilities.values())
     if not math.isclose(total, 1.0, rel_tol=0.0, abs_tol=1e-12):
         raise AssertionError("normalized label probabilities did not sum to one")

@@ -59,12 +59,17 @@ def main() -> int:
     actual = result.metric_map()
     for name, expected_value in expected.items():
         if name not in actual or abs(actual[name] - float(expected_value)) > 1e-12:
-            _fail(f"golden metric mismatch {name}: actual={actual.get(name)} expected={expected_value}")
+            _fail(
+                f"golden metric mismatch {name}: actual={actual.get(name)} expected={expected_value}"
+            )
 
     try:
         fit_temperature_scaling(
             [
-                {label: 1.0 if index == 0 else 0.0 for index, label in enumerate(golden["allowed_labels"])}
+                {
+                    label: 1.0 if index == 0 else 0.0
+                    for index, label in enumerate(golden["allowed_labels"])
+                }
             ],
             [golden["allowed_labels"][0]],
             allowed_labels=golden["allowed_labels"],

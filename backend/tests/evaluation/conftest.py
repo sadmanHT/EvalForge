@@ -8,7 +8,6 @@ import pytest
 
 from app.evaluation.contracts import EvaluationExample, Prediction
 
-
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/phase5/golden_metrics.json"
 
 

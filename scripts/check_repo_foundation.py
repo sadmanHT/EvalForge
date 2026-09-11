@@ -150,10 +150,15 @@ def validate_locked_consumption() -> None:
         if marker not in frontend_docker:
             fail(f"frontend Dockerfile does not enforce {label}")
 
-    if "npm install --no-audit --no-fund" in workflow or "npm install --no-audit --no-fund" in frontend_docker:
+    if (
+        "npm install --no-audit --no-fund" in workflow
+        or "npm install --no-audit --no-fund" in frontend_docker
+    ):
         fail("floating frontend npm install is forbidden once package-lock.json is committed")
     if 'pip install -e "./backend[dev]"' in workflow:
-        fail("floating backend editable dependency resolution is forbidden once the lock is committed")
+        fail(
+            "floating backend editable dependency resolution is forbidden once the lock is committed"
+        )
 
 
 def main() -> None:

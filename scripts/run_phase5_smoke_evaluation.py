@@ -26,7 +26,9 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 def _build_config(root: Path, manifest: dict[str, Any], model: dict[str, Any]) -> ExperimentConfig:
-    lock_checksum = hashlib.sha256((root / "backend/requirements.full.lock").read_bytes()).hexdigest()
+    lock_checksum = hashlib.sha256(
+        (root / "backend/requirements.full.lock").read_bytes()
+    ).hexdigest()
     return ExperimentConfig(
         study_id=model["study_id"],
         pipeline_type=PipelineType.ZERO_SHOT,
@@ -76,7 +78,9 @@ def main() -> int:
             .order_by(Incident.incident_id)
         ).all()
         if len(incidents) != 6:
-            raise SystemExit(f"PHASE05_SMOKE=FAIL expected 6 test incidents, found {len(incidents)}")
+            raise SystemExit(
+                f"PHASE05_SMOKE=FAIL expected 6 test incidents, found {len(incidents)}"
+            )
         examples: list[EvaluationExample] = []
         predictions: list[Prediction] = []
         for index, incident in enumerate(incidents):
@@ -96,7 +100,9 @@ def main() -> int:
                     score=probabilities[label],
                     probability=probabilities[label],
                 )
-                for label in sorted(labels, key=lambda label: (probabilities[label], label), reverse=True)
+                for label in sorted(
+                    labels, key=lambda label: (probabilities[label], label), reverse=True
+                )
             )
             predictions.append(
                 Prediction(
@@ -125,7 +131,10 @@ def main() -> int:
         rescored = score_stored_run(session, run_id=RUN_ID, harness=harness)
         if snapshot.result_hash != result.result_hash or rescored.result_hash != result.result_hash:
             raise SystemExit("PHASE05_SMOKE=FAIL persisted/reloaded result identity mismatch")
-        if snapshot.metric_values != result.metric_map() or rescored.metric_map() != result.metric_map():
+        if (
+            snapshot.metric_values != result.metric_map()
+            or rescored.metric_map() != result.metric_map()
+        ):
             raise SystemExit("PHASE05_SMOKE=FAIL persisted/reloaded metric mismatch")
 
     print("PHASE05_SMOKE=PASS")

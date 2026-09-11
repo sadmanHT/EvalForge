@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Mapping, Sequence
 
 from app.evaluation.contracts import EvaluationExample, ParseStatus, Prediction
 
@@ -25,7 +25,9 @@ def _require_aligned(
     if set(prediction_by_id) != example_ids:
         missing = sorted(example_ids - set(prediction_by_id))
         unexpected = sorted(set(prediction_by_id) - example_ids)
-        raise MetricInputError(f"prediction/example incident mismatch: missing={missing}, unexpected={unexpected}")
+        raise MetricInputError(
+            f"prediction/example incident mismatch: missing={missing}, unexpected={unexpected}"
+        )
     return [(example, prediction_by_id[example.incident_id]) for example in examples]
 
 
@@ -52,7 +54,10 @@ def hierarchical_accuracy(
         if prediction.parse_status is not ParseStatus.OK:
             continue
         predicted = prediction.predicted_root_cause_code
-        if predicted is not None and label_to_category.get(predicted) == example.root_cause_category:
+        if (
+            predicted is not None
+            and label_to_category.get(predicted) == example.root_cause_category
+        ):
             correct += 1
     return correct / len(pairs)
 
@@ -199,7 +204,9 @@ def quantile(values: Sequence[float], q: float) -> float:
 
 
 def latency_percentiles(predictions: Sequence[Prediction]) -> tuple[float, float]:
-    values = [prediction.latency_ms for prediction in predictions if prediction.latency_ms is not None]
+    values = [
+        prediction.latency_ms for prediction in predictions if prediction.latency_ms is not None
+    ]
     if len(values) != len(predictions) or not values:
         raise MetricInputError("latency metrics require latency_ms for every prediction")
     return quantile(values, 0.50), quantile(values, 0.95)

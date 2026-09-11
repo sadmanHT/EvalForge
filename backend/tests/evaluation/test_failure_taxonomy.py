@@ -12,7 +12,6 @@ from app.evaluation.failure_taxonomy import (
     manual_annotation,
 )
 
-
 CATEGORIES = {"a": "database", "b": "database", "c": "resource"}
 
 

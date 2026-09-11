@@ -7,7 +7,6 @@ from pydantic import ValidationError
 
 from app.evaluation.contracts import ParseStatus, Prediction
 
-
 LABELS = {"a", "b", "c"}
 
 
@@ -44,9 +43,7 @@ def test_parser_records_unknown_label() -> None:
 def test_parser_records_partial_optional_output() -> None:
     prediction = Prediction.from_raw_output(
         incident_id="i4",
-        raw_model_output=json.dumps(
-            {"root_cause_code": "a", "ranked_labels": "not-a-list"}
-        ),
+        raw_model_output=json.dumps({"root_cause_code": "a", "ranked_labels": "not-a-list"}),
         allowed_labels=LABELS,
     )
     assert prediction.parse_status is ParseStatus.PARTIAL_OUTPUT

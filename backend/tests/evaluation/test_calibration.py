@@ -11,7 +11,6 @@ from app.evaluation.calibration import (
     normalize_label_sequence_log_likelihoods,
 )
 
-
 LABELS = ("a", "b", "c")
 
 

@@ -17,7 +17,9 @@ def test_ragas_adapter_is_namespaced_supporting_only() -> None:
 
 
 def test_evaluator_registry_is_pipeline_agnostic(
-    golden_payload: dict[str, object], golden_examples: list[object], golden_predictions: list[object]
+    golden_payload: dict[str, object],
+    golden_examples: list[object],
+    golden_predictions: list[object],
 ) -> None:
     harness = EvaluationHarness(
         evaluator_version="registry-v1",

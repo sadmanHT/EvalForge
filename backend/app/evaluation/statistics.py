@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
 
 class StatisticsInputError(ValueError):
