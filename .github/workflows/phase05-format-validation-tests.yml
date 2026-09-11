@@ -1,0 +1,38 @@
+name: phase05-format-validation-tests
+
+on:
+  push:
+    branches:
+      - phase-05-evaluation-harness-metric-correctness
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase-05-evaluation-harness-metric-correctness
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned Ruff
+        run: python -m pip install ruff==0.12.0
+      - name: Canonicalize validation tests
+        run: |
+          cd backend
+          ruff format tests/evaluation/test_validation_edges.py
+      - name: Commit formatter output
+        run: |
+          if git diff --quiet; then
+            echo 'No formatter changes required'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add backend/tests/evaluation/test_validation_edges.py
+          git commit -m 'phase5 apply canonical validation-test formatting'
+          git push origin HEAD:phase-05-evaluation-harness-metric-correctness
