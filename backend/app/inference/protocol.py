@@ -52,7 +52,8 @@ class BaselineProtocol(BaseModel):
         if split == "test":
             if self.state is not ProtocolState.FROZEN or not self.locked_test_authorized:
                 raise ValueError(
-                    "locked test is unavailable until the Phase 06 protocol is frozen and authorized"
+                    "locked test is unavailable until the Phase 06 protocol is frozen "
+                    "and authorized"
                 )
             return "test"
         raise ValueError("Phase 06 baseline runner supports only validation or test splits")
