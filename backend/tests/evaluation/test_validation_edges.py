@@ -198,7 +198,7 @@ def test_numeric_helpers_cover_boundaries_and_invalid_values() -> None:
     assert quantile([2.0], 0.5) == pytest.approx(2.0)
     with pytest.raises(MetricInputError, match="at least one"):
         quantile([], 0.5)
-    with pytest.raises(MetricInputError, match="in \[0,1\]"):
+    with pytest.raises(MetricInputError, match=r"in \[0,1\]"):
         quantile([1.0], 1.5)
     with pytest.raises(MetricInputError, match="finite"):
         quantile([math.inf], 0.5)
