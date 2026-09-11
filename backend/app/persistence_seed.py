@@ -14,16 +14,24 @@ from app.services.dataset_import import import_phase3_dataset
 def main() -> int:
     root = Path(os.environ.get("EVALFORGE_ROOT", ".")).resolve()
     model = json.loads((root / "configs/model.yaml").read_text(encoding="utf-8"))
-    dataset = json.loads(
-        (root / "datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0/manifest.json").read_text(encoding="utf-8")
+    manifest_path = (
+        root
+        / "datasets/incident_diagnosis/processed"
+        / "evalforge-incident-diagnosis-v0.1.0"
+        / "manifest.json"
     )
-    lock_checksum = hashlib.sha256((root / "backend/requirements.full.lock").read_bytes()).hexdigest()
+    dataset = json.loads(manifest_path.read_text(encoding="utf-8"))
+    lock_path = root / "backend/requirements.full.lock"
+    lock_checksum = hashlib.sha256(lock_path.read_bytes()).hexdigest()
     engine = build_engine()
     with session_scope(engine) as session:
         imported = import_phase3_dataset(session, root, dataset["dataset_version"])
         repo = PersistenceRepository(session)
         repo.ensure_model_version(
-            model["base_model_id"], model["base_model_revision"], license_name=model.get("license"), metadata=model
+            model["base_model_id"],
+            model["base_model_revision"],
+            license_name=model.get("license"),
+            metadata=model,
         )
         config = ExperimentConfig(
             study_id=model["study_id"],
