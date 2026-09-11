@@ -190,9 +190,7 @@ def test_adapter_rejects_incomplete_label_score_set_and_duplicate_batch_ids() ->
         adapter.predict(incident)
 
     complete = ZeroShotBaselineAdapter(
-        backend=FakeBackend(
-            raw_text='{"root_cause_code":"no_fault"}', scores=_scores("no_fault")
-        ),
+        backend=FakeBackend(raw_text='{"root_cause_code":"no_fault"}', scores=_scores("no_fault")),
         allowed_labels=LABELS,
     )
     with pytest.raises(ValueError, match="duplicate incident_id"):
