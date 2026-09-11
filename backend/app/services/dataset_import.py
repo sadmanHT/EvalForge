@@ -7,7 +7,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.data.io import read_jsonl
-from app.data.schemas import DatasetManifest, IncidentFamily as DataFamily, IncidentRecord
+from app.data.schemas import (
+    DatasetManifest,
+    IncidentFamily as DataFamily,
+    IncidentRecord,
+)
 from app.models import DatasetVersion, Incident, IncidentFamily
 
 
@@ -72,10 +76,14 @@ def import_phase3_dataset(session: Session, root: Path, dataset_version: str) ->
         )
     session.flush()
     family_count = session.scalar(
-        select(func.count()).select_from(IncidentFamily).where(IncidentFamily.dataset_version == dataset_version)
+        select(func.count())
+        .select_from(IncidentFamily)
+        .where(IncidentFamily.dataset_version == dataset_version)
     )
     record_count = session.scalar(
-        select(func.count()).select_from(Incident).where(Incident.dataset_version == dataset_version)
+        select(func.count())
+        .select_from(Incident)
+        .where(Incident.dataset_version == dataset_version)
     )
     if family_count != manifest.family_count or record_count != manifest.record_count:
         raise ValueError("database round-trip counts disagree with dataset manifest")
