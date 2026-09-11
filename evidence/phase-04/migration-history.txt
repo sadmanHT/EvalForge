@@ -1,0 +1,11 @@
+EvalForge Phase 04 canonical migration history
+
+base -> 0001_phase02  Phase 02 foundation (no domain tables)
+0001_phase02 -> 0002_phase04  Phase 04 persistence, versioning, pgvector, and reproducibility schema
+
+Required validated path:
+1. empty PostgreSQL database
+2. alembic upgrade 0001_phase02
+3. alembic upgrade head
+4. alembic_version == 0002_phase04
+5. pg_extension contains vector
