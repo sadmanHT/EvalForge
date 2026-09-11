@@ -95,9 +95,10 @@ class PersistenceRepository:
             if adapter.model_version_id != model.model_version_id:
                 raise ValueError("adapter belongs to a different base model version")
             adapter_version_id = adapter.adapter_version_id
-        if config.knowledge_base_version is not None and self.session.get(
-            KnowledgeBaseVersion, config.knowledge_base_version
-        ) is None:
+        if (
+            config.knowledge_base_version is not None
+            and self.session.get(KnowledgeBaseVersion, config.knowledge_base_version) is None
+        ):
             raise ValueError("knowledge base version is not registered")
         row = Experiment(
             experiment_id=experiment_id,

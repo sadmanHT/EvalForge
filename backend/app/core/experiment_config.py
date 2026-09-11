@@ -84,10 +84,7 @@ class ExperimentConfig(BaseModel):
         ):
             raise ValueError("non-RAG pipelines may not carry retrieval configuration")
         generation_temperature = self.generation_config.get("temperature")
-        if (
-            generation_temperature is not None
-            and float(generation_temperature) != self.temperature
-        ):
+        if generation_temperature is not None and float(generation_temperature) != self.temperature:
             raise ValueError("temperature disagrees with generation_config")
         _reject_non_finite(self.model_dump(mode="json"))
         return self

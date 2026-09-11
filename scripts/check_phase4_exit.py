@@ -53,10 +53,7 @@ def _assert_equal(actual: object, expected: object, message: str) -> None:
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     dataset_path = (
-        root
-        / "datasets/incident_diagnosis/processed"
-        / DATASET_VERSION
-        / "manifest.json"
+        root / "datasets/incident_diagnosis/processed" / DATASET_VERSION / "manifest.json"
     )
     dataset = _load_json(dataset_path)
     model = _load_json(root / "configs/model.yaml")
@@ -79,9 +76,7 @@ def main() -> int:
         tables = {row[0] for row in cursor.fetchall()}
         missing_tables = sorted(EXPECTED_TABLES - tables)
         if missing_tables:
-            raise SystemExit(
-                f"PHASE04_EXIT_GATE=FAIL missing persistence tables={missing_tables}"
-            )
+            raise SystemExit(f"PHASE04_EXIT_GATE=FAIL missing persistence tables={missing_tables}")
 
         cursor.execute(
             """

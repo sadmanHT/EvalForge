@@ -46,12 +46,7 @@ def _alembic_config() -> Config:
 
 
 def _manifest() -> dict[str, Any]:
-    path = (
-        ROOT
-        / "datasets/incident_diagnosis/processed"
-        / DATASET_VERSION
-        / "manifest.json"
-    )
+    path = ROOT / "datasets/incident_diagnosis/processed" / DATASET_VERSION / "manifest.json"
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -62,9 +57,7 @@ def _model_config() -> dict[str, Any]:
 def _experiment_config(*, prompt_version: str) -> ExperimentConfig:
     manifest = _manifest()
     model = _model_config()
-    lock_checksum = hashlib.sha256(
-        (BACKEND / "requirements.full.lock").read_bytes()
-    ).hexdigest()
+    lock_checksum = hashlib.sha256((BACKEND / "requirements.full.lock").read_bytes()).hexdigest()
     return ExperimentConfig(
         study_id=model["study_id"],
         pipeline_type=PipelineType.ZERO_SHOT,
@@ -134,14 +127,14 @@ def test_phase3_dataset_import_round_trips_without_loss(engine: Engine) -> None:
         assert stored.family_count == manifest["family_count"] == 18
 
         family_count = session.scalar(
-            select(func.count()).select_from(IncidentFamily).where(
-                IncidentFamily.dataset_version == DATASET_VERSION
-            )
+            select(func.count())
+            .select_from(IncidentFamily)
+            .where(IncidentFamily.dataset_version == DATASET_VERSION)
         )
         incident_count = session.scalar(
-            select(func.count()).select_from(Incident).where(
-                Incident.dataset_version == DATASET_VERSION
-            )
+            select(func.count())
+            .select_from(Incident)
+            .where(Incident.dataset_version == DATASET_VERSION)
         )
         split_rows = session.execute(
             select(Incident.split, func.count())
@@ -150,17 +143,13 @@ def test_phase3_dataset_import_round_trips_without_loss(engine: Engine) -> None:
         ).all()
         assert family_count == 18
         assert incident_count == 18
-        assert Counter(dict(split_rows)) == Counter(
-            {"train": 6, "validation": 6, "test": 6}
-        )
+        assert Counter(dict(split_rows)) == Counter({"train": 6, "validation": 6, "test": 6})
 
 
 def test_family_split_mismatch_is_rejected_by_database(engine: Engine) -> None:
     with Session(engine) as session:
         family = session.scalar(
-            select(IncidentFamily).where(
-                IncidentFamily.dataset_version == DATASET_VERSION
-            ).limit(1)
+            select(IncidentFamily).where(IncidentFamily.dataset_version == DATASET_VERSION).limit(1)
         )
         assert family is not None
         wrong_split = "validation" if family.split != "validation" else "test"
