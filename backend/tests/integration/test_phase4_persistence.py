@@ -146,6 +146,29 @@ def test_phase3_dataset_import_round_trips_without_loss(engine: Engine) -> None:
         assert Counter(dict(split_rows)) == Counter({"train": 6, "validation": 6, "test": 6})
 
 
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("test_split_manifest_checksum", "f" * 64, "manifest checksum"),
+        ("label_taxonomy_version", "phase4-invalid-taxonomy", "taxonomy version"),
+    ],
+)
+def test_experiment_dataset_identity_mismatch_is_rejected(
+    engine: Engine,
+    field: str,
+    value: str,
+    message: str,
+) -> None:
+    config = _experiment_config(prompt_version=f"phase4-invalid-{field}").model_copy(
+        update={field: value}
+    )
+    with Session(engine) as session:
+        repo = PersistenceRepository(session)
+        with pytest.raises(ValueError, match=message):
+            repo.create_experiment(f"exp-phase4-invalid-{field}", config)
+        session.rollback()
+
+
 def test_family_split_mismatch_is_rejected_by_database(engine: Engine) -> None:
     with Session(engine) as session:
         family = session.scalar(
