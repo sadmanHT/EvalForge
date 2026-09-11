@@ -2,15 +2,22 @@ from __future__ import annotations
 
 import hashlib
 import json
-from contextlib import contextmanager
 from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.experiment_config import ExperimentConfig, experiment_config_hash
-from app.models import AdapterVersion, DatasetVersion, Experiment, Job, KnowledgeBaseVersion, ModelVersion
+from app.models import (
+    AdapterVersion,
+    DatasetVersion,
+    Experiment,
+    Job,
+    KnowledgeBaseVersion,
+    ModelVersion,
+)
 
 
 def _stable_id(prefix: str, *parts: str) -> str:
@@ -67,7 +74,9 @@ class PersistenceRepository:
         status: str = "planned",
     ) -> Experiment:
         config_hash = experiment_config_hash(config)
-        existing = self.session.scalar(select(Experiment).where(Experiment.config_hash == config_hash))
+        existing = self.session.scalar(
+            select(Experiment).where(Experiment.config_hash == config_hash)
+        )
         if existing is not None:
             return existing
         if self.session.get(DatasetVersion, config.dataset_version) is None:
