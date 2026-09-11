@@ -79,8 +79,13 @@ class PersistenceRepository:
         )
         if existing is not None:
             return existing
-        if self.session.get(DatasetVersion, config.dataset_version) is None:
+        dataset = self.session.get(DatasetVersion, config.dataset_version)
+        if dataset is None:
             raise ValueError(f"unknown dataset version: {config.dataset_version}")
+        if dataset.manifest_checksum != config.test_split_manifest_checksum:
+            raise ValueError("experiment test manifest checksum does not match dataset version")
+        if dataset.label_taxonomy_version != config.label_taxonomy_version:
+            raise ValueError("experiment label taxonomy version does not match dataset version")
         model = self.ensure_model_version(config.base_model_id, config.base_model_revision)
         adapter_version_id: str | None = None
         if config.adapter_id and config.adapter_revision:
