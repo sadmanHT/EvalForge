@@ -64,7 +64,8 @@ class WandbTracker:
         try:
             wandb: Any = importlib.import_module("wandb")
         except ImportError as exc:
-            raise RuntimeError("WANDB_PROJECT is configured but the wandb package is unavailable") from exc
+            message = "WANDB_PROJECT is configured but the wandb package is unavailable"
+            raise RuntimeError(message) from exc
 
         run = wandb.init(
             project=self.project,
