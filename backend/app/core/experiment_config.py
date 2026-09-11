@@ -67,13 +67,27 @@ class ExperimentConfig(BaseModel):
         if uses_rag:
             if any(value is None for value in retrieval):
                 raise ValueError("RAG pipelines require complete retrieval identity")
-            assert self.chunk_size is not None and self.overlap is not None and self.top_k is not None
-            if self.chunk_size <= 0 or self.overlap < 0 or self.overlap >= self.chunk_size or self.top_k <= 0:
+            assert self.chunk_size is not None
+            assert self.overlap is not None
+            assert self.top_k is not None
+            if (
+                self.chunk_size <= 0
+                or self.overlap < 0
+                or self.overlap >= self.chunk_size
+                or self.top_k <= 0
+            ):
                 raise ValueError("invalid retrieval configuration")
-        elif any(value is not None for value in retrieval) or self.reranker_id or self.reranker_revision:
+        elif (
+            any(value is not None for value in retrieval)
+            or self.reranker_id
+            or self.reranker_revision
+        ):
             raise ValueError("non-RAG pipelines may not carry retrieval configuration")
         generation_temperature = self.generation_config.get("temperature")
-        if generation_temperature is not None and float(generation_temperature) != self.temperature:
+        if (
+            generation_temperature is not None
+            and float(generation_temperature) != self.temperature
+        ):
             raise ValueError("temperature disagrees with generation_config")
         _reject_non_finite(self.model_dump(mode="json"))
         return self
@@ -93,7 +107,13 @@ def _reject_non_finite(value: Any) -> None:
 def canonical_config_json(config: ExperimentConfig) -> str:
     payload = config.model_dump(mode="json", exclude_none=False)
     _reject_non_finite(payload)
-    return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    )
 
 
 def experiment_config_hash(config: ExperimentConfig) -> str:
