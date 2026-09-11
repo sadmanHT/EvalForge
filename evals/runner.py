@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument("--git-commit", required=True)
     parser.add_argument("--hardware-runtime-descriptor", required=True)
     parser.add_argument("--cost-rate-snapshot-version", required=True)
+    parser.add_argument("--gpu-hour-usd", required=True, type=float)
     parser.add_argument("--experiment-id")
     parser.add_argument("--run-id")
     parser.add_argument("--max-attempts", type=int, default=2)
@@ -29,6 +30,7 @@ def main() -> int:
         "git_commit": args.git_commit,
         "hardware_runtime_descriptor": args.hardware_runtime_descriptor,
         "cost_rate_snapshot_version": args.cost_rate_snapshot_version,
+        "gpu_hour_usd": args.gpu_hour_usd,
         "experiment_id": args.experiment_id,
         "run_id": args.run_id,
         "max_attempts": args.max_attempts,

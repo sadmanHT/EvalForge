@@ -22,7 +22,7 @@ from app.inference.base_model import (
 )
 from app.inference.protocol import load_baseline_protocol, load_taxonomy
 from app.inference.runner import run_baseline_experiment
-from app.models import Incident
+from app.models import CostRecord, Incident
 from app.services.dataset_import import import_phase3_dataset
 
 pytestmark = pytest.mark.integration
@@ -110,38 +110,52 @@ def test_validation_runner_persists_every_incident_and_recomputes_metrics(engine
         prompt_version=protocol.prompt_version,
         generation_config=protocol.generation_config,
     )
+    run_kwargs = {
+        "root": ROOT,
+        "protocol": protocol,
+        "adapter": adapter,
+        "split": "validation",
+        "git_commit": "phase6-integration",
+        "hardware_runtime_descriptor": "phase6-ci-fixture-no-real-model",
+        "cost_rate_snapshot_version": "phase6-ci-fixture-rates-v1",
+        "experiment_id": "exp-phase6-runner-fixture",
+        "run_id": "run-phase6-runner-fixture",
+        "max_attempts": 2,
+    }
     with Session(engine) as session:
-        summary = run_baseline_experiment(
-            session,
-            root=ROOT,
-            protocol=protocol,
-            adapter=adapter,
-            split="validation",
-            git_commit="phase6-integration",
-            hardware_runtime_descriptor="phase6-ci-fixture-no-real-model",
-            cost_rate_snapshot_version="phase6-ci-fixture-rates-v1",
-            experiment_id="exp-phase6-runner-fixture",
-            run_id="run-phase6-runner-fixture",
-            max_attempts=2,
-        )
+        summary = run_baseline_experiment(session, **run_kwargs)
         session.commit()
 
     assert summary.prediction_count == 6
     assert summary.inference_failure_count == 1
+    assert summary.cost_record_count == 5
     assert summary.recomputation_verified is True
     assert "primary.exact_accuracy" in summary.metric_values
+    first_call_count = sum(backend.calls_by_prompt.values())
+    assert first_call_count == 7
 
     with Session(engine) as session:
         predictions = load_canonical_predictions(session, run_id=summary.run_id)
         snapshot = reload_evaluation(session, run_id=summary.run_id)
+        costs = session.scalars(
+            select(CostRecord).where(CostRecord.run_id == summary.run_id)
+        ).all()
     assert len(predictions) == 6
     assert len({prediction.incident_id for prediction in predictions}) == 6
     invalid_json_count = sum(
         prediction.parse_status is ParseStatus.INVALID_JSON for prediction in predictions
     )
     assert invalid_json_count == 1
+    assert len(costs) == 5
+    assert {row.cost_rate_snapshot_version for row in costs} == {"phase6-ci-fixture-rates-v1"}
     assert snapshot.result_hash == summary.result_hash
     assert snapshot.metric_values == pytest.approx(summary.metric_values)
+
+    with Session(engine) as session:
+        reused = run_baseline_experiment(session, **run_kwargs)
+        session.commit()
+    assert reused == summary
+    assert sum(backend.calls_by_prompt.values()) == first_call_count
 
 
 def test_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -> None:

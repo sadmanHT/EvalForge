@@ -126,6 +126,7 @@ def test_real_redis_worker_to_postgres_to_api_readback(engine: Engine) -> None:
     assert processed.state is JobState.SUCCEEDED
     assert isinstance(processed.result, dict)
     assert processed.result["prediction_count"] == 6
+    assert processed.result["cost_record_count"] == 6
     assert processed.result["tracking"]["configured"] is False
 
     client = TestClient(create_app(readiness_probe=HealthyProbe(), engine=engine))
@@ -135,6 +136,11 @@ def test_real_redis_worker_to_postgres_to_api_readback(engine: Engine) -> None:
     assert payload["stored_prediction_count"] == 6
     assert len(payload["predictions"]) == 6
     assert len({row["incident_id"] for row in payload["predictions"]}) == 6
+    assert payload["stored_cost_record_count"] == 6
+    assert len(payload["cost_records"]) == 6
+    assert {row["cost_rate_snapshot_version"] for row in payload["cost_records"]} == {
+        "phase6-ci-fixture-rates-v1"
+    }
     assert payload["run"]["runtime_metadata"]["metric_recomputation_verified"] is True
     assert payload["run"]["runtime_metadata"]["experiment_tracking"]["configured"] is False
     assert "primary.exact_accuracy" in payload["metrics"]

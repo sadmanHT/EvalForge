@@ -35,7 +35,7 @@ test-phase5:
 	cd backend && pytest tests/evaluation tests/integration/test_phase5_evaluation_persistence.py --cov=app.evaluation --cov-report=term-missing --cov-fail-under=90
 
 test-phase6:
-	cd backend && pytest tests/inference/test_phase6_base_model.py tests/inference/test_phase6_protocol.py tests/inference/test_phase6_tracking.py tests/integration/test_phase6_baseline_runner.py tests/integration/test_phase6_worker_api.py
+	cd backend && pytest tests/inference/test_phase6_base_model.py tests/inference/test_phase6_costing.py tests/inference/test_phase6_protocol.py tests/inference/test_phase6_tracking.py tests/integration/test_phase6_baseline_runner.py tests/integration/test_phase6_worker_api.py
 
 test-integration:
 	cd backend && pytest tests/integration -m integration

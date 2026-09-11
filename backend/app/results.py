@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Experiment, Metric, Prediction, Run
+from app.models import CostRecord, Experiment, Metric, Prediction, Run
 
 
 def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | None:
@@ -18,6 +18,11 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
     ).all()
     metrics = session.scalars(
         select(Metric).where(Metric.run_id == run_id).order_by(Metric.name)
+    ).all()
+    costs = session.scalars(
+        select(CostRecord)
+        .where(CostRecord.run_id == run_id)
+        .order_by(CostRecord.cost_record_id)
     ).all()
     return {
         "experiment": {
@@ -41,4 +46,15 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
         "stored_prediction_count": len(predictions),
         "predictions": [dict(row.output_json) for row in predictions],
         "metrics": {row.name: row.value for row in metrics},
+        "stored_cost_record_count": len(costs),
+        "cost_records": [
+            {
+                "cost_record_id": row.cost_record_id,
+                "prediction_id": row.prediction_id,
+                "cost_rate_snapshot_version": row.cost_rate_snapshot_version,
+                "units": dict(row.units_json),
+                "amount_usd": format(row.amount_usd, "f"),
+            }
+            for row in costs
+        ],
     }

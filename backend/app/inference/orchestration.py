@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import os
 from collections.abc import Callable
 from dataclasses import asdict
@@ -10,6 +11,7 @@ from sqlalchemy.engine import Engine
 
 from app.db import build_engine, session_scope
 from app.inference.base_model import BaseModelBackend, TransformersBackend, ZeroShotBaselineAdapter
+from app.inference.costing import HourlyRateCostBackend
 from app.inference.protocol import BaselineProtocol, load_baseline_protocol, load_taxonomy
 from app.inference.runner import BaselineRunSummary, run_baseline_experiment
 from app.inference.tracking import ExperimentTracker, build_tracker_from_env
@@ -17,10 +19,6 @@ from app.models import Run
 from app.services.dataset_import import import_phase3_dataset
 
 BackendFactory = Callable[[BaselineProtocol], BaseModelBackend]
-
-
-def _default_backend_factory(protocol: BaselineProtocol) -> BaseModelBackend:
-    return TransformersBackend(protocol.runtime_config)
 
 
 def _required_text(payload: dict[str, Any], key: str) -> str:
@@ -39,6 +37,19 @@ def _optional_text(payload: dict[str, Any], key: str) -> str | None:
     return value.strip()
 
 
+def _optional_non_negative_float(payload: dict[str, Any], key: str) -> float | None:
+    value = payload.get(key)
+    if value is None:
+        return None
+    try:
+        converted = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{key} must be numeric when provided") from exc
+    if not math.isfinite(converted) or converted < 0:
+        raise ValueError(f"{key} must be finite and non-negative")
+    return converted
+
+
 class Phase6BaselineJobHandler:
     """Worker/CLI orchestration around the reusable Phase 06 baseline runner."""
 
@@ -52,13 +63,22 @@ class Phase6BaselineJobHandler:
     ) -> None:
         self.root = (root or Path(os.environ.get("EVALFORGE_ROOT", "."))).resolve()
         self.engine = engine or build_engine()
-        self.backend_factory = backend_factory or _default_backend_factory
+        self.backend_factory = backend_factory
         self.tracker = tracker or build_tracker_from_env()
 
     def __call__(self, payload: dict[str, Any]) -> dict[str, object]:
         protocol = load_baseline_protocol(self.root)
         labels, _categories = load_taxonomy(self.root)
-        backend = self.backend_factory(protocol)
+        gpu_hour_usd = _optional_non_negative_float(payload, "gpu_hour_usd")
+        if self.backend_factory is None:
+            if gpu_hour_usd is None:
+                raise ValueError("real Phase 06 baseline jobs require gpu_hour_usd")
+            backend: BaseModelBackend = HourlyRateCostBackend(
+                TransformersBackend(protocol.runtime_config),
+                gpu_hour_usd=gpu_hour_usd,
+            )
+        else:
+            backend = self.backend_factory(protocol)
         adapter = ZeroShotBaselineAdapter(
             backend=backend,
             allowed_labels=labels,
