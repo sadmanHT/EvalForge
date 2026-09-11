@@ -59,8 +59,10 @@ def main() -> int:
     actual = result.metric_map()
     for name, expected_value in expected.items():
         if name not in actual or abs(actual[name] - float(expected_value)) > 1e-12:
+            actual_value = actual.get(name)
             _fail(
-                f"golden metric mismatch {name}: actual={actual.get(name)} expected={expected_value}"
+                f"golden metric mismatch {name}: actual={actual_value} "
+                f"expected={expected_value}"
             )
 
     try:
