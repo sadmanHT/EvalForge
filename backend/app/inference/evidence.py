@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from collections.abc import Mapping
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Literal
 
@@ -19,6 +21,32 @@ from app.results import load_run_evidence
 
 RUN_EVIDENCE_VERSION = "phase6-run-evidence-v1"
 VALIDATION_REVIEW_VERSION = "phase6-validation-review-v1"
+_REAL_REQUIRED_METRICS = (
+    "primary.exact_accuracy",
+    "supporting.hierarchical_accuracy",
+    "supporting.top3_accuracy",
+    "quality.parse_failure_rate",
+    "calibration.normalized_multiclass_brier",
+    "calibration.ece",
+    "latency.p50_ms",
+    "latency.p95_ms",
+    "cost.marginal_mean_usd",
+    "cost.amortized_mean_usd",
+)
+_BOUNDED_METRICS = {
+    "primary.exact_accuracy",
+    "supporting.hierarchical_accuracy",
+    "supporting.top3_accuracy",
+    "quality.parse_failure_rate",
+    "calibration.normalized_multiclass_brier",
+    "calibration.ece",
+}
+_NON_NEGATIVE_METRICS = {
+    "latency.p50_ms",
+    "latency.p95_ms",
+    "cost.marginal_mean_usd",
+    "cost.amortized_mean_usd",
+}
 
 
 class ValidationReview(BaseModel):
@@ -284,6 +312,128 @@ def validate_run_evidence(
     unsealed.pop("evidence_sha256", None)
     if evidence_sha != canonical_json_sha256(unsealed):
         raise ValueError("Phase 06 run evidence checksum mismatch")
+
+
+def _require_hex_digest(payload: Mapping[str, Any], field: str) -> str:
+    value = payload.get(field)
+    if not isinstance(value, str) or len(value) != 64:
+        raise ValueError(f"real Phase 06 evidence has invalid {field}")
+    if any(character not in "0123456789abcdef" for character in value):
+        raise ValueError(f"real Phase 06 evidence has invalid {field}")
+    return value
+
+
+def _require_finite_metric(metrics: Mapping[str, Any], name: str) -> float:
+    value = metrics.get(name)
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise ValueError(f"real Phase 06 evidence metric is missing/non-numeric: {name}")
+    converted = float(value)
+    if not math.isfinite(converted):
+        raise ValueError(f"real Phase 06 evidence metric is non-finite: {name}")
+    return converted
+
+
+def validate_real_run_operational_evidence(
+    payload: Mapping[str, Any],
+    *,
+    require_tracking: bool,
+) -> None:
+    failure_count = payload.get("inference_failure_count")
+    if isinstance(failure_count, bool) or failure_count != 0:
+        raise ValueError("real Phase 06 run has technical inference failures")
+
+    stored_prediction_count = payload.get("stored_prediction_count")
+    if (
+        isinstance(stored_prediction_count, bool)
+        or not isinstance(stored_prediction_count, int)
+        or stored_prediction_count <= 0
+    ):
+        raise ValueError("real Phase 06 run has an invalid stored prediction count")
+
+    _require_hex_digest(payload, "scientific_config_hash")
+    _require_hex_digest(payload, "experiment_config_hash")
+    _require_hex_digest(payload, "dependency_lock_checksum")
+    _require_hex_digest(payload, "result_hash")
+    git_commit = payload.get("git_commit")
+    if (
+        not isinstance(git_commit, str)
+        or len(git_commit) != 40
+        or any(character not in "0123456789abcdef" for character in git_commit)
+    ):
+        raise ValueError("real Phase 06 run must record an exact 40-hex git commit")
+    hardware = payload.get("hardware_runtime_descriptor")
+    if not isinstance(hardware, str) or not hardware.startswith("phase6-gpu-host-v1 "):
+        raise ValueError("real Phase 06 run is not bound to sealed Phase 06 GPU host evidence")
+
+    rate_snapshot = payload.get("cost_rate_snapshot_version")
+    if not isinstance(rate_snapshot, str) or not rate_snapshot.strip():
+        raise ValueError("real Phase 06 run is missing a cost-rate snapshot version")
+    cost_records = payload.get("cost_records")
+    if not isinstance(cost_records, list):
+        raise ValueError("real Phase 06 run cost records must be a list")
+    stored_cost_count = payload.get("stored_cost_record_count")
+    if stored_cost_count != len(cost_records) or len(cost_records) != stored_prediction_count:
+        raise ValueError("real Phase 06 run must persist exactly one cost record per prediction")
+
+    cost_ids: set[str] = set()
+    for cost in cost_records:
+        if not isinstance(cost, dict):
+            raise ValueError("real Phase 06 run cost records must contain objects")
+        cost_id = cost.get("cost_record_id")
+        if not isinstance(cost_id, str) or not cost_id or cost_id in cost_ids:
+            raise ValueError("real Phase 06 run has missing/duplicated cost record IDs")
+        cost_ids.add(cost_id)
+        if cost.get("cost_rate_snapshot_version") != rate_snapshot:
+            raise ValueError("real Phase 06 cost record uses a different rate snapshot")
+        try:
+            amount = Decimal(str(cost.get("amount_usd")))
+        except (InvalidOperation, ValueError) as exc:
+            raise ValueError("real Phase 06 cost record amount is invalid") from exc
+        if not amount.is_finite() or amount <= 0:
+            raise ValueError("real Phase 06 cost record amount must be finite and positive")
+        units = cost.get("units")
+        if not isinstance(units, dict):
+            raise ValueError("real Phase 06 cost record units are missing")
+        if units.get("method") != "active_inference_wall_time_x_gpu_hour_rate":
+            raise ValueError("real Phase 06 cost record uses an unexpected cost method")
+        hourly_rate = units.get("gpu_hour_usd")
+        if isinstance(hourly_rate, bool) or not isinstance(hourly_rate, int | float):
+            raise ValueError("real Phase 06 cost record is missing gpu_hour_usd")
+        if not math.isfinite(float(hourly_rate)) or float(hourly_rate) <= 0:
+            raise ValueError("real Phase 06 gpu_hour_usd must be finite and positive")
+        latency = units.get("latency_ms")
+        if isinstance(latency, bool) or not isinstance(latency, int | float):
+            raise ValueError("real Phase 06 cost record is missing latency_ms")
+        if not math.isfinite(float(latency)) or float(latency) <= 0:
+            raise ValueError("real Phase 06 priced inference latency must be finite and positive")
+
+    metrics = payload.get("metrics")
+    if not isinstance(metrics, dict):
+        raise ValueError("real Phase 06 evidence metrics must be an object")
+    metric_values = {
+        name: _require_finite_metric(metrics, name) for name in _REAL_REQUIRED_METRICS
+    }
+    for name in _BOUNDED_METRICS:
+        if not 0.0 <= metric_values[name] <= 1.0:
+            raise ValueError(f"real Phase 06 evidence metric is outside [0,1]: {name}")
+    for name in _NON_NEGATIVE_METRICS:
+        if metric_values[name] < 0.0:
+            raise ValueError(f"real Phase 06 evidence metric is negative: {name}")
+    if metric_values["cost.marginal_mean_usd"] <= 0.0:
+        raise ValueError("real Phase 06 marginal cost must be positive")
+    if metric_values["cost.amortized_mean_usd"] < metric_values["cost.marginal_mean_usd"]:
+        raise ValueError("real Phase 06 amortized cost cannot be below marginal cost")
+
+    tracking = payload.get("tracking")
+    if not isinstance(tracking, dict) or tracking.get("provider") != "wandb":
+        raise ValueError("real Phase 06 evidence has an invalid tracking payload")
+    if require_tracking:
+        if tracking.get("configured") is not True:
+            raise ValueError("final Phase 06 locked-test evidence requires configured W&B tracking")
+        for field in ("run_reference", "artifact_reference"):
+            value = tracking.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"final Phase 06 W&B tracking is missing {field}")
 
 
 def validate_validation_review(
