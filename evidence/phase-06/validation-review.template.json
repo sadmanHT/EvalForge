@@ -1,0 +1,12 @@
+{
+  "label_contract_passed": false,
+  "no_prompt_or_parser_defect_observed": false,
+  "notes": "Replace this template only after manually reviewing every real validation prediction. Do not mark fields true without inspection.",
+  "review_version": "phase6-validation-review-v1",
+  "reviewed_at": "REPLACE_WITH_ISO8601_TIMESTAMP",
+  "reviewed_incident_ids": [],
+  "reviewer": "REPLACE_WITH_REVIEWER",
+  "run_id": "REPLACE_WITH_REAL_VALIDATION_RUN_ID",
+  "schema_contract_passed": false,
+  "scientific_config_hash": "REPLACE_WITH_64_HEX_SCIENTIFIC_CONFIG_HASH"
+}
