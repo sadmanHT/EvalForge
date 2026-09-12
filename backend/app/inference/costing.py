@@ -39,9 +39,11 @@ class HourlyRateCostBackend:
             generation_config=generation_config,
         )
         if output.cost_usd is not None:
-            raise InferenceError("hourly-rate costing cannot wrap a backend that already reports cost")
+            message = "hourly-rate costing cannot wrap a backend that already reports cost"
+            raise InferenceError(message)
         if not math.isfinite(output.latency_ms) or output.latency_ms < 0:
-            raise InferenceError("backend latency must be finite and non-negative for cost accounting")
+            message = "backend latency must be finite and non-negative for cost accounting"
+            raise InferenceError(message)
         cost_usd = output.latency_ms / 3_600_000.0 * self.gpu_hour_usd
         metadata = dict(output.runtime_metadata or {})
         metadata.update(
