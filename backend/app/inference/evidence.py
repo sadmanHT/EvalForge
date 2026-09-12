@@ -24,7 +24,7 @@ VALIDATION_REVIEW_VERSION = "phase6-validation-review-v1"
 class ValidationReview(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    review_version: Literal["phase6-validation-review-v1"] = VALIDATION_REVIEW_VERSION
+    review_version: Literal["phase6-validation-review-v1"] = "phase6-validation-review-v1"
     run_id: str = Field(min_length=1)
     scientific_config_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     reviewed_incident_ids: tuple[str, ...]
