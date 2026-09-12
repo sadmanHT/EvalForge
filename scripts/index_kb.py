@@ -67,9 +67,7 @@ def main() -> int:
     manifest_payload["persisted_chunk_count"] = first_counts[1]
     _write_json(evidence_dir / "kb-manifest.json", manifest_payload)
 
-    chunk_ids_sha256 = hashlib.sha256(
-        "\n".join(first_chunk_ids).encode("utf-8")
-    ).hexdigest()
+    chunk_ids_sha256 = hashlib.sha256("\n".join(first_chunk_ids).encode("utf-8")).hexdigest()
     _write_json(
         evidence_dir / "index-reindex.json",
         {
