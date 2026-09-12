@@ -59,16 +59,12 @@ def main() -> int:
     review_path = args.review if args.review.is_absolute() else ROOT / args.review
     protocol_path = ROOT / BASELINE_PROTOCOL_PATH
     freeze_record_path = (
-        args.freeze_record
-        if args.freeze_record.is_absolute()
-        else ROOT / args.freeze_record
+        args.freeze_record if args.freeze_record.is_absolute() else ROOT / args.freeze_record
     )
 
     protocol = load_baseline_protocol(ROOT)
     if protocol.state is not ProtocolState.VALIDATION or protocol.locked_test_authorized:
-        raise SystemExit(
-            "PHASE06_PROTOCOL_FREEZE=FAIL protocol must still be validation/unlocked"
-        )
+        raise SystemExit("PHASE06_PROTOCOL_FREEZE=FAIL protocol must still be validation/unlocked")
     evidence = _load_json(evidence_path)
     review = ValidationReview.model_validate(_load_json(review_path))
     validate_run_evidence(
