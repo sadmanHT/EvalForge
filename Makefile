@@ -2,9 +2,9 @@ SHELL := /bin/bash
 PYTHON ?= python
 NPM ?= npm
 
-.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch phase3-primary-source-check phase3-research-admission-check phase3-research-build phase3-research-rebuild-check phase4-seed phase4-exit phase5-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit
+.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch phase3-primary-source-check phase3-research-admission-check phase3-research-build phase3-research-rebuild-check phase4-seed phase4-exit phase5-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit
 
-PHASE_SCRIPTS := ../scripts/audit_dataset.py ../scripts/admit_phase3_research_records.py ../scripts/audit_phase7_leakage.py ../scripts/build_phase3_candidate.py ../scripts/build_phase3_research_dataset.py ../scripts/capture_phase6_gpu_host.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/check_phase3_research_reproducibility.py ../scripts/check_phase4_exit.py ../scripts/check_phase5_exit.py ../scripts/check_phase6_contract.py ../scripts/check_phase6_exit.py ../scripts/check_phase7_contract.py ../scripts/export_phase6_run_evidence.py ../scripts/fetch_phase3_sources.py ../scripts/freeze_phase6_protocol.py ../scripts/index_kb.py ../scripts/preserve_phase3_primary_sources.py ../scripts/run_phase5_smoke_evaluation.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py ../evals/runner.py
+PHASE_SCRIPTS := ../scripts/audit_dataset.py ../scripts/admit_phase3_research_records.py ../scripts/audit_phase7_leakage.py ../scripts/build_phase3_candidate.py ../scripts/build_phase3_research_dataset.py ../scripts/capture_phase6_gpu_host.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/check_phase3_research_reproducibility.py ../scripts/check_phase4_exit.py ../scripts/check_phase5_exit.py ../scripts/check_phase6_contract.py ../scripts/check_phase6_exit.py ../scripts/check_phase7_contract.py ../scripts/check_phase7_exit.py ../scripts/export_phase6_run_evidence.py ../scripts/fetch_phase3_sources.py ../scripts/freeze_phase6_protocol.py ../scripts/index_kb.py ../scripts/preserve_phase3_primary_sources.py ../scripts/run_phase5_smoke_evaluation.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py ../evals/runner.py
 
 format:
 	cd backend && ruff check --fix app tests $(PHASE_SCRIPTS)
@@ -38,7 +38,7 @@ test-phase6:
 	cd backend && pytest tests/inference/test_phase6_base_model.py tests/inference/test_phase6_completion_gate.py tests/inference/test_phase6_costing.py tests/inference/test_phase6_evidence.py tests/inference/test_phase6_gpu_host.py tests/inference/test_phase6_protocol.py tests/inference/test_phase6_tracking.py tests/integration/test_phase6_baseline_runner.py tests/integration/test_phase6_worker_api.py
 
 test-phase7:
-	cd backend && pytest tests/retrieval/test_phase7_retrieval.py tests/integration/test_phase7_retrieval_integration.py
+	cd backend && pytest tests/retrieval/test_phase7_retrieval.py tests/retrieval/test_phase7_completion_gate.py tests/integration/test_phase7_retrieval_integration.py
 
 test-integration:
 	cd backend && pytest tests/integration -m integration
@@ -110,6 +110,9 @@ phase7-index:
 
 phase7-leakage-audit:
 	$(PYTHON) scripts/audit_phase7_leakage.py
+
+phase7-exit:
+	$(PYTHON) scripts/check_phase7_exit.py
 
 smoke:
 	cd backend && pytest tests/test_health.py tests/test_worker.py
