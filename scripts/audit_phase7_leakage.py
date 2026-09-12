@@ -57,9 +57,7 @@ def main() -> int:
     config = load_kb_config(ROOT / "configs/phase7-kb.json")
     adapter = HashEmbeddingAdapter(config.embedding)
     incidents = _load_incidents(config.dataset_version)
-    heldout_incidents = [
-        item for item in incidents if item["split"] in {"validation", "test"}
-    ]
+    heldout_incidents = [item for item in incidents if item["split"] in {"validation", "test"}]
     heldout_family_ids = {str(item["incident_family_id"]) for item in heldout_incidents}
 
     engine = build_engine()
