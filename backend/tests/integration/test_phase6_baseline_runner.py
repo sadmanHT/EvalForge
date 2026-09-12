@@ -56,9 +56,7 @@ class FixtureBackend:
         if self.fail_incident_marker in prompt:
             raise InferenceError("fixture per-example inference failure")
         label = next(label for label in self.labels if label in prompt)
-        scores = {
-            candidate: (-0.1 if candidate == label else -4.0) for candidate in self.labels
-        }
+        scores = {candidate: (-0.1 if candidate == label else -4.0) for candidate in self.labels}
         return BackendOutput(
             raw_text=f'{{"root_cause_code":"{label}","reasoning":"fixture"}}',
             label_log_likelihoods=scores,
@@ -144,20 +142,15 @@ def test_validation_runner_persists_every_incident_and_recomputes_metrics(
     with Session(engine) as session:
         predictions = load_canonical_predictions(session, run_id=summary.run_id)
         snapshot = reload_evaluation(session, run_id=summary.run_id)
-        costs = session.scalars(
-            select(CostRecord).where(CostRecord.run_id == summary.run_id)
-        ).all()
+        costs = session.scalars(select(CostRecord).where(CostRecord.run_id == summary.run_id)).all()
     assert len(predictions) == 6
     assert len({prediction.incident_id for prediction in predictions}) == 6
     invalid_json_count = sum(
-        prediction.parse_status is ParseStatus.INVALID_JSON
-        for prediction in predictions
+        prediction.parse_status is ParseStatus.INVALID_JSON for prediction in predictions
     )
     assert invalid_json_count == 1
     assert len(costs) == 5
-    assert {row.cost_rate_snapshot_version for row in costs} == {
-        "phase6-ci-fixture-rates-v1"
-    }
+    assert {row.cost_rate_snapshot_version for row in costs} == {"phase6-ci-fixture-rates-v1"}
     assert snapshot.result_hash == summary.result_hash
     assert snapshot.metric_values == pytest.approx(summary.metric_values)
 
