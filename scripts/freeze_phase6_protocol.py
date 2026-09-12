@@ -126,9 +126,7 @@ def main() -> int:
         "validation_evidence_file_sha256": _file_sha256(evidence_path),
         "gpu_host_evidence_sha256": host_evidence.evidence_sha256,
         "gpu_host_evidence_file_sha256": _file_sha256(host_evidence_path),
-        "gpu_environment_fingerprint_sha256": (
-            host_evidence.environment_fingerprint_sha256
-        ),
+        "gpu_environment_fingerprint_sha256": (host_evidence.environment_fingerprint_sha256),
         "manual_review_file_sha256": _file_sha256(review_path),
         "manual_reviewed_at": review.reviewed_at.isoformat(),
         "manual_reviewer": review.reviewer,
