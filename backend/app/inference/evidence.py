@@ -410,9 +410,7 @@ def validate_real_run_operational_evidence(
     metrics = payload.get("metrics")
     if not isinstance(metrics, dict):
         raise ValueError("real Phase 06 evidence metrics must be an object")
-    metric_values = {
-        name: _require_finite_metric(metrics, name) for name in _REAL_REQUIRED_METRICS
-    }
+    metric_values = {name: _require_finite_metric(metrics, name) for name in _REAL_REQUIRED_METRICS}
     for name in _BOUNDED_METRICS:
         if not 0.0 <= metric_values[name] <= 1.0:
             raise ValueError(f"real Phase 06 evidence metric is outside [0,1]: {name}")

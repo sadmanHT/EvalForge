@@ -113,9 +113,7 @@ def _validation_bundle(
     if evidence.get("locked_test_authorized_at_export") is not False:
         raise ValueError("validation evidence was exported after locked-test authorization")
 
-    review = ValidationReview.model_validate(
-        _load_json_object(_path(root, VALIDATION_REVIEW_PATH))
-    )
+    review = ValidationReview.model_validate(_load_json_object(_path(root, VALIDATION_REVIEW_PATH)))
     validate_validation_review(review, validation_evidence=evidence)
     host = _load_host_evidence(root, VALIDATION_GPU_HOST_PATH)
     _validate_run_host_binding(evidence, host)
