@@ -16,11 +16,29 @@ The canonical protocol is `configs/phase6-baseline.json`. Before validation it m
 
 Do not change prompt, model, decoding, confidence method, evaluator, or label taxonomy after inspecting locked-test outcomes.
 
-## 2. Prepare a Linux CUDA GPU host
+## 2. Prepare and prove the Linux CUDA GPU host
 
-Use a GPU environment capable of loading the frozen model runtime. Phase 01 proved the compatibility path on Tesla T4 hardware. Install the repository backend lock plus the GPU model stack used by the real host. Record the exact installed versions and `nvidia-smi` output with the run evidence. Do not substitute a tiny or mock model for the real validation/test runs.
+`configs/phase6-gpu-host.json` pins the real-host compatibility contract to the Phase 01 proven stack. The real Phase 06 host must use Python 3.12.x and these exact package versions:
 
-The canonical worker/CLI needs PostgreSQL because PostgreSQL is the experiment system of record. On a GPU host with Docker available, a minimal database can be started with the same image used by EvalForge:
+- torch `2.10.0+cu128`
+- transformers `4.57.6`
+- accelerate `1.13.0`
+- bitsandbytes `0.50.2`
+- huggingface-hub `0.36.2`
+- safetensors `0.7.0`
+
+The contract also requires CUDA, compute capability at least 7.5, and at least 14 GiB VRAM on a visible GPU. Phase 01 proved this path on Tesla T4 hardware. Do not substitute a tiny model, CPU-only runtime, or unrecorded dependency stack for the real validation/test runs.
+
+After installing the repository backend lock plus the pinned GPU packages, capture the machine-checkable host evidence:
+
+```bash
+python scripts/capture_phase6_gpu_host.py \
+  --output evidence/phase-06/validation-gpu-host.json
+```
+
+The command verifies the Phase 01 reference evidence, exact package versions, CUDA availability, GPU capability/VRAM, captures `nvidia-smi`, seals the evidence JSON, and prints a stable environment fingerprint. The fingerprint excludes volatile capture time and `nvidia-smi` text but includes Python, exact packages, CUDA runtime, and the visible GPU identities/capabilities.
+
+The canonical worker/CLI needs PostgreSQL because PostgreSQL is the experiment system of record. On a GPU host with Docker available, start the same image used by EvalForge:
 
 ```bash
 docker run -d --name evalforge-phase6-postgres \
@@ -35,8 +53,6 @@ cd backend
 alembic upgrade head
 cd ..
 ```
-
-Install the repository package and the real inference stack in the same Python environment. The model runtime will fail explicitly if torch/transformers/bitsandbytes support is unavailable.
 
 ## 3. Configure tracking and cost evidence
 
@@ -54,13 +70,13 @@ Use the GPU provider's actual rate for `--gpu-hour-usd`. Give that rate source a
 
 ## 4. Run the real validation split
 
-Capture the exact repository commit and a factual hardware/runtime descriptor. Then run:
+The runner no longer accepts a hand-written hardware descriptor. It validates the sealed host evidence and derives the experiment runtime descriptor from its stable environment fingerprint.
 
 ```bash
 python evals/runner.py \
   --split validation \
   --git-commit "$(git rev-parse HEAD)" \
-  --hardware-runtime-descriptor "<actual GPU/runtime description>" \
+  --gpu-host-evidence evidence/phase-06/validation-gpu-host.json \
   --cost-rate-snapshot-version "<actual rate snapshot version>" \
   --gpu-hour-usd <actual provider rate> \
   --experiment-id phase6-zero-shot-validation-v1 \
@@ -87,7 +103,8 @@ Check readiness without modifying the protocol:
 ```bash
 python scripts/freeze_phase6_protocol.py \
   --evidence evidence/phase-06/validation-run.json \
-  --review evidence/phase-06/validation-review.json
+  --review evidence/phase-06/validation-review.json \
+  --gpu-host-evidence evidence/phase-06/validation-gpu-host.json
 ```
 
 Only after that prints `PHASE06_VALIDATION_FREEZE_READINESS=PASS`, freeze and authorize:
@@ -96,17 +113,25 @@ Only after that prints `PHASE06_VALIDATION_FREEZE_READINESS=PASS`, freeze and au
 python scripts/freeze_phase6_protocol.py \
   --evidence evidence/phase-06/validation-run.json \
   --review evidence/phase-06/validation-review.json \
+  --gpu-host-evidence evidence/phase-06/validation-gpu-host.json \
   --apply
 ```
 
-Commit the validation evidence, review, generated `protocol-freeze.json`, and frozen protocol before executing the locked test. The scientific configuration hash must remain unchanged by the freeze.
+The freeze record binds the accepted validation run to the sealed GPU evidence and its stable environment fingerprint. Commit the validation evidence, GPU-host evidence, review, generated `protocol-freeze.json`, and frozen protocol before executing the locked test. The scientific configuration hash must remain unchanged by the freeze.
 
 ## 6. Run the locked test once
 
-After the frozen/authorized commit is on the Phase 06 branch, run the exact same real-model command with `--split test`, a distinct experiment/run ID, and `--evidence-output evidence/phase-06/test-run.json`. Use the frozen commit SHA as `--git-commit`.
+On the locked-test host, capture host evidence again:
+
+```bash
+python scripts/capture_phase6_gpu_host.py \
+  --output evidence/phase-06/test-gpu-host.json
+```
+
+Then run the same baseline with `--split test`, a distinct experiment/run ID, and `--gpu-host-evidence evidence/phase-06/test-gpu-host.json`. The runner refuses the locked test unless the stable GPU/software environment fingerprint exactly matches the validation fingerprint preserved in `protocol-freeze.json`. Use the frozen commit SHA as `--git-commit`.
 
 Do not rerun the locked test because its score is disappointing or because a prompt/config change looks attractive. A rerun is valid only after documenting a non-model technical invalidation such as corrupted data, failed persistence, or incomplete inference.
 
 ## 7. Preserve final evidence
 
-The final Phase 06 handoff must retain the real test experiment ID/config hash, scientific hash, W&B reference when configured, exact stored prediction count versus test count, raw prediction export, cost records, metric recomputation proof, hardware/runtime evidence, and cumulative Phase 1–6 + clean-environment CI results. No dashboard/README claim may be substituted for those artifacts.
+The final Phase 06 handoff must retain the real test experiment ID/config hash, scientific hash, W&B reference when configured, exact stored prediction count versus test count, raw prediction export, cost records, metric recomputation proof, validation and test GPU-host evidence, the frozen environment fingerprint, and cumulative Phase 1–6 + clean-environment CI results. No dashboard/README claim may be substituted for those artifacts.
