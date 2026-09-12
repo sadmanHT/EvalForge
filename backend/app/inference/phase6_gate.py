@@ -89,7 +89,8 @@ def _validate_run_host_binding(
     run_evidence: dict[str, Any],
     host_evidence: GPUHostEvidence,
 ) -> None:
-    if run_evidence.get("hardware_runtime_descriptor") != hardware_runtime_descriptor(host_evidence):
+    expected_descriptor = hardware_runtime_descriptor(host_evidence)
+    if run_evidence.get("hardware_runtime_descriptor") != expected_descriptor:
         raise ValueError("Phase 06 run evidence is not bound to its sealed GPU host evidence")
 
 
@@ -106,7 +107,9 @@ def _validation_bundle(
     )
     validate_real_run_operational_evidence(evidence, require_tracking=False)
     if evidence.get("protocol_state_at_export") != ProtocolState.VALIDATION.value:
-        raise ValueError("validation evidence was not exported while the protocol was in validation")
+        raise ValueError(
+            "validation evidence was not exported while the protocol was in validation"
+        )
     if evidence.get("locked_test_authorized_at_export") is not False:
         raise ValueError("validation evidence was exported after locked-test authorization")
 
