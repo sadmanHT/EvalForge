@@ -1,0 +1,679 @@
+{
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "completed_at": "2026-09-12T17:13:49.897655+00:00",
+  "confidence_method": "normalized_label_sequence_log_likelihood",
+  "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+  "cost_records": [
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-38188d27270cbda4fdc4e7cd",
+      "prediction_id": "prediction-be867da13452b836c5edaf7b",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 193,
+        "latency_ms": 4917.415720999998,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 57,
+        "total_tokens": 250
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-627f8fdfa57ae5bfa4211eb9",
+      "prediction_id": "prediction-9d4249664295dfa93068ab02",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 322,
+        "latency_ms": 8764.708434,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 112,
+        "total_tokens": 434
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-64b37aba6ede36b69294393b",
+      "prediction_id": "prediction-4396229408f8edd236c4e93d",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 246,
+        "latency_ms": 5951.820997000027,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 64,
+        "total_tokens": 310
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-ee46e88f64a2a2f5b6ada9e1",
+      "prediction_id": "prediction-6e42182b7ed0be086f019f3d",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 190,
+        "latency_ms": 5611.193725000021,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 50,
+        "total_tokens": 240
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-f1165201efc6a792524dbbf8",
+      "prediction_id": "prediction-6d94a7331d482d8d4b6ffb86",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 230,
+        "latency_ms": 5336.032005999982,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 61,
+        "total_tokens": 291
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-f81efafb7831a08e6b28b9cb",
+      "prediction_id": "prediction-ac251447d904c5e58907fba7",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 256,
+        "latency_ms": 6889.929093999967,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 83,
+        "total_tokens": 339
+      }
+    }
+  ],
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "dependency_lock_checksum": "917fb1f22c38b666d0baadcfaa8a1d9b22d424b0991321e7c622c0da45ae8a95",
+  "evaluator_version": "phase5-evaluator-v1",
+  "evidence_sha256": "184ed6f973bfc69ff5bc7becac5f60b1650ce7368cb36cfec89bcd6e1e344e1f",
+  "evidence_version": "phase6-run-evidence-v1",
+  "expected_incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "experiment_config_hash": "900728386a2eb15003b40e4bd1942887a2ea6447bef77ea79e8c47dc73fb1ca7",
+  "experiment_id": "phase6-zero-shot-validation-kaggle-v2",
+  "experiment_status": "completed",
+  "failure_codes": [],
+  "generation_config": {
+    "do_sample": false,
+    "max_new_tokens": 128,
+    "temperature": 0.0
+  },
+  "git_commit": "081712079b464e9f6af293ec8f6999d90798abb5",
+  "hardware_runtime_descriptor": "phase6-gpu-host-v1 environment=45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff torch=2.10.0+cu128 cuda=12.8 gpus=Tesla T4",
+  "inference_failure_count": 0,
+  "label_taxonomy_version": "1.0.0",
+  "locked_test_authorized_at_export": false,
+  "metric_recomputation_verified": true,
+  "metrics": {
+    "calibration.ece": 0.0008532466916105763,
+    "calibration.normalized_multiclass_brier": 1.6257064801246548e-06,
+    "cost.amortized_mean_usd": 0.0,
+    "cost.marginal_mean_usd": 0.0,
+    "latency.p50_ms": 5781.507361000024,
+    "latency.p95_ms": 8296.013598999993,
+    "primary.exact_accuracy": 1.0,
+    "quality.parse_failure_rate": 0.0,
+    "supporting.hierarchical_accuracy": 1.0,
+    "supporting.top3_accuracy": 1.0
+  },
+  "output_schema_version": "root-cause-prediction-v1",
+  "prediction_incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "predictions": [
+    {
+      "confidence_probability": 0.9999999284749038,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "input_tokens": 190,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.9999999284749038,
+        "database_connection_leak": 4.9722001840791145e-08,
+        "disk_exhaustion": 1.7837159214267758e-08,
+        "memory_leak": 1.9437119791210063e-09,
+        "n_plus_one_query": 2.86644486264763e-10,
+        "no_fault": 1.7355791719092999e-09
+      },
+      "latency_ms": 5611.193725000021,
+      "output_tokens": 50,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -12.96884536743164,
+          "database_connection_leak": -29.785663604736328,
+          "disk_exhaustion": -30.810827255249023,
+          "memory_leak": -33.02751159667969,
+          "n_plus_one_query": -34.94162368774414,
+          "no_fault": -33.140769958496094
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "broken_payment_configuration",
+      "ranked_labels": [
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.9999999284749038,
+          "score": -12.96884536743164
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 4.9722001840791145e-08,
+          "score": -29.785663604736328
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 1.7837159214267758e-08,
+          "score": -30.810827255249023
+        },
+        {
+          "label": "memory_leak",
+          "probability": 1.9437119791210063e-09,
+          "score": -33.02751159667969
+        },
+        {
+          "label": "no_fault",
+          "probability": 1.7355791719092999e-09,
+          "score": -33.140769958496094
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 2.86644486264763e-10,
+          "score": -34.94162368774414
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"broken_payment_configuration\",\n  \"reasoning\": \"The incident was caused by a broken payment configuration update that prevented U.S. credit-card processing.\"\n}",
+      "reasoning": "The incident was caused by a broken payment configuration update that prevented U.S. credit-card processing.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 240
+    },
+    {
+      "confidence_probability": 0.9968933286320032,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "input_tokens": 230,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.0025277553206429415,
+        "database_connection_leak": 0.0004065860022310675,
+        "disk_exhaustion": 5.5242586430512776e-05,
+        "memory_leak": 1.1853780587378074e-05,
+        "n_plus_one_query": 0.00010523367810507037,
+        "no_fault": 0.9968933286320032
+      },
+      "latency_ms": 5336.032005999982,
+      "output_tokens": 61,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -19.46237564086914,
+          "database_connection_leak": -21.2896671295166,
+          "disk_exhaustion": -23.285728454589844,
+          "memory_leak": -24.82481575012207,
+          "n_plus_one_query": -22.641279220581055,
+          "no_fault": -13.485063552856445
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "no_fault",
+      "ranked_labels": [
+        {
+          "label": "no_fault",
+          "probability": 0.9968933286320032,
+          "score": -13.485063552856445
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.0025277553206429415,
+          "score": -19.46237564086914
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0004065860022310675,
+          "score": -21.2896671295166
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.00010523367810507037,
+          "score": -22.641279220581055
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 5.5242586430512776e-05,
+          "score": -23.285728454589844
+        },
+        {
+          "label": "memory_leak",
+          "probability": 1.1853780587378074e-05,
+          "score": -24.82481575012207
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"no_fault\",\n  \"reasoning\": \"The incident was determined to be a false alarm, as Fastly confirmed there were no elevated Cloud WAF errors, and other locations and services were unaffected.\"\n}",
+      "reasoning": "The incident was determined to be a false alarm, as Fastly confirmed there were no elevated Cloud WAF errors, and other locations and services were unaffected.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 291
+    },
+    {
+      "confidence_probability": 0.999999842097921,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "input_tokens": 193,
+      "label_probabilities": {
+        "broken_payment_configuration": 1.742143367892793e-10,
+        "database_connection_leak": 4.3114394435505045e-08,
+        "disk_exhaustion": 1.0810671610504407e-07,
+        "memory_leak": 0.999999842097921,
+        "n_plus_one_query": 6.41606328357025e-09,
+        "no_fault": 9.069169384712602e-11
+      },
+      "latency_ms": 4917.415720999998,
+      "output_tokens": 57,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -33.78331756591797,
+          "database_connection_leak": -28.271991729736328,
+          "disk_exhaustion": -27.35272979736328,
+          "memory_leak": -11.312582969665527,
+          "n_plus_one_query": -30.177043914794922,
+          "no_fault": -34.43613815307617
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "memory_leak",
+      "ranked_labels": [
+        {
+          "label": "memory_leak",
+          "probability": 0.999999842097921,
+          "score": -11.312582969665527
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 1.0810671610504407e-07,
+          "score": -27.35272979736328
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 4.3114394435505045e-08,
+          "score": -28.271991729736328
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 6.41606328357025e-09,
+          "score": -30.177043914794922
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 1.742143367892793e-10,
+          "score": -33.78331756591797
+        },
+        {
+          "label": "no_fault",
+          "probability": 9.069169384712602e-11,
+          "score": -34.43613815307617
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"memory_leak\",\n  \"reasoning\": \"The incident description explicitly mentions a memory leak in the EBS data-collection-agent, which slowly consumed system memory and degraded request handling.\"\n}",
+      "reasoning": "The incident description explicitly mentions a memory leak in the EBS data-collection-agent, which slowly consumed system memory and degraded request handling.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 250
+    },
+    {
+      "confidence_probability": 0.9991250998017781,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "input_tokens": 256,
+      "label_probabilities": {
+        "broken_payment_configuration": 2.405693137362885e-08,
+        "database_connection_leak": 0.0008695051935438628,
+        "disk_exhaustion": 0.9991250998017781,
+        "memory_leak": 1.7218623807259554e-06,
+        "n_plus_one_query": 3.645446898276594e-06,
+        "no_fault": 3.638467073587657e-09
+      },
+      "latency_ms": 6889.929093999967,
+      "output_tokens": 83,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -27.07630729675293,
+          "database_connection_leak": -16.581050872802734,
+          "disk_exhaustion": -9.534339904785156,
+          "memory_leak": -22.80556869506836,
+          "n_plus_one_query": -22.055496215820312,
+          "no_fault": -28.965167999267578
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "disk_exhaustion",
+      "ranked_labels": [
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.9991250998017781,
+          "score": -9.534339904785156
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0008695051935438628,
+          "score": -16.581050872802734
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 3.645446898276594e-06,
+          "score": -22.055496215820312
+        },
+        {
+          "label": "memory_leak",
+          "probability": 1.7218623807259554e-06,
+          "score": -22.80556869506836
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 2.405693137362885e-08,
+          "score": -27.07630729675293
+        },
+        {
+          "label": "no_fault",
+          "probability": 3.638467073587657e-09,
+          "score": -28.965167999267578
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"disk_exhaustion\",\n  \"reasoning\": \"The incident description mentions that the disk-full condition caused a partial binlog write, corrupted the final event, and stopped slave replication. This suggests that the disk was unable to handle the large amount of data being written, leading to exhaustion of disk space.\"\n}",
+      "reasoning": "The incident description mentions that the disk-full condition caused a partial binlog write, corrupted the final event, and stopped slave replication. This suggests that the disk was unable to handle the large amount of data being written, leading to exhaustion of disk space.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 339
+    },
+    {
+      "confidence_probability": 0.9989606525296882,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "input_tokens": 246,
+      "label_probabilities": {
+        "broken_payment_configuration": 2.9556947868137348e-12,
+        "database_connection_leak": 0.9989606525296882,
+        "disk_exhaustion": 7.864356149300429e-05,
+        "memory_leak": 0.00016458863614740696,
+        "n_plus_one_query": 0.0007961024894777738,
+        "no_fault": 1.2780237161138767e-08
+      },
+      "latency_ms": 5951.820997000027,
+      "output_tokens": 64,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -36.86077117919922,
+          "database_connection_leak": -10.314523696899414,
+          "disk_exhaustion": -19.764068603515625,
+          "memory_leak": -19.025545120239258,
+          "n_plus_one_query": -17.44926643371582,
+          "no_fault": -28.488849639892578
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "database_connection_leak",
+      "ranked_labels": [
+        {
+          "label": "database_connection_leak",
+          "probability": 0.9989606525296882,
+          "score": -10.314523696899414
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.0007961024894777738,
+          "score": -17.44926643371582
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.00016458863614740696,
+          "score": -19.025545120239258
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 7.864356149300429e-05,
+          "score": -19.764068603515625
+        },
+        {
+          "label": "no_fault",
+          "probability": 1.2780237161138767e-08,
+          "score": -28.488849639892578
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 2.9556947868137348e-12,
+          "score": -36.86077117919922
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"database_connection_leak\",\n  \"reasoning\": \"The incident description indicates that BoneCP database connections are not being returned to the pool, leaving connections unavailable to the application. This is consistent with a database connection leak.\"\n}",
+      "reasoning": "The incident description indicates that BoneCP database connections are not being returned to the pool, leaving connections unavailable to the application. This is consistent with a database connection leak.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 310
+    },
+    {
+      "confidence_probability": 0.9999016683140416,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "input_tokens": 322,
+      "label_probabilities": {
+        "broken_payment_configuration": 8.778275251222036e-08,
+        "database_connection_leak": 9.732984039415362e-05,
+        "disk_exhaustion": 6.919849547443585e-07,
+        "memory_leak": 2.0074977952625192e-07,
+        "n_plus_one_query": 0.9999016683140416,
+        "no_fault": 2.1328076333693525e-08
+      },
+      "latency_ms": 8764.708434,
+      "output_tokens": 112,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -32.39470672607422,
+          "database_connection_leak": -25.383710861206055,
+          "disk_exhaustion": -30.330007553100586,
+          "memory_leak": -31.56751251220703,
+          "n_plus_one_query": -16.146404266357422,
+          "no_fault": -33.809547424316406
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "n_plus_one_query",
+      "ranked_labels": [
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.9999016683140416,
+          "score": -16.146404266357422
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 9.732984039415362e-05,
+          "score": -25.383710861206055
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 6.919849547443585e-07,
+          "score": -30.330007553100586
+        },
+        {
+          "label": "memory_leak",
+          "probability": 2.0074977952625192e-07,
+          "score": -31.56751251220703
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 8.778275251222036e-08,
+          "score": -32.39470672607422
+        },
+        {
+          "label": "no_fault",
+          "probability": 2.1328076333693525e-08,
+          "score": -33.809547424316406
+        }
+      ],
+      "raw_model_output": "{\n  \"root_cause_code\": \"n_plus_one_query\",\n  \"reasoning\": \"The incident description indicates an N+1 query pattern in the workflow_runs loading, where each row triggers a separate lookup. This results in a large number of queries, causing the log pages to be slow. The large TOAST fields being deserialized for each row, the sub-millisecond base SQL, and the large number of queries all point to an N+1 query issue.\"\n}",
+      "reasoning": "The incident description indicates an N+1 query pattern in the workflow_runs loading, where each row triggers a separate lookup. This results in a large number of queries, causing the log pages to be slow. The large TOAST fields being deserialized for each row, the sub-millisecond base SQL, and the large number of queries all point to an N+1 query issue.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 434
+    }
+  ],
+  "prompt_version": "zero-shot-baseline-v1",
+  "protocol_state_at_export": "validation",
+  "protocol_version": "phase6-zero-shot-baseline-v1",
+  "result_hash": "0a232db2efdb626747bb1ab1c5ff282f8c28fc48e2564877022b14276fd0e719",
+  "run_id": "phase6-zero-shot-validation-kaggle-v2",
+  "run_status": "completed",
+  "scientific_config_hash": "15fdda8fdd9f33e3b3d59f7d3f7971751124a25d321728576d85af8cb690a18e",
+  "seed": 20260908,
+  "split": "validation",
+  "stored_cost_record_count": 6,
+  "stored_prediction_count": 6,
+  "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "tracking": {
+    "artifact_reference": null,
+    "configured": false,
+    "provider": "wandb",
+    "run_reference": null
+  },
+  "upfront_cost_usd": 0.0
+}
