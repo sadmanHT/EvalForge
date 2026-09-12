@@ -21,7 +21,7 @@ from app.inference.base_model import (
     ZeroShotBaselineAdapter,
 )
 from app.inference.evidence import export_phase6_run_evidence, validate_run_evidence
-from app.inference.protocol import load_baseline_protocol, load_taxonomy
+from app.inference.protocol import BaselineProtocol, load_baseline_protocol, load_taxonomy
 from app.inference.runner import run_baseline_experiment
 from app.models import CostRecord, Incident
 from app.services.dataset_import import import_phase3_dataset
@@ -216,7 +216,10 @@ def test_completed_validation_run_exports_sealed_recomputable_evidence(engine: E
 
 
 def test_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -> None:
-    protocol = load_baseline_protocol(ROOT)
+    committed = load_baseline_protocol(ROOT)
+    payload = committed.model_dump(mode="json")
+    payload.update({"state": "validation", "locked_test_authorized": False})
+    protocol = BaselineProtocol.model_validate(payload)
     labels, _categories = load_taxonomy(ROOT)
     adapter = ZeroShotBaselineAdapter(
         backend=FixtureBackend(labels, fail_incident_marker="marker-not-present"),
