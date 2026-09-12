@@ -67,9 +67,7 @@ def main() -> int:
         contract=host_contract,
     )
     if args.split == "test":
-        _assert_locked_test_host_matches_freeze(
-            host_evidence.environment_fingerprint_sha256
-        )
+        _assert_locked_test_host_matches_freeze(host_evidence.environment_fingerprint_sha256)
 
     payload = {
         "split": args.split,
@@ -107,9 +105,7 @@ def main() -> int:
         )
         result = {
             **result,
-            "gpu_environment_fingerprint_sha256": (
-                host_evidence.environment_fingerprint_sha256
-            ),
+            "gpu_environment_fingerprint_sha256": (host_evidence.environment_fingerprint_sha256),
             "gpu_host_evidence_sha256": host_evidence.evidence_sha256,
             "evidence_output": str(output),
             "evidence_sha256": evidence["evidence_sha256"],
