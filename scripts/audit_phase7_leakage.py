@@ -23,16 +23,9 @@ from app.retrieval.search import (  # noqa: E402
 
 
 def _load_incidents(dataset_version: str) -> list[dict[str, Any]]:
-    path = (
-        ROOT
-        / "datasets/incident_diagnosis/processed"
-        / dataset_version
-        / "incidents.jsonl"
-    )
+    path = ROOT / "datasets/incident_diagnosis/processed" / dataset_version / "incidents.jsonl"
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -64,9 +57,7 @@ def main() -> int:
     config = load_kb_config(ROOT / "configs/phase7-kb.json")
     adapter = HashEmbeddingAdapter(config.embedding)
     incidents = _load_incidents(config.dataset_version)
-    heldout_incidents = [
-        item for item in incidents if item["split"] in {"validation", "test"}
-    ]
+    heldout_incidents = [item for item in incidents if item["split"] in {"validation", "test"}]
     heldout_family_ids = {str(item["incident_family_id"]) for item in heldout_incidents}
 
     engine = build_engine()
@@ -179,8 +170,7 @@ def main() -> int:
 
     if violations:
         raise SystemExit(
-            "PHASE07_LEAKAGE_AUDIT=FAIL "
-            f"known held-out-family leakage violations={len(violations)}"
+            f"PHASE07_LEAKAGE_AUDIT=FAIL known held-out-family leakage violations={len(violations)}"
         )
 
     print("PHASE07_LEAKAGE_AUDIT=PASS")
