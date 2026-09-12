@@ -16,16 +16,15 @@ from app.inference.protocol import (
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def test_committed_protocol_is_validation_only_and_deterministic() -> None:
+def test_committed_protocol_is_frozen_authorized_and_deterministic() -> None:
     protocol = load_baseline_protocol(ROOT)
-    assert protocol.state is ProtocolState.VALIDATION
-    assert protocol.locked_test_authorized is False
+    assert protocol.state is ProtocolState.FROZEN
+    assert protocol.locked_test_authorized is True
     assert protocol.assert_split_allowed("validation") == "validation"
+    assert protocol.assert_split_allowed("test") == "test"
     assert protocol.runtime_config.quantization is QuantizationMode.BITSANDBYTES_4BIT_NF4
     assert protocol.runtime_config.dtype == "float16"
     assert protocol.runtime_config.bnb_4bit_use_double_quant is True
-    with pytest.raises(ValueError, match="locked test"):
-        protocol.assert_split_allowed("test")
     first = protocol.scientific_config_hash()
     second = BaselineProtocol.model_validate(
         json.loads((ROOT / "configs/phase6-baseline.json").read_text(encoding="utf-8"))
@@ -36,13 +35,10 @@ def test_committed_protocol_is_validation_only_and_deterministic() -> None:
 
 def test_locked_test_requires_frozen_authorized_protocol() -> None:
     protocol = load_baseline_protocol(ROOT)
-    payload = protocol.model_dump(mode="json")
-    payload.update({"state": "frozen", "locked_test_authorized": True})
-    frozen = BaselineProtocol.model_validate(payload)
-    assert frozen.assert_split_allowed("test") == "test"
+    assert protocol.assert_split_allowed("test") == "test"
 
     invalid = protocol.model_dump(mode="json")
-    invalid["locked_test_authorized"] = True
+    invalid.update({"state": "validation", "locked_test_authorized": True})
     with pytest.raises(ValueError, match="requires a frozen protocol"):
         BaselineProtocol.model_validate(invalid)
 
