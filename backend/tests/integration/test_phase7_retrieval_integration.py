@@ -51,6 +51,32 @@ def _incidents(dataset_version: str) -> list[dict[str, Any]]:
     ]
 
 
+def test_phase7_migration_creates_retrieval_indexes(engine: Engine) -> None:
+    with engine.connect() as connection:
+        revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
+        index_names = {
+            row[0]
+            for row in connection.execute(
+                text(
+                    """
+                    SELECT indexname
+                    FROM pg_indexes
+                    WHERE schemaname = 'public'
+                      AND tablename IN ('kb_chunks', 'kb_documents')
+                    """
+                )
+            )
+        }
+
+    assert revision == "0003_phase07"
+    assert {
+        "ix_kb_chunks_embedding_hnsw_cosine",
+        "ix_kb_chunks_version_family",
+        "ix_kb_documents_version_source_split",
+        "ix_kb_documents_version_source_type",
+    } <= index_names
+
+
 def test_real_kb_reindex_is_logically_idempotent(engine: Engine) -> None:
     config = load_kb_config(ROOT / "configs/phase7-kb.json")
     plan = build_index_plan(ROOT, config)

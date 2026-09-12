@@ -65,7 +65,10 @@ def main() -> int:
         connection.cursor() as cursor,
     ):
         cursor.execute("SELECT version_num FROM alembic_version")
-        _assert_equal(cursor.fetchone(), ("0002_phase04",), "migration head mismatch")
+        migration_row = cursor.fetchone()
+        if migration_row is None or not migration_row[0]:
+            raise SystemExit("PHASE04_EXIT_GATE=FAIL migration head missing")
+        migration_head = str(migration_row[0])
 
         cursor.execute("SELECT count(*) FROM pg_extension WHERE extname = 'vector'")
         _assert_equal(cursor.fetchone(), (1,), "pgvector extension missing")
@@ -105,10 +108,7 @@ def main() -> int:
         )
         _assert_equal(dataset_row[5], True, "research readiness mismatch")
 
-        cursor.execute(
-            "SELECT split, count(*) FROM incidents WHERE dataset_version = %s GROUP BY split",
-            (DATASET_VERSION,),
-        )
+        cursor.execute("SELECT split, count(*) FROM incidents WHERE dataset_version = %s GROUP BY split", (DATASET_VERSION,))
         incident_splits = Counter(dict(cursor.fetchall()))
         cursor.execute(
             """
@@ -185,7 +185,7 @@ def main() -> int:
         _assert_equal(cursor.fetchone(), (1,), "idempotent smoke job missing or duplicated")
 
     print("PHASE04_EXIT_GATE=PASS")
-    print("ALEMBIC_HEAD=0002_phase04")
+    print(f"ALEMBIC_HEAD={migration_head}")
     print(f"PERSISTENCE_TABLES={len(EXPECTED_TABLES)}")
     print(f"DATASET_VERSION={DATASET_VERSION}")
     print("DATASET_RECORDS=18")

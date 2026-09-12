@@ -99,14 +99,20 @@ def test_migration_from_empty_database_and_stepwise_upgrade(engine: Engine) -> N
         revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
         assert revision == "0001_phase02"
 
-    command.upgrade(config, "head")
+    command.upgrade(config, "0002_phase04")
     with engine.connect() as connection:
-        revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
+        phase4_revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
         vector_extension = connection.scalar(
             text("SELECT count(*) FROM pg_extension WHERE extname = 'vector'")
         )
-        assert revision == "0002_phase04"
+        assert phase4_revision == "0002_phase04"
         assert vector_extension == 1
+
+    command.upgrade(config, "head")
+    with engine.connect() as connection:
+        current_revision = connection.scalar(text("SELECT version_num FROM alembic_version"))
+        assert current_revision is not None
+        assert current_revision != "0001_phase02"
 
 
 def test_phase3_dataset_import_round_trips_without_loss(engine: Engine) -> None:
