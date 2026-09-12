@@ -1,0 +1,30 @@
+{
+  "chunking": {
+    "overlap": 24,
+    "size": 96,
+    "version": "phase7-token-window-v1"
+  },
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "embedding": {
+    "dimension": 1536,
+    "model_id": "evalforge/feature-hash-embedding",
+    "preprocessing": {
+      "include_bigrams": true,
+      "l2_normalize": true,
+      "lowercase": true,
+      "token_pattern": "[a-z0-9_]+"
+    },
+    "revision": "phase7-feature-hash-v1"
+  },
+  "kb_version": "evalforge-kb-v0.1.0",
+  "reranker": {
+    "id": null,
+    "revision": null
+  },
+  "retrieval": {
+    "default_top_k": 5,
+    "distance": "cosine",
+    "research_policy_version": "phase7-leakage-policy-v1"
+  },
+  "schema_version": "phase7-kb-config-v1"
+}
