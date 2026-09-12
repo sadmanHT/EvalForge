@@ -124,9 +124,12 @@ def seal_gpu_host_evidence(payload: Mapping[str, Any]) -> dict[str, Any]:
             "evidence_sha256": "0" * 64,
         }
     )
-    draft["environment_fingerprint_sha256"] = environment_fingerprint(provisional)
-    draft["evidence_sha256"] = _canonical_json_sha256(draft)
-    return draft
+    normalized = provisional.model_dump(mode="json")
+    normalized.pop("environment_fingerprint_sha256", None)
+    normalized.pop("evidence_sha256", None)
+    normalized["environment_fingerprint_sha256"] = environment_fingerprint(provisional)
+    normalized["evidence_sha256"] = _canonical_json_sha256(normalized)
+    return normalized
 
 
 def validate_gpu_host_evidence(
