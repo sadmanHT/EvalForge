@@ -42,14 +42,7 @@ def expected_split_incident_ids(
     dataset_version: str,
     split: str,
 ) -> tuple[str, ...]:
-    path = (
-        root
-        / "datasets"
-        / "incident_diagnosis"
-        / "processed"
-        / dataset_version
-        / "incidents.jsonl"
-    )
+    path = root / "datasets" / "incident_diagnosis" / "processed" / dataset_version / "incidents.jsonl"
     if not path.is_file():
         raise FileNotFoundError(f"dataset incidents file is unavailable: {path}")
     incident_ids: list[str] = []
