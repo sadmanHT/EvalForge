@@ -1,0 +1,15 @@
+{
+  "fixture_version": "phase7-retrieval-fixtures-v1",
+  "cases": [
+    {
+      "case_id": "database-connection-leak-runbook",
+      "query": "A database connection leak occurs when application code checks out a connection from a pool but fails to return it on every teardown path. Typical signals include an increasing count of checked-out connections, a pool that remains exhausted after request load falls, database-dependent requests timing out, and temporary recovery after process restart. Diagnose by comparing pool checkout and checkin counts, inspecting long-lived sessions, and tracing cancellation, streaming, exception, and retry paths. Repair requires guaranteed cleanup in finally blocks or context managers, bounded pool timeouts, and alerts on sustained pool saturation rather than only database CPU.",
+      "expected_source_uri": "evalforge://runbooks/database-connection-leak"
+    },
+    {
+      "case_id": "disk-exhaustion-runbook",
+      "query": "Disk exhaustion occurs when a filesystem reaches capacity or inode limits and services can no longer create or extend required files. Common causes include unbounded logs, retained write-ahead logs, failed replication, temporary files, or runaway artifact generation. Signals include rapidly falling free space, write failures, database or queue errors, and recovery after space is freed or capacity is added. Diagnose the largest growth contributors and the process responsible before deleting data. Prevent recurrence with retention policies, replication health alerts, filesystem headroom alerts, and tested cleanup procedures.",
+      "expected_source_uri": "evalforge://runbooks/disk-exhaustion"
+    }
+  ]
+}

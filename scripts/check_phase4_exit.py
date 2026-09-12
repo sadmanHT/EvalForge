@@ -108,7 +108,15 @@ def main() -> int:
         )
         _assert_equal(dataset_row[5], True, "research readiness mismatch")
 
-        cursor.execute("SELECT split, count(*) FROM incidents WHERE dataset_version = %s GROUP BY split", (DATASET_VERSION,))
+        cursor.execute(
+            """
+            SELECT split, count(*)
+            FROM incidents
+            WHERE dataset_version = %s
+            GROUP BY split
+            """,
+            (DATASET_VERSION,),
+        )
         incident_splits = Counter(dict(cursor.fetchall()))
         cursor.execute(
             """
