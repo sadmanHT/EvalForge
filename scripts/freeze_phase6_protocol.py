@@ -16,6 +16,7 @@ if str(BACKEND) not in sys.path:
 
 from app.inference.evidence import (  # noqa: E402
     ValidationReview,
+    validate_real_run_operational_evidence,
     validate_run_evidence,
     validate_validation_review,
 )
@@ -83,6 +84,7 @@ def main() -> int:
         protocol=protocol,
         expected_split="validation",
     )
+    validate_real_run_operational_evidence(evidence, require_tracking=False)
     validate_validation_review(review, validation_evidence=evidence)
 
     host_contract = load_gpu_host_contract(ROOT)
