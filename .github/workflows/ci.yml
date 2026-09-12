@@ -73,6 +73,12 @@ jobs:
         run: python scripts/check_phase5_exit.py | tee /tmp/phase05-exit.txt
       - name: Record Phase 06 hard-exit status
         run: python scripts/check_phase6_exit.py | tee /tmp/phase06-exit.txt
+      - name: Record Phase 07 retrieval contract
+        run: python scripts/check_phase7_contract.py | tee /tmp/phase07-contract.txt
+      - name: Record Phase 07 index and reindex evidence
+        run: python scripts/index_kb.py | tee /tmp/phase07-index.txt
+      - name: Record Phase 07 leakage audit
+        run: python scripts/audit_phase7_leakage.py | tee /tmp/phase07-leakage-audit.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
@@ -119,6 +125,18 @@ jobs:
             docs/phase-06-handoff.md
             configs/phase6-baseline.json
             configs/phase6-gpu-host.json
+      - name: Upload Phase 07 retrieval evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase07-retrieval-evidence
+          path: |
+            /tmp/phase07-contract.txt
+            /tmp/phase07-index.txt
+            /tmp/phase07-leakage-audit.txt
+            evidence/phase-07/
+            configs/phase7-kb.json
+            knowledge_base/phase7/
+            backend/migrations/versions/0003_phase07_retrieval.py
 
   clean-compose:
     runs-on: ubuntu-latest
@@ -135,29 +153,32 @@ jobs:
         run: |
           python -m pip install -r backend/requirements.full.lock
           python -m pip install --no-deps -e ./backend
-      - name: Fresh Compose build and smoke
+      - name: Fresh Compose build and Phase 07 retrieval smoke
         env:
           DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
         run: |
-          mkdir -p /tmp/phase06-clean-environment
+          mkdir -p /tmp/phase07-clean-environment
           docker compose down -v --remove-orphans
           docker compose build --no-cache
           docker compose up -d
-          python scripts/compose_health.py | tee /tmp/phase06-clean-environment/fresh-start-smoke.log
-          python scripts/check_phase4_exit.py | tee /tmp/phase06-clean-environment/phase04-exit.log
-          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase06-clean-environment/phase05-smoke.log
-          python scripts/check_phase5_exit.py | tee /tmp/phase06-clean-environment/phase05-exit.log
-          python scripts/check_phase6_exit.py | tee /tmp/phase06-clean-environment/phase06-exit.log
-          docker compose ps | tee /tmp/phase06-clean-environment/service-health.txt
+          python scripts/compose_health.py | tee /tmp/phase07-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase07-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase07-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase07-clean-environment/phase05-exit.log
+          python scripts/check_phase6_exit.py | tee /tmp/phase07-clean-environment/phase06-exit.log
+          python scripts/check_phase7_contract.py | tee /tmp/phase07-clean-environment/phase07-contract.log
+          python scripts/index_kb.py | tee /tmp/phase07-clean-environment/phase07-index.log
+          python scripts/audit_phase7_leakage.py | tee /tmp/phase07-clean-environment/phase07-leakage-audit.log
+          docker compose ps | tee /tmp/phase07-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
-        run: docker compose logs --no-color > /tmp/phase06-clean-environment/compose.log || true
+        run: docker compose logs --no-color > /tmp/phase07-clean-environment/compose.log || true
       - name: Tear down cleanly
         if: always()
         run: docker compose down -v --remove-orphans
-      - name: Upload Phase 06 clean-environment evidence
+      - name: Upload Phase 07 clean-environment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase06-clean-environment
-          path: /tmp/phase06-clean-environment/
+          name: phase07-clean-environment
+          path: /tmp/phase07-clean-environment/
