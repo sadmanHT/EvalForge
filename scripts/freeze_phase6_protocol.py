@@ -19,6 +19,12 @@ from app.inference.evidence import (  # noqa: E402
     validate_run_evidence,
     validate_validation_review,
 )
+from app.inference.gpu_host import (  # noqa: E402
+    hardware_runtime_descriptor,
+    load_gpu_host_contract,
+    validate_gpu_host_evidence,
+    verify_reference_smoke,
+)
 from app.inference.protocol import (  # noqa: E402
     BASELINE_PROTOCOL_PATH,
     BaselineProtocol,
@@ -38,6 +44,10 @@ def _file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _resolve(path: Path) -> Path:
+    return path if path.is_absolute() else ROOT / path
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -47,6 +57,7 @@ def main() -> int:
     )
     parser.add_argument("--evidence", required=True, type=Path)
     parser.add_argument("--review", required=True, type=Path)
+    parser.add_argument("--gpu-host-evidence", required=True, type=Path)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument(
         "--freeze-record",
@@ -55,12 +66,11 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    evidence_path = args.evidence if args.evidence.is_absolute() else ROOT / args.evidence
-    review_path = args.review if args.review.is_absolute() else ROOT / args.review
+    evidence_path = _resolve(args.evidence)
+    review_path = _resolve(args.review)
+    host_evidence_path = _resolve(args.gpu_host_evidence)
     protocol_path = ROOT / BASELINE_PROTOCOL_PATH
-    freeze_record_path = (
-        args.freeze_record if args.freeze_record.is_absolute() else ROOT / args.freeze_record
-    )
+    freeze_record_path = _resolve(args.freeze_record)
 
     protocol = load_baseline_protocol(ROOT)
     if protocol.state is not ProtocolState.VALIDATION or protocol.locked_test_authorized:
@@ -75,11 +85,22 @@ def main() -> int:
     )
     validate_validation_review(review, validation_evidence=evidence)
 
+    host_contract = load_gpu_host_contract(ROOT)
+    verify_reference_smoke(ROOT, host_contract)
+    host_evidence = validate_gpu_host_evidence(
+        _load_json(host_evidence_path),
+        contract=host_contract,
+    )
+    expected_descriptor = hardware_runtime_descriptor(host_evidence)
+    if evidence.get("hardware_runtime_descriptor") != expected_descriptor:
+        raise ValueError("validation run evidence is not bound to the supplied GPU host evidence")
+
     scientific_hash = protocol.scientific_config_hash()
     print("PHASE06_VALIDATION_FREEZE_READINESS=PASS")
     print(f"VALIDATION_RUN_ID={evidence['run_id']}")
     print(f"SCIENTIFIC_CONFIG_HASH={scientific_hash}")
     print(f"VALIDATION_EVIDENCE_SHA256={evidence['evidence_sha256']}")
+    print(f"GPU_ENVIRONMENT_FINGERPRINT={host_evidence.environment_fingerprint_sha256}")
     print(f"MANUAL_REVIEW_SHA256={_file_sha256(review_path)}")
     if not args.apply:
         print("PROTOCOL_MUTATED=false")
@@ -103,6 +124,11 @@ def main() -> int:
         "validation_run_id": evidence["run_id"],
         "validation_evidence_sha256": evidence["evidence_sha256"],
         "validation_evidence_file_sha256": _file_sha256(evidence_path),
+        "gpu_host_evidence_sha256": host_evidence.evidence_sha256,
+        "gpu_host_evidence_file_sha256": _file_sha256(host_evidence_path),
+        "gpu_environment_fingerprint_sha256": (
+            host_evidence.environment_fingerprint_sha256
+        ),
         "manual_review_file_sha256": _file_sha256(review_path),
         "manual_reviewed_at": review.reviewed_at.isoformat(),
         "manual_reviewer": review.reviewer,
