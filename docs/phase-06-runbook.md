@@ -56,7 +56,7 @@ cd ..
 
 ## 3. Configure tracking and cost evidence
 
-For portfolio/public experiment tracking, configure W&B before the real run and install the `wandb` package in the GPU environment:
+For the final locked-test hard exit, configure W&B and install the `wandb` package in the GPU environment. Validation may be run without W&B while debugging, but the final locked-test evidence must preserve real W&B run and artifact references.
 
 ```bash
 export WANDB_PROJECT=<real-project-name>
@@ -134,4 +134,24 @@ Do not rerun the locked test because its score is disappointing or because a pro
 
 ## 7. Preserve final evidence
 
-The final Phase 06 handoff must retain the real test experiment ID/config hash, scientific hash, W&B reference when configured, exact stored prediction count versus test count, raw prediction export, cost records, metric recomputation proof, validation and test GPU-host evidence, the frozen environment fingerprint, and cumulative Phase 1–6 + clean-environment CI results. No dashboard/README claim may be substituted for those artifacts.
+The final Phase 06 handoff must retain the real test experiment ID/config hash, scientific hash, W&B run/artifact references, exact stored prediction count versus test count, raw prediction export, cost records, metric recomputation proof, validation and test GPU-host evidence, the frozen environment fingerprint, and cumulative Phase 1–6 + clean-environment CI results. No dashboard/README claim may be substituted for those artifacts.
+
+## 8. Pass the machine-checkable completion gates
+
+At every repository transition, run:
+
+```bash
+python scripts/check_phase6_contract.py
+```
+
+It must report one internally consistent stage: `pre_validation`, `validation_ready_to_freeze`, `frozen_waiting_test`, or `complete`. This contract check is already part of `make verify-all`.
+
+Only after the real locked-test evidence is committed should this pass:
+
+```bash
+python scripts/check_phase6_exit.py
+```
+
+The hard-exit checker requires exact held-out prediction coverage with no duplicates, raw-prediction metric recomputation, zero technical inference failures, one positive versioned cost row per prediction, frozen/recoverable scientific identity, validation/test GPU-software fingerprint equality, and configured W&B run/artifact references for the locked test.
+
+When the repository reaches `complete`, deliberately update the Phase 06 completion-state regression test from the pre-validation expectation, add `phase6-exit` to the cumulative `verify-all` dependency list, then rerun the full Phase 1–6 gate and fresh no-cache Compose smoke. Do not mark Phase 06 complete before those final green results are preserved.
