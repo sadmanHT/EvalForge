@@ -139,19 +139,14 @@ def _document_id(source_uri: str, source_checksum: str) -> str:
 
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
 def load_phase7_documents(root: Path, config: KnowledgeBaseConfig) -> tuple[DocumentInput, ...]:
     generic_path = root / "knowledge_base/phase7/generic-documents.jsonl"
     incident_path = (
-        root
-        / "datasets/incident_diagnosis/processed"
-        / config.dataset_version
-        / "incidents.jsonl"
+        root / "datasets/incident_diagnosis/processed" / config.dataset_version / "incidents.jsonl"
     )
 
     documents: list[DocumentInput] = []
@@ -225,9 +220,12 @@ def chunk_document(
         end_offset = matches[end_token - 1].end()
         chunk_text = document.content[start_offset:end_offset]
         text_checksum = _sha256_text(chunk_text)
-        chunk_id = "chunk-" + _sha256_text(
-            f"{document.document_id}:{start_offset}:{end_offset}:{text_checksum}"
-        )[:32]
+        chunk_id = (
+            "chunk-"
+            + _sha256_text(f"{document.document_id}:{start_offset}:{end_offset}:{text_checksum}")[
+                :32
+            ]
+        )
         embedding = adapter.embed(chunk_text)
         validate_embedding_dimension(embedding, adapter.dimension)
         chunks.append(

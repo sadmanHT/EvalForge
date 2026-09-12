@@ -89,9 +89,7 @@ def search_chunks(
             ]
         )
         if query.query_family_id is not None:
-            clauses.append(
-                "(c.source_family_id IS NULL OR c.source_family_id <> :query_family_id)"
-            )
+            clauses.append("(c.source_family_id IS NULL OR c.source_family_id <> :query_family_id)")
             params["query_family_id"] = query.query_family_id
     if query.source_type is not None:
         clauses.append("d.document_metadata ->> 'source_type' = :source_type")
@@ -110,7 +108,7 @@ def search_chunks(
         JOIN kb_documents AS d
           ON d.kb_version = c.kb_version
          AND d.document_id = c.document_id
-        WHERE {' AND '.join(clauses)}
+        WHERE {" AND ".join(clauses)}
         ORDER BY c.embedding <=> CAST(:query_embedding AS vector), c.chunk_id
         LIMIT :top_k
         """

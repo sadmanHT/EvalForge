@@ -45,16 +45,9 @@ def engine() -> Engine:
 
 
 def _incidents(dataset_version: str) -> list[dict[str, Any]]:
-    path = (
-        ROOT
-        / "datasets/incident_diagnosis/processed"
-        / dataset_version
-        / "incidents.jsonl"
-    )
+    path = ROOT / "datasets/incident_diagnosis/processed" / dataset_version / "incidents.jsonl"
     return [
-        json.loads(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
     ]
 
 
@@ -110,14 +103,10 @@ def test_pgvector_nearest_neighbor_and_research_filter(engine: Engine) -> None:
     assert exact[0].score == pytest.approx(1.0, abs=1e-8)
 
     heldout = next(
-        item
-        for item in _incidents(config.dataset_version)
-        if item["split"] == "validation"
+        item for item in _incidents(config.dataset_version) if item["split"] == "validation"
     )
     family_id = str(heldout["incident_family_id"])
-    heldout_document = next(
-        item for item in plan.documents if item.source_family_id == family_id
-    )
+    heldout_document = next(item for item in plan.documents if item.source_family_id == family_id)
     heldout_chunk = next(
         item for item in plan.chunks if item.document_id == heldout_document.document_id
     )
