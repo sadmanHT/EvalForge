@@ -1,0 +1,32 @@
+{
+  "captured_at_utc": "2026-09-12T17:11:39.625546Z",
+  "contract_version": "phase6-gpu-host-contract-v1",
+  "cuda_available": true,
+  "environment_fingerprint_sha256": "45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff",
+  "evidence_sha256": "7ce2c71fda7585558db2cbc294229e46fcdf108eba6240bebad50c2973472a41",
+  "evidence_version": "phase6-gpu-host-evidence-v1",
+  "gpus": [
+    {
+      "compute_capability": [
+        7,
+        5
+      ],
+      "index": 0,
+      "name": "Tesla T4",
+      "total_memory_bytes": 15636037632
+    }
+  ],
+  "nvidia_smi": "Sat Sep 12 17:11:39 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |\n| N/A   43C    P8             10W /   70W |       3MiB /  15360MiB |      0%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n|   1  Tesla T4                       Off |   00000000:00:05.0 Off |                    0 |\n| N/A   50C    P8             14W /   70W |       0MiB /  15360MiB |      0%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+",
+  "packages": {
+    "accelerate": "1.13.0",
+    "bitsandbytes": "0.50.2",
+    "huggingface_hub": "0.36.2",
+    "safetensors": "0.7.0",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6"
+  },
+  "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+  "python_version": "3.12.13 (main, May 10 2026, 19:30:01) [Clang 22.1.3 ]",
+  "reference_smoke_evidence_sha256": "53cf1617d3d52b48105d267e1ce54d3b26a0c9bb952aed249a48da717f3990cb",
+  "torch_cuda_version": "12.8"
+}
