@@ -20,6 +20,7 @@ from app.inference.base_model import (
     RuntimeConfig,
     ZeroShotBaselineAdapter,
 )
+from app.inference.evidence import export_phase6_run_evidence, validate_run_evidence
 from app.inference.protocol import load_baseline_protocol, load_taxonomy
 from app.inference.runner import run_baseline_experiment
 from app.models import CostRecord, Incident
@@ -159,6 +160,59 @@ def test_validation_runner_persists_every_incident_and_recomputes_metrics(
         session.commit()
     assert reused == summary
     assert sum(backend.calls_by_prompt.values()) == first_call_count
+
+
+def test_completed_validation_run_exports_sealed_recomputable_evidence(engine: Engine) -> None:
+    protocol = load_baseline_protocol(ROOT)
+    labels, _categories = load_taxonomy(ROOT)
+    backend = FixtureBackend(labels, fail_incident_marker="marker-not-present")
+    adapter = ZeroShotBaselineAdapter(
+        backend=backend,
+        allowed_labels=labels,
+        prompt_version=protocol.prompt_version,
+        generation_config=protocol.generation_config,
+    )
+    with Session(engine) as session:
+        summary = run_baseline_experiment(
+            session,
+            root=ROOT,
+            protocol=protocol,
+            adapter=adapter,
+            split="validation",
+            git_commit="phase6-evidence-integration",
+            hardware_runtime_descriptor="phase6-ci-evidence-fixture-no-real-model",
+            cost_rate_snapshot_version="phase6-ci-evidence-rates-v1",
+            experiment_id="exp-phase6-evidence-fixture",
+            run_id="run-phase6-evidence-fixture",
+            max_attempts=2,
+            upfront_cost_usd=0.06,
+        )
+        session.commit()
+
+    assert summary.prediction_count == 6
+    assert summary.inference_failure_count == 0
+    assert summary.cost_record_count == 6
+    assert summary.metric_values["cost.amortized_mean_usd"] == pytest.approx(0.011)
+    assert summary.metric_values["cost.marginal_mean_usd"] == pytest.approx(0.001)
+
+    with Session(engine) as session:
+        evidence = export_phase6_run_evidence(
+            session,
+            root=ROOT,
+            run_id=summary.run_id,
+            protocol=protocol,
+        )
+    validate_run_evidence(
+        evidence,
+        root=ROOT,
+        protocol=protocol,
+        expected_split="validation",
+    )
+    assert evidence["stored_prediction_count"] == 6
+    assert evidence["stored_cost_record_count"] == 6
+    assert evidence["upfront_cost_usd"] == pytest.approx(0.06)
+    assert evidence["result_hash"] == summary.result_hash
+    assert len(str(evidence["evidence_sha256"])) == 64
 
 
 def test_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -> None:
