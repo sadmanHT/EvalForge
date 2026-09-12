@@ -10,6 +10,7 @@ from app.inference.evidence import (
     ValidationReview,
     expected_split_incident_ids,
     seal_run_evidence,
+    validate_real_run_operational_evidence,
     validate_run_evidence,
     validate_validation_review,
 )
@@ -47,6 +48,55 @@ def _validation_evidence() -> dict[str, object]:
     return seal_run_evidence(payload)
 
 
+def _operational_evidence() -> dict[str, object]:
+    metrics = {
+        "primary.exact_accuracy": 0.5,
+        "supporting.hierarchical_accuracy": 0.5,
+        "supporting.top3_accuracy": 0.75,
+        "quality.parse_failure_rate": 0.0,
+        "calibration.normalized_multiclass_brier": 0.25,
+        "calibration.ece": 0.2,
+        "latency.p50_ms": 20.0,
+        "latency.p95_ms": 30.0,
+        "cost.marginal_mean_usd": 0.00001,
+        "cost.amortized_mean_usd": 0.00001,
+    }
+    costs = [
+        {
+            "cost_record_id": f"cost-{index}",
+            "prediction_id": f"prediction-{index}",
+            "cost_rate_snapshot_version": "provider-rate-2026-09-12",
+            "units": {
+                "method": "active_inference_wall_time_x_gpu_hour_rate",
+                "gpu_hour_usd": 0.40,
+                "latency_ms": 20.0 + index,
+            },
+            "amount_usd": "0.00001000",
+        }
+        for index in range(2)
+    ]
+    return {
+        "inference_failure_count": 0,
+        "stored_prediction_count": 2,
+        "stored_cost_record_count": 2,
+        "scientific_config_hash": "a" * 64,
+        "experiment_config_hash": "b" * 64,
+        "dependency_lock_checksum": "c" * 64,
+        "result_hash": "d" * 64,
+        "git_commit": "e" * 40,
+        "hardware_runtime_descriptor": "phase6-gpu-host-v1 environment=fixture",
+        "cost_rate_snapshot_version": "provider-rate-2026-09-12",
+        "cost_records": costs,
+        "metrics": metrics,
+        "tracking": {
+            "provider": "wandb",
+            "configured": False,
+            "run_reference": None,
+            "artifact_reference": None,
+        },
+    }
+
+
 def test_validation_evidence_requires_exact_incident_coverage_and_checksum() -> None:
     protocol = load_baseline_protocol(ROOT)
     evidence = _validation_evidence()
@@ -77,6 +127,35 @@ def test_validation_evidence_requires_exact_incident_coverage_and_checksum() -> 
             protocol=protocol,
             expected_split="validation",
         )
+
+
+def test_real_run_operational_evidence_requires_complete_cost_and_tracking_proof() -> None:
+    evidence = _operational_evidence()
+    validate_real_run_operational_evidence(evidence, require_tracking=False)
+
+    with pytest.raises(ValueError, match="configured W&B"):
+        validate_real_run_operational_evidence(evidence, require_tracking=True)
+
+    tracked = dict(evidence)
+    tracked["tracking"] = {
+        "provider": "wandb",
+        "configured": True,
+        "run_reference": "https://wandb.ai/example/run",
+        "artifact_reference": "wandb-artifact://example",
+    }
+    validate_real_run_operational_evidence(tracked, require_tracking=True)
+
+    failed = dict(evidence)
+    failed["inference_failure_count"] = 1
+    with pytest.raises(ValueError, match="technical inference failures"):
+        validate_real_run_operational_evidence(failed, require_tracking=False)
+
+    zero_cost = dict(evidence)
+    zero_cost_records = [dict(item) for item in evidence["cost_records"]]
+    zero_cost_records[0]["amount_usd"] = "0"
+    zero_cost["cost_records"] = zero_cost_records
+    with pytest.raises(ValueError, match="finite and positive"):
+        validate_real_run_operational_evidence(zero_cost, require_tracking=False)
 
 
 def test_manual_review_must_cover_every_prediction_and_pass_contracts() -> None:
