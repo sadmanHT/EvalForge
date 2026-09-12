@@ -231,7 +231,13 @@ def _completed_summary(
     if run.status != "completed":
         raise RuntimeError("completed experiment references a non-completed run")
     snapshot = reload_evaluation(session, run_id=run_id)
-    rescored = score_stored_run(session, run_id=run_id, harness=harness)
+    upfront_cost_usd = float(run.runtime_metadata.get("upfront_cost_usd", 0.0))
+    rescored = score_stored_run(
+        session,
+        run_id=run_id,
+        harness=harness,
+        upfront_cost_usd=upfront_cost_usd,
+    )
     result_identity_matches = snapshot.result_hash == rescored.result_hash
     metrics_match = snapshot.metric_values == rescored.metric_map()
     if not result_identity_matches or not metrics_match:
@@ -370,7 +376,12 @@ def run_baseline_experiment(
         run_id=actual_run_id,
         predictions=predictions,
     )
-    rescored = score_stored_run(session, run_id=actual_run_id, harness=harness)
+    rescored = score_stored_run(
+        session,
+        run_id=actual_run_id,
+        harness=harness,
+        upfront_cost_usd=upfront_cost_usd,
+    )
     recomputation_verified = (
         snapshot.result_hash == result.result_hash == rescored.result_hash
         and snapshot.metric_values == result.metric_map() == rescored.metric_map()
@@ -391,6 +402,7 @@ def run_baseline_experiment(
         "inference_failure_count": inference_failure_count,
         "prediction_count": len(predictions),
         "cost_record_count": cost_record_count,
+        "upfront_cost_usd": upfront_cost_usd,
         "metric_recomputation_verified": True,
     }
     experiment.status = "completed"
