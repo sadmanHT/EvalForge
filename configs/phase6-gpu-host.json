@@ -1,0 +1,22 @@
+{
+  "contract_version": "phase6-gpu-host-contract-v1",
+  "reference_smoke_path": "evidence/phase-01/model-smoke.json",
+  "reference_smoke_evidence_sha256": "53cf1617d3d52b48105d267e1ce54d3b26a0c9bb952aed249a48da717f3990cb",
+  "python_version_prefix": "3.12.",
+  "require_cuda": true,
+  "minimum_compute_capability": [7, 5],
+  "minimum_vram_gib": 14.0,
+  "required_packages": {
+    "accelerate": "1.13.0",
+    "bitsandbytes": "0.50.2",
+    "huggingface_hub": "0.36.2",
+    "safetensors": "0.7.0",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6"
+  },
+  "runtime_expectations": {
+    "quantization": "bitsandbytes_4bit_nf4",
+    "compute_dtype": "float16",
+    "bnb_4bit_use_double_quant": true
+  }
+}
