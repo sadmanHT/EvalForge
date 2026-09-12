@@ -1,0 +1,16 @@
+{
+  "freeze_record_version": "phase6-protocol-freeze-v1",
+  "frozen_at": "2026-09-12T17:48:35.857529+00:00",
+  "gpu_environment_fingerprint_sha256": "45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff",
+  "gpu_host_evidence_file_sha256": "ee3f32ee0a6bf3ec452e837a2040adbf9964335d01840913c98e7247b3981c67",
+  "gpu_host_evidence_sha256": "7ce2c71fda7585558db2cbc294229e46fcdf108eba6240bebad50c2973472a41",
+  "locked_test_authorized": true,
+  "manual_review_file_sha256": "538cbdaeba363509c9f688f3ca47fda2fd5d937ff2717eb529e06f284dd541df",
+  "manual_reviewed_at": "2026-09-12T17:48:08+00:00",
+  "manual_reviewer": "project-owner",
+  "protocol_version": "phase6-zero-shot-baseline-v1",
+  "scientific_config_hash": "15fdda8fdd9f33e3b3d59f7d3f7971751124a25d321728576d85af8cb690a18e",
+  "validation_evidence_file_sha256": "9de27a3ea03d7b05c91180546d02eb384ce9143be078f5a932ce08592235fdb0",
+  "validation_evidence_sha256": "184ed6f973bfc69ff5bc7becac5f60b1650ce7368cb36cfec89bcd6e1e344e1f",
+  "validation_run_id": "phase6-zero-shot-validation-kaggle-v2"
+}
