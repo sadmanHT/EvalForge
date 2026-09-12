@@ -14,7 +14,9 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
     if experiment is None:
         raise RuntimeError("run references a missing experiment")
     predictions = session.scalars(
-        select(Prediction).where(Prediction.run_id == run_id).order_by(Prediction.incident_id)
+        select(Prediction)
+        .where(Prediction.run_id == run_id)
+        .order_by(Prediction.incident_id)
     ).all()
     metrics = session.scalars(
         select(Metric).where(Metric.run_id == run_id).order_by(Metric.name)
