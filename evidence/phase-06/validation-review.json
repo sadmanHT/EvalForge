@@ -1,0 +1,19 @@
+{
+  "label_contract_passed": true,
+  "no_prompt_or_parser_defect_observed": true,
+  "notes": "Project-owner approved the manual validation review after inspection of all six validation predictions. All outputs were schema-valid, used allowed labels, and showed no prompt/parser defect. Validation descriptions are unusually diagnosis-explicit, so the 100% validation accuracy should not be overgeneralized beyond this frozen split.",
+  "review_version": "phase6-validation-review-v1",
+  "reviewed_at": "2026-09-12T17:48:08+00:00",
+  "reviewed_incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "reviewer": "project-owner",
+  "run_id": "phase6-zero-shot-validation-kaggle-v2",
+  "schema_contract_passed": true,
+  "scientific_config_hash": "15fdda8fdd9f33e3b3d59f7d3f7971751124a25d321728576d85af8cb690a18e"
+}
