@@ -232,7 +232,9 @@ def _completed_summary(
         raise RuntimeError("completed experiment references a non-completed run")
     snapshot = reload_evaluation(session, run_id=run_id)
     rescored = score_stored_run(session, run_id=run_id, harness=harness)
-    if snapshot.result_hash != rescored.result_hash or snapshot.metric_values != rescored.metric_map():
+    result_identity_matches = snapshot.result_hash == rescored.result_hash
+    metrics_match = snapshot.metric_values == rescored.metric_map()
+    if not result_identity_matches or not metrics_match:
         raise RuntimeError("completed baseline run failed metric recomputation")
     scientific_hash = protocol.scientific_config_hash()
     if run.runtime_metadata.get("phase6_scientific_config_hash") != scientific_hash:
