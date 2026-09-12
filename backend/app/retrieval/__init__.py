@@ -9,7 +9,12 @@ from app.retrieval.indexing import (
     persist_index,
 )
 from app.retrieval.reranker import NoOpReranker, Reranker, TokenOverlapReranker
-from app.retrieval.search import RetrievalQuery, RetrievalResult, research_document_allowed, search_chunks
+from app.retrieval.search import (
+    RetrievalQuery,
+    RetrievalResult,
+    research_document_allowed,
+    search_chunks,
+)
 
 __all__ = [
     "ChunkRecord",

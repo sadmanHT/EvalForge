@@ -11,7 +11,11 @@ from sqlalchemy import delete, text
 from sqlalchemy.orm import Session
 
 from app.models import KBDocument, KnowledgeBaseVersion
-from app.retrieval.embeddings import EmbeddingConfig, HashEmbeddingAdapter, validate_embedding_dimension
+from app.retrieval.embeddings import (
+    EmbeddingConfig,
+    HashEmbeddingAdapter,
+    validate_embedding_dimension,
+)
 
 _TOKEN_SPAN_RE = re.compile(r"\S+")
 
@@ -21,7 +25,13 @@ def _sha256_text(value: str) -> str:
 
 
 def _canonical_json(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    )
 
 
 @dataclass(frozen=True)
