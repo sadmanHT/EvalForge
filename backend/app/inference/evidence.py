@@ -47,6 +47,11 @@ _NON_NEGATIVE_METRICS = {
     "cost.marginal_mean_usd",
     "cost.amortized_mean_usd",
 }
+_ZERO_DIRECT_COST_RATE_SNAPSHOTS = frozenset(
+    {
+        "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+    }
+)
 
 
 class ValidationReview(BaseModel):
@@ -368,6 +373,7 @@ def validate_real_run_operational_evidence(
     rate_snapshot = payload.get("cost_rate_snapshot_version")
     if not isinstance(rate_snapshot, str) or not rate_snapshot.strip():
         raise ValueError("real Phase 06 run is missing a cost-rate snapshot version")
+    zero_direct_cost = rate_snapshot in _ZERO_DIRECT_COST_RATE_SNAPSHOTS
     cost_records = payload.get("cost_records")
     if not isinstance(cost_records, list):
         raise ValueError("real Phase 06 run cost records must be a list")
@@ -389,7 +395,14 @@ def validate_real_run_operational_evidence(
             amount = Decimal(str(cost.get("amount_usd")))
         except (InvalidOperation, ValueError) as exc:
             raise ValueError("real Phase 06 cost record amount is invalid") from exc
-        if not amount.is_finite() or amount <= 0:
+        if not amount.is_finite() or amount < 0:
+            raise ValueError("real Phase 06 cost record amount must be finite and non-negative")
+        if zero_direct_cost:
+            if amount != 0:
+                raise ValueError(
+                    "real Phase 06 zero-direct-cost snapshot must record zero marginal cost"
+                )
+        elif amount <= 0:
             raise ValueError("real Phase 06 cost record amount must be finite and positive")
         units = cost.get("units")
         if not isinstance(units, dict):
@@ -399,7 +412,15 @@ def validate_real_run_operational_evidence(
         hourly_rate = units.get("gpu_hour_usd")
         if isinstance(hourly_rate, bool) or not isinstance(hourly_rate, int | float):
             raise ValueError("real Phase 06 cost record is missing gpu_hour_usd")
-        if not math.isfinite(float(hourly_rate)) or float(hourly_rate) <= 0:
+        hourly_rate_value = float(hourly_rate)
+        if not math.isfinite(hourly_rate_value) or hourly_rate_value < 0:
+            raise ValueError("real Phase 06 gpu_hour_usd must be finite and non-negative")
+        if zero_direct_cost:
+            if hourly_rate_value != 0:
+                raise ValueError(
+                    "real Phase 06 zero-direct-cost snapshot must record a zero GPU hourly rate"
+                )
+        elif hourly_rate_value <= 0:
             raise ValueError("real Phase 06 gpu_hour_usd must be finite and positive")
         latency = units.get("latency_ms")
         if isinstance(latency, bool) or not isinstance(latency, int | float):
@@ -417,7 +438,12 @@ def validate_real_run_operational_evidence(
     for name in _NON_NEGATIVE_METRICS:
         if metric_values[name] < 0.0:
             raise ValueError(f"real Phase 06 evidence metric is negative: {name}")
-    if metric_values["cost.marginal_mean_usd"] <= 0.0:
+    if zero_direct_cost:
+        if metric_values["cost.marginal_mean_usd"] != 0.0:
+            raise ValueError(
+                "real Phase 06 zero-direct-cost snapshot must report zero marginal mean cost"
+            )
+    elif metric_values["cost.marginal_mean_usd"] <= 0.0:
         raise ValueError("real Phase 06 marginal cost must be positive")
     if metric_values["cost.amortized_mean_usd"] < metric_values["cost.marginal_mean_usd"]:
         raise ValueError("real Phase 06 amortized cost cannot be below marginal cost")
