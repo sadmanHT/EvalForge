@@ -133,7 +133,8 @@ def load_kb_config(path: Path) -> KnowledgeBaseConfig:
 
 
 def _document_id(source_uri: str, source_checksum: str) -> str:
-    return f"doc-{_sha256_text(f'{source_uri}\0{source_checksum}')[:32]}"
+    material = source_uri + "\0" + source_checksum
+    return f"doc-{_sha256_text(material)[:32]}"
 
 
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:

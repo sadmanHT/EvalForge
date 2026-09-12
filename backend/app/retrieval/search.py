@@ -40,9 +40,7 @@ def research_document_allowed(
     if metadata.get("source_split") in {"validation", "test"}:
         return False
     source_family_id = metadata.get("source_family_id")
-    if query_family_id is not None and source_family_id == query_family_id:
-        return False
-    return True
+    return not (query_family_id is not None and source_family_id == query_family_id)
 
 
 def _vector_literal(values: list[float]) -> str:

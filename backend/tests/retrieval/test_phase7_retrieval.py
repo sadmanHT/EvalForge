@@ -76,7 +76,10 @@ def test_repository_kb_manifest_is_deterministic_and_provenance_complete() -> No
     assert first.manifest_checksum == second.manifest_checksum
     assert [item.chunk_id for item in first.chunks] == [item.chunk_id for item in second.chunks]
     assert len(first.documents) == 24
-    assert len([item for item in first.documents if item.source_type == "historical_incident"]) == 18
+    historical = [
+        item for item in first.documents if item.source_type == "historical_incident"
+    ]
+    assert len(historical) == 18
     assert all(item.source_uri and item.source_version for item in first.documents)
 
 

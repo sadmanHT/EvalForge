@@ -43,7 +43,9 @@ class HashEmbeddingAdapter:
         vector = [0.0] * self.dimension
         features = list(tokens)
         if self.config.preprocessing.get("include_bigrams", True):
-            features.extend(f"{left}::{right}" for left, right in zip(tokens, tokens[1:]))
+            features.extend(
+                f"{left}::{right}" for left, right in zip(tokens, tokens[1:], strict=False)
+            )
 
         for feature in features:
             digest = hashlib.sha256(feature.encode("utf-8")).digest()
