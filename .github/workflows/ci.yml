@@ -71,6 +71,8 @@ jobs:
         run: python scripts/check_phase4_exit.py | tee /tmp/phase04-exit.txt
       - name: Record Phase 05 hard-exit status
         run: python scripts/check_phase5_exit.py | tee /tmp/phase05-exit.txt
+      - name: Record Phase 06 hard-exit status
+        run: python scripts/check_phase6_exit.py | tee /tmp/phase06-exit.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
@@ -106,6 +108,17 @@ jobs:
             evidence/phase-05/
             docs/evaluation-methodology.md
             backend/tests/fixtures/phase5/golden_metrics.json
+      - name: Upload Phase 06 baseline evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase06-baseline-evidence
+          path: |
+            /tmp/phase06-exit.txt
+            evidence/phase-06/
+            docs/phase-06-runbook.md
+            docs/phase-06-handoff.md
+            configs/phase6-baseline.json
+            configs/phase6-gpu-host.json
 
   clean-compose:
     runs-on: ubuntu-latest
@@ -126,24 +139,25 @@ jobs:
         env:
           DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
         run: |
-          mkdir -p /tmp/phase05-clean-environment
+          mkdir -p /tmp/phase06-clean-environment
           docker compose down -v --remove-orphans
           docker compose build --no-cache
           docker compose up -d
-          python scripts/compose_health.py | tee /tmp/phase05-clean-environment/fresh-start-smoke.log
-          python scripts/check_phase4_exit.py | tee /tmp/phase05-clean-environment/phase04-exit.log
-          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase05-clean-environment/phase05-smoke.log
-          python scripts/check_phase5_exit.py | tee /tmp/phase05-clean-environment/phase05-exit.log
-          docker compose ps | tee /tmp/phase05-clean-environment/service-health.txt
+          python scripts/compose_health.py | tee /tmp/phase06-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase06-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase06-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase06-clean-environment/phase05-exit.log
+          python scripts/check_phase6_exit.py | tee /tmp/phase06-clean-environment/phase06-exit.log
+          docker compose ps | tee /tmp/phase06-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
-        run: docker compose logs --no-color > /tmp/phase05-clean-environment/compose.log || true
+        run: docker compose logs --no-color > /tmp/phase06-clean-environment/compose.log || true
       - name: Tear down cleanly
         if: always()
         run: docker compose down -v --remove-orphans
-      - name: Upload Phase 05 clean-environment evidence
+      - name: Upload Phase 06 clean-environment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase05-clean-environment
-          path: /tmp/phase05-clean-environment/
+          name: phase06-clean-environment
+          path: /tmp/phase06-clean-environment/
