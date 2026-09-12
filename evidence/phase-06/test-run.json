@@ -153,7 +153,7 @@
         "disk_exhaustion": 2.055624948784524e-07,
         "memory_leak": 8.363163580454093e-08,
         "n_plus_one_query": 0.9999699955704375,
-        "no_fault": 2.58054887472982e-08
+        "no_fault": 2.580548874772982e-08
       },
       "latency_ms": 7980.4422479999175,
       "output_tokens": 93,
@@ -344,22 +344,22 @@
           "memory_leak": -28.654666900634766,
           "n_plus_one_query": -28.63983917236328,
           "no_fault": -33.17969512939453
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "ZERO_SHOT",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
       },
-      "output_schema_version": "root-cause-prediction-v1",
-      "pipeline_type": "ZERO_SHOT",
-      "prompt_version": "zero-shot-baseline-v1",
-      "runtime": {
-        "bnb_4bit_use_double_quant": true,
-        "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
-        "device": "cuda:0",
-      "dtype": "float16",
-        "gpu_hour_usd": 0.0,
-        "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
-        "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
-      "quantization": "bitsandbytes_4bit_nf4",
-        "seed": 20260908
-      }
-    },
       "predicted_root_cause_code": "database_connection_leak",
       "ranked_labels": [
         {
@@ -509,7 +509,7 @@
           "max_new_tokens": 128,
           "temperature": 0.0
         },
-        "label_log_likeliihoods": {
+        "label_log_likelihoods": {
           "broken_payment_configuration": -12.086950302124023,
           "database_connection_leak": -12.98573112487793,
           "disk_exhaustion": -15.868220329284668,
