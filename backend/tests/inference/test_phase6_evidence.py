@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -156,6 +157,39 @@ def test_real_run_operational_evidence_requires_complete_cost_and_tracking_proof
     zero_cost["cost_records"] = zero_cost_records
     with pytest.raises(ValueError, match="finite and positive"):
         validate_real_run_operational_evidence(zero_cost, require_tracking=False)
+
+
+def test_explicit_zero_direct_cost_snapshot_is_accepted_without_weakening_paid_cost_gate() -> None:
+    evidence = deepcopy(_operational_evidence())
+    snapshot = "kaggle-free-quota-no-direct-usd-per-gpu-hour"
+    evidence["cost_rate_snapshot_version"] = snapshot
+    for cost in evidence["cost_records"]:
+        cost["cost_rate_snapshot_version"] = snapshot
+        cost["amount_usd"] = "0.00000000"
+        cost["units"]["gpu_hour_usd"] = 0.0
+    evidence["metrics"]["cost.marginal_mean_usd"] = 0.0
+    evidence["metrics"]["cost.amortized_mean_usd"] = 0.0
+
+    validate_real_run_operational_evidence(evidence, require_tracking=False)
+
+    nonzero_rate = deepcopy(evidence)
+    nonzero_rate["cost_records"][0]["units"]["gpu_hour_usd"] = 0.40
+    with pytest.raises(ValueError, match="zero GPU hourly rate"):
+        validate_real_run_operational_evidence(nonzero_rate, require_tracking=False)
+
+    nonzero_amount = deepcopy(evidence)
+    nonzero_amount["cost_records"][0]["amount_usd"] = "0.00001000"
+    with pytest.raises(ValueError, match="zero marginal cost"):
+        validate_real_run_operational_evidence(nonzero_amount, require_tracking=False)
+
+    nonzero_marginal_metric = deepcopy(evidence)
+    nonzero_marginal_metric["metrics"]["cost.marginal_mean_usd"] = 0.00001
+    nonzero_marginal_metric["metrics"]["cost.amortized_mean_usd"] = 0.00001
+    with pytest.raises(ValueError, match="zero marginal mean cost"):
+        validate_real_run_operational_evidence(
+            nonzero_marginal_metric,
+            require_tracking=False,
+        )
 
 
 def test_manual_review_must_cover_every_prediction_and_pass_contracts() -> None:
