@@ -131,7 +131,7 @@ secrets:
 worker-smoke:
 	$(PYTHON) scripts/worker_smoke.py
 
-verify-all: lint typecheck test test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check phase3-primary-source-check phase3-research-admission-check phase3-exit phase4-seed phase4-exit smoke eval-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit frontend-build secrets
+verify-all: lint typecheck test test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check phase3-primary-source-check phase3-research-admission-check phase3-exit phase4-seed phase4-exit smoke eval-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit frontend-build secrets
 
 fresh-smoke:
 	docker compose down -v --remove-orphans
@@ -144,5 +144,6 @@ fresh-smoke:
 	$(PYTHON) scripts/check_phase7_contract.py
 	$(PYTHON) scripts/index_kb.py
 	$(PYTHON) scripts/audit_phase7_leakage.py
+	$(PYTHON) scripts/check_phase7_exit.py
 	docker compose ps
 	docker compose down -v --remove-orphans
