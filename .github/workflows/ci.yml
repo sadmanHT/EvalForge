@@ -78,7 +78,9 @@ jobs:
       - name: Record Phase 07 index and reindex evidence
         run: python scripts/index_kb.py | tee /tmp/phase07-index.txt
       - name: Record Phase 07 leakage audit
-        run: python scripts/audit_phase7_leakage.py | tee /tmp/phase07-leakage-audit.txt
+        run: |
+          mkdir -p /tmp/phase07-runtime-evidence
+          python scripts/audit_phase7_leakage.py --output-dir /tmp/phase07-runtime-evidence | tee /tmp/phase07-leakage-audit.txt
       - name: Record Phase 07 hard-exit status
         run: python scripts/check_phase7_exit.py | tee /tmp/phase07-exit.txt
       - name: Upload dependency locks
@@ -136,6 +138,7 @@ jobs:
             /tmp/phase07-index.txt
             /tmp/phase07-leakage-audit.txt
             /tmp/phase07-exit.txt
+            /tmp/phase07-runtime-evidence/
             evidence/phase-07/
             configs/phase7-kb.json
             knowledge_base/phase7/
@@ -171,7 +174,7 @@ jobs:
           python scripts/check_phase6_exit.py | tee /tmp/phase07-clean-environment/phase06-exit.log
           python scripts/check_phase7_contract.py | tee /tmp/phase07-clean-environment/phase07-contract.log
           python scripts/index_kb.py | tee /tmp/phase07-clean-environment/phase07-index.log
-          python scripts/audit_phase7_leakage.py | tee /tmp/phase07-clean-environment/phase07-leakage-audit.log
+          python scripts/audit_phase7_leakage.py --output-dir /tmp/phase07-clean-environment/runtime-evidence | tee /tmp/phase07-clean-environment/phase07-leakage-audit.log
           python scripts/check_phase7_exit.py | tee /tmp/phase07-clean-environment/phase07-exit.log
           docker compose ps | tee /tmp/phase07-clean-environment/service-health.txt
       - name: Capture Compose logs
