@@ -1,0 +1,15 @@
+{
+  "review_version": "phase7-retrieval-review-v1",
+  "approved": true,
+  "reviewer": "project-owner",
+  "reviewed_at": "2026-09-13T15:53:25.449428+00:00",
+  "reviewed_sample_incident_ids": [
+    "incident-0557d490e1a492950c4ac3e4",
+    "incident-215133387692e86f737df1e9"
+  ],
+  "relevance_reviewed": true,
+  "provenance_reviewed": true,
+  "leakage_guard_reviewed": true,
+  "limitations_acknowledged": true,
+  "notes": "Project-owner approved the preserved train and validation retrieval traces after inspection. Provenance and research-mode leakage guards were accepted. The validation sample ranks the correct payment-configuration runbook first; the shorter train sample ranks the same correct runbook second behind an unrelated N+1 historical incident. This ranking limitation of the deterministic feature-hash baseline is acknowledged and is not tuned from held-out outcomes in Phase 07."
+}
