@@ -10,7 +10,7 @@ EvalForge is a reproducible research-and-product system for production incident 
 - Phase 04 — PostgreSQL persistence, migrations, immutable versioning, experiment/run/prediction schemas, and readback contracts: **complete**.
 - Phase 05 — deterministic evaluation harness, calibration/cost/latency metrics, persistence, and golden regression evidence: **complete**.
 - Phase 06 — frozen zero-shot Mistral-7B baseline, real GPU validation, one authorized locked test, W&B tracking, and reproducibility evidence: **complete**.
-- Phase 07 — versioned knowledge base, deterministic embedding/chunking baseline, pgvector retrieval, research leakage guards, reindex evidence, and manual retrieval review: **complete pending the final exact-head CI confirmation on `phase-07-knowledge-base-retrieval-foundation`**.
+- Phase 07 — versioned knowledge base, deterministic embedding/chunking baseline, pgvector retrieval, research leakage guards, reindex evidence, and manual retrieval review: **complete** on `phase-07-knowledge-base-retrieval-foundation`; the release/merge decision still requires the mandatory exact-head green CI check.
 
 ## Repository boundaries
 
