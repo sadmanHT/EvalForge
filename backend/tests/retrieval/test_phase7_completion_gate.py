@@ -32,12 +32,11 @@ def _approved_review() -> dict[str, object]:
     }
 
 
-def test_committed_phase7_state_waits_for_manual_review() -> None:
+def test_committed_phase7_state_is_complete_after_manual_review() -> None:
     status = evaluate_phase7_repository_state(ROOT)
 
-    assert status.stage is Phase7Stage.AWAITING_MANUAL_REVIEW
-    assert status.blocker is not None
-    assert "manual" in status.blocker
+    assert status.stage is Phase7Stage.COMPLETE
+    assert status.blocker is None
     assert status.kb_version == "evalforge-kb-v0.1.0"
     assert status.manifest_checksum == (
         "a55b666c6508c4a1190b70c5fcae1694c54275afc5380f6bed967c95894c51b5"
@@ -48,7 +47,7 @@ def test_committed_phase7_state_waits_for_manual_review() -> None:
     assert status.sample_incident_ids == EXPECTED_SAMPLE_IDS
     assert status.ci_run_id == 34719281051
     assert status.ci_head_sha == "9085f916f1fd51c1cab76fb808b34c0554bc22d4"
-    assert status.reviewer is None
+    assert status.reviewer == "project-owner"
 
 
 def test_review_contract_accepts_complete_approval() -> None:
