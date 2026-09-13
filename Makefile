@@ -109,7 +109,7 @@ phase7-index:
 	$(PYTHON) scripts/index_kb.py
 
 phase7-leakage-audit:
-	$(PYTHON) scripts/audit_phase7_leakage.py
+	$(PYTHON) scripts/audit_phase7_leakage.py --output-dir /tmp/evalforge-phase7-runtime-evidence
 
 phase7-exit:
 	$(PYTHON) scripts/check_phase7_exit.py
@@ -143,7 +143,7 @@ fresh-smoke:
 	$(PYTHON) scripts/check_phase6_exit.py
 	$(PYTHON) scripts/check_phase7_contract.py
 	$(PYTHON) scripts/index_kb.py
-	$(PYTHON) scripts/audit_phase7_leakage.py
+	$(PYTHON) scripts/audit_phase7_leakage.py --output-dir /tmp/evalforge-phase7-fresh-smoke-evidence
 	$(PYTHON) scripts/check_phase7_exit.py
 	docker compose ps
 	docker compose down -v --remove-orphans
