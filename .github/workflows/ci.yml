@@ -79,6 +79,8 @@ jobs:
         run: python scripts/index_kb.py | tee /tmp/phase07-index.txt
       - name: Record Phase 07 leakage audit
         run: python scripts/audit_phase7_leakage.py | tee /tmp/phase07-leakage-audit.txt
+      - name: Record Phase 07 hard-exit status
+        run: python scripts/check_phase7_exit.py | tee /tmp/phase07-exit.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
@@ -133,6 +135,7 @@ jobs:
             /tmp/phase07-contract.txt
             /tmp/phase07-index.txt
             /tmp/phase07-leakage-audit.txt
+            /tmp/phase07-exit.txt
             evidence/phase-07/
             configs/phase7-kb.json
             knowledge_base/phase7/
@@ -169,6 +172,7 @@ jobs:
           python scripts/check_phase7_contract.py | tee /tmp/phase07-clean-environment/phase07-contract.log
           python scripts/index_kb.py | tee /tmp/phase07-clean-environment/phase07-index.log
           python scripts/audit_phase7_leakage.py | tee /tmp/phase07-clean-environment/phase07-leakage-audit.log
+          python scripts/check_phase7_exit.py | tee /tmp/phase07-clean-environment/phase07-exit.log
           docker compose ps | tee /tmp/phase07-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
