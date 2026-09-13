@@ -46,8 +46,8 @@ def test_committed_phase7_state_waits_for_manual_review() -> None:
     assert status.chunk_count == 25
     assert status.leakage_query_count == 12
     assert status.sample_incident_ids == EXPECTED_SAMPLE_IDS
-    assert status.ci_run_id == 34718610607
-    assert status.ci_head_sha == "bca42ed037833558a12f8881b75b6ee93c927c6a"
+    assert status.ci_run_id == 34719281051
+    assert status.ci_head_sha == "9085f916f1fd51c1cab76fb808b34c0554bc22d4"
     assert status.reviewer is None
 
 
