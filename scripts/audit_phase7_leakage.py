@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -20,6 +21,23 @@ from app.retrieval.search import (  # noqa: E402
     research_document_allowed,
     search_chunks,
 )
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the Phase 07 held-out-family leakage audit against the persisted KB."
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=ROOT / "evidence/phase-07",
+        help=(
+            "Directory for the raw leakage-audit.json and sample-retrievals.json outputs. "
+            "Verification/CI should use a temporary directory so committed preserved evidence "
+            "is not overwritten."
+        ),
+    )
+    return parser.parse_args()
 
 
 def _load_incidents(dataset_version: str) -> list[dict[str, Any]]:
@@ -54,6 +72,11 @@ def _write_json(path: Path, payload: object) -> None:
 
 
 def main() -> int:
+    args = _parse_args()
+    output_dir = args.output_dir
+    if not output_dir.is_absolute():
+        output_dir = ROOT / output_dir
+
     config = load_kb_config(ROOT / "configs/phase7-kb.json")
     adapter = HashEmbeddingAdapter(config.embedding)
     incidents = _load_incidents(config.dataset_version)
@@ -142,9 +165,8 @@ def main() -> int:
     finally:
         engine.dispose()
 
-    evidence_dir = ROOT / "evidence/phase-07"
     _write_json(
-        evidence_dir / "leakage-audit.json",
+        output_dir / "leakage-audit.json",
         {
             "evidence_version": "phase7-leakage-audit-v1",
             "kb_version": config.kb_version,
@@ -159,7 +181,7 @@ def main() -> int:
         },
     )
     _write_json(
-        evidence_dir / "sample-retrievals.json",
+        output_dir / "sample-retrievals.json",
         {
             "evidence_version": "phase7-sample-retrievals-v1",
             "kb_version": config.kb_version,
@@ -180,6 +202,7 @@ def main() -> int:
     print(f"AUDITED_QUERIES={len(audit_rows)}")
     print("KNOWN_HELDOUT_FAMILY_LEAKAGE=0")
     print(f"SAMPLE_RETRIEVALS={len(samples)}")
+    print(f"OUTPUT_DIR={output_dir}")
     return 0
 
 
