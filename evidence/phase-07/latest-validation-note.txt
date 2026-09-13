@@ -1,0 +1,1 @@
+Phase 07 completion-guardrail validation is pinned to GitHub Actions run 34719281051 (run #320), head 9085f916f1fd51c1cab76fb808b34c0554bc22d4. Both verify-all and clean-compose concluded success. This note is informational; machine-validated IDs/digests are stored in ci-validation.json.
