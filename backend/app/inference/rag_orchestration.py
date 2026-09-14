@@ -22,7 +22,7 @@ from app.models import Run
 from app.retrieval.embeddings import HashEmbeddingAdapter
 from app.retrieval.indexing import load_kb_config
 from app.retrieval.phase8_variants import build_phase8_kb_variant_config
-from app.retrieval.reranker import NoOpReranker, TokenOverlapReranker
+from app.retrieval.reranker import NoOpReranker, Reranker, TokenOverlapReranker
 from app.services.dataset_import import import_phase3_dataset
 
 BackendFactory = Callable[[RAGProtocol], BaseModelBackend]
@@ -57,22 +57,7 @@ def _optional_non_negative_float(payload: dict[str, Any], key: str) -> float | N
     return converted
 
 
-def _select_variant(protocol: RAGProtocol, payload: dict[str, Any]) -> RAGVariant:
-    _loaded_protocol, suite = load_rag_protocol_from_protocol(protocol)
-    variant_id = _required_text(payload, "variant_id")
-    for variant in suite.variants:
-        if variant.variant_id == variant_id:
-            return variant
-    raise ValueError(f"unknown Phase 08 RAG variant: {variant_id}")
-
-
-def load_rag_protocol_from_protocol(protocol: RAGProtocol):  # type: ignore[no-untyped-def]
-    root = Path(protocol.ablation_suite_path)
-    del root
-    raise AssertionError("internal helper must be replaced by handler-bound protocol loading")
-
-
-def _build_reranker(variant: RAGVariant):  # type: ignore[no-untyped-def]
+def _build_reranker(variant: RAGVariant) -> Reranker:
     if variant.reranker_id is None:
         return NoOpReranker()
     if (
