@@ -350,7 +350,10 @@ def _chunk_metadata(chunk: ChunkRecord, document: DocumentInput) -> dict[str, ob
 def _embedding_matches(stored: list[float] | None, expected: list[float]) -> bool:
     if stored is None or len(stored) != len(expected):
         return False
-    return all(abs(float(actual) - target) <= 1e-6 for actual, target in zip(stored, expected))
+    return all(
+        abs(float(actual) - target) <= 1e-6
+        for actual, target in zip(stored, expected, strict=False)
+    )
 
 
 def _validate_persisted_index(session: Session, plan: IndexPlan) -> tuple[int, int] | None:
@@ -378,7 +381,9 @@ def _validate_persisted_index(session: Session, plan: IndexPlan) -> tuple[int, i
             or row.title != expected.title
             or row.document_metadata != _document_metadata(expected)
         ):
-            raise ValueError("existing knowledge-base document disagrees with the sealed index plan")
+            raise ValueError(
+                "existing knowledge-base document disagrees with the sealed index plan"
+            )
 
     expected_chunks = {item.chunk_id: item for item in plan.chunks}
     for row in chunks:
