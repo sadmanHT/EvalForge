@@ -272,9 +272,7 @@ def test_ablation_suite_changes_only_one_controlled_factor() -> None:
     assert len(suite.config_hash()) == 64
 
     payload = suite.model_dump(mode="python")
-    candidate = next(
-        variant for variant in payload["variants"] if variant["factor"] == "top_k"
-    )
+    candidate = next(variant for variant in payload["variants"] if variant["factor"] == "top_k")
     candidate["max_context_tokens"] += 1
     with pytest.raises(ValueError, match="uncontrolled fields"):
         RAGAblationSuite.model_validate(payload)
