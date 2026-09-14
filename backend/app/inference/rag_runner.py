@@ -14,9 +14,9 @@ from app.evaluation.harness import EvaluationHarness
 from app.evaluation.persistence import persist_evaluation, reload_evaluation, score_stored_run
 from app.inference.base_model import IncidentInput, InferenceError
 from app.inference.protocol import load_taxonomy
-from app.inference.rag_ablations import RAGVariant
+from app.inference.rag_ablations import RAGVariant, load_ablation_suite
 from app.inference.rag_persistence import persist_rag_retrieval_traces
-from app.inference.rag_pipeline import RAGPipeline, RAGPipelineResult
+from app.inference.rag_pipeline import RAGPipeline, RAGPipelineResult, RAGRetrievalTrace
 from app.inference.rag_protocol import RAGProtocol, build_rag_experiment_config
 from app.inference.runner import _cost_record_count, _persist_prediction_costs, _stable_id
 from app.models import (
@@ -28,6 +28,7 @@ from app.models import (
     RetrievalTrace,
     Run,
 )
+from app.models import Prediction as PredictionRow
 from app.repositories import PersistenceRepository
 from app.retrieval.reranker import NoOpReranker
 
@@ -67,6 +68,24 @@ def _build_harness(
         label_to_category=categories,
         ece_bins=protocol.ece_bins,
     )
+
+
+def _validate_registered_variant(
+    *,
+    root: Path,
+    protocol: RAGProtocol,
+    variant: RAGVariant,
+    split: str,
+) -> None:
+    suite = load_ablation_suite(root / protocol.ablation_suite_path)
+    if suite.config_hash() != protocol.ablation_suite_hash:
+        raise ValueError("Phase 08 ablation suite hash disagrees with the RAG protocol")
+    by_id = {candidate.variant_id: candidate for candidate in suite.variants}
+    registered = by_id.get(variant.variant_id)
+    if registered is None or registered != variant:
+        raise ValueError("RAG variant is not an exact member of the registered Phase 08 ablation suite")
+    if split == "test" and variant.variant_id != protocol.selected_variant_id:
+        raise ValueError("locked test may run only the validation-selected frozen RAG variant")
 
 
 def _validate_registered_kb(
@@ -187,10 +206,7 @@ def _predict_with_retry(
     last_error: InferenceError | None = None
     for attempt in range(1, max_attempts + 1):
         try:
-            return (
-                pipeline.predict(incident, query_family_id=query_family_id),
-                attempt - 1,
-            )
+            return pipeline.predict(incident, query_family_id=query_family_id), attempt - 1
         except InferenceError as exc:
             last_error = exc
     if last_error is None:
@@ -202,15 +218,10 @@ def _retrieval_trace_count(session: Session, *, run_id: str) -> int:
     value = session.scalar(
         select(func.count())
         .select_from(RetrievalTrace)
-        .join(Run, RetrievalTrace.prediction_id.in_(select_prediction_ids(run_id)))
+        .join(PredictionRow, RetrievalTrace.prediction_id == PredictionRow.prediction_id)
+        .where(PredictionRow.run_id == run_id)
     )
     return int(value or 0)
-
-
-def select_prediction_ids(run_id: str):  # type: ignore[no-untyped-def]
-    from app.models import Prediction as PredictionRow
-
-    return select(PredictionRow.prediction_id).where(PredictionRow.run_id == run_id)
 
 
 def _completed_summary(
@@ -283,6 +294,12 @@ def run_rag_experiment(
     upfront_cost_usd: float = 0.0,
 ) -> RAGRunSummary:
     evaluation_split = protocol.assert_split_allowed(split)
+    _validate_registered_variant(
+        root=root,
+        protocol=protocol,
+        variant=variant,
+        split=evaluation_split,
+    )
     labels, categories = load_taxonomy(root)
     _validate_pipeline_contract(
         pipeline=pipeline,
@@ -356,7 +373,7 @@ def run_rag_experiment(
     started_at = datetime.now(UTC)
     predictions: list[Prediction] = []
     examples: list[EvaluationExample] = []
-    traces_by_incident = {}
+    traces_by_incident: dict[str, tuple[RAGRetrievalTrace, ...]] = {}
     no_context_prediction_count = 0
     inference_retry_count = 0
     try:
@@ -453,6 +470,10 @@ def run_rag_experiment(
         session.flush()
     except Exception:
         experiment.status = "failed"
+        run = session.get(Run, actual_run_id)
+        if run is not None:
+            run.status = "failed"
+            run.completed_at = datetime.now(UTC)
         session.flush()
         raise
 
