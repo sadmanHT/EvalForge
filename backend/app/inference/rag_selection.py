@@ -5,12 +5,11 @@ from dataclasses import dataclass
 
 from app.inference.rag_ablations import RAGAblationSuite
 
-RAG_SELECTION_POLICY_VERSION = "phase8-validation-selection-v1"
+RAG_SELECTION_POLICY_VERSION = "phase8-validation-selection-v2-missing-ece-worst"
 _REQUIRED_METRICS = (
     "primary.exact_accuracy",
     "supporting.hierarchical_accuracy",
     "retrieval.context_recall",
-    "calibration.ece",
     "latency.p95_ms",
 )
 
@@ -31,15 +30,23 @@ class RAGSelectionResult:
     ranking_rows: tuple[dict[str, object], ...]
 
 
+def _selection_ece(candidate: RAGValidationCandidate) -> float | None:
+    value = candidate.metric_values.get("calibration.ece")
+    if value is None:
+        return None
+    return float(value)
+
+
 def _selection_key(
     candidate: RAGValidationCandidate,
 ) -> tuple[float, float, float, float, float, str]:
     metrics = candidate.metric_values
+    ece = _selection_ece(candidate)
     return (
         -float(metrics["primary.exact_accuracy"]),
         -float(metrics["supporting.hierarchical_accuracy"]),
         -float(metrics["retrieval.context_recall"]),
-        float(metrics["calibration.ece"]),
+        float("inf") if ece is None else ece,
         float(metrics["latency.p95_ms"]),
         candidate.variant_id,
     )
@@ -52,7 +59,10 @@ def select_primary_rag_variant(
     """Choose the single frozen RAG config using validation evidence only.
 
     Ordering is predeclared and deterministic: exact accuracy, hierarchical accuracy, retrieval
-    recall, lower ECE, lower p95 latency, then lexical variant id. Test evidence is rejected.
+    recall, lower ECE, lower p95 latency, then lexical variant id. If the common evaluator
+    legitimately omits ECE because a parse-failure prediction has no confidence, that undefined
+    value is conservatively ranked after every defined ECE at the same tie-break position. Test
+    evidence is rejected.
     """
     by_id = {candidate.variant_id: candidate for candidate in candidates}
     if len(by_id) != len(candidates):
@@ -85,7 +95,8 @@ def select_primary_rag_variant(
                 candidate.metric_values["supporting.hierarchical_accuracy"]
             ),
             "retrieval_context_recall": float(candidate.metric_values["retrieval.context_recall"]),
-            "ece": float(candidate.metric_values["calibration.ece"]),
+            "ece": _selection_ece(candidate),
+            "ece_defined": _selection_ece(candidate) is not None,
             "p95_latency_ms": float(candidate.metric_values["latency.p95_ms"]),
         }
         for rank, candidate in enumerate(ranked, start=1)
