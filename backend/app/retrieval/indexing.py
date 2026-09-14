@@ -347,9 +347,7 @@ def _chunk_metadata(chunk: ChunkRecord, document: DocumentInput) -> dict[str, ob
     }
 
 
-def _embedding_matches(
-    stored: list[float] | str | None, expected: list[float]
-) -> bool:
+def _embedding_matches(stored: list[float] | str | None, expected: list[float]) -> bool:
     if stored is None:
         return False
     if isinstance(stored, str):
