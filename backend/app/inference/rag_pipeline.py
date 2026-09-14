@@ -329,9 +329,7 @@ class RAGPipeline:
         if parsed.parse_status is ParseStatus.OK and parsed.predicted_root_cause_code is not None:
             predicted = parsed.predicted_root_cause_code
             payload["confidence_probability"] = probabilities[predicted]
-            payload["confidence_source"] = (
-                ConfidenceSource.NORMALIZED_LABEL_SEQUENCE_LOG_LIKELIHOOD
-            )
+            payload["confidence_source"] = ConfidenceSource.NORMALIZED_LABEL_SEQUENCE_LOG_LIKELIHOOD
             ranked_labels = sorted(
                 self.allowed_labels,
                 key=lambda label: (float(output.label_log_likelihoods[label]), label),

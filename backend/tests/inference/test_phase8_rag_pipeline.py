@@ -162,10 +162,7 @@ def test_rag_pipeline_builds_structured_prediction_and_complete_trace() -> None:
     assert all(trace.reranker_score is not None for trace in result.retrieval_traces)
     assert set(result.prediction.retrieved_chunk_ids) == {"chunk-db", "chunk-pay"}
     assert result.prediction.evidence_citations
-    assert all(
-        trace.provenance["source_split"] == "train"
-        for trace in result.retrieval_traces
-    )
+    assert all(trace.provenance["source_split"] == "train" for trace in result.retrieval_traces)
 
 
 def test_forbidden_document_metadata_never_enters_rag_prompt() -> None:
@@ -286,9 +283,7 @@ def test_ablation_suite_changes_only_one_controlled_factor() -> None:
     assert len(suite.config_hash()) == 64
 
     payload = suite.model_dump(mode="python")
-    candidate = next(
-        variant for variant in payload["variants"] if variant["factor"] == "top_k"
-    )
+    candidate = next(variant for variant in payload["variants"] if variant["factor"] == "top_k")
     candidate["max_context_tokens"] += 1
     with pytest.raises(ValueError, match="uncontrolled fields"):
         RAGAblationSuite.model_validate(payload)
