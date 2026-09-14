@@ -162,9 +162,7 @@ def _validate_freeze_record(
         variant_id: {
             "run_id": evidence["run_id"],
             "evidence_sha256": evidence["evidence_sha256"],
-            "file_sha256": _file_sha256(
-                _path(root, VALIDATION_DIR / f"{variant_id}.json")
-            ),
+            "file_sha256": _file_sha256(_path(root, VALIDATION_DIR / f"{variant_id}.json")),
         }
         for variant_id, evidence in sorted(validation_evidence.items())
     }
@@ -243,9 +241,7 @@ def _test_bundle(
 def evaluate_phase8_repository_state(root: Path) -> Phase8RepositoryStatus:
     protocol, suite = load_rag_protocol(root)
     scientific_hash = protocol.scientific_config_hash()
-    validation_paths = [
-        VALIDATION_DIR / f"{variant.variant_id}.json" for variant in suite.variants
-    ]
+    validation_paths = [VALIDATION_DIR / f"{variant.variant_id}.json" for variant in suite.variants]
     validation_paths.extend(
         [VALIDATION_GPU_HOST_PATH, ABLATION_REPORT_PATH, VALIDATION_COMPARISON_PATH]
     )
@@ -303,9 +299,7 @@ def evaluate_phase8_repository_state(root: Path) -> Phase8RepositoryStatus:
             selected_variant_id=protocol.selected_variant_id,
             ablation_report_sha256=str(report["report_sha256"]),
             comparison_sha256=str(validation_comparison["comparison_sha256"]),
-            gpu_environment_fingerprint_sha256=(
-                validation_host.environment_fingerprint_sha256
-            ),
+            gpu_environment_fingerprint_sha256=(validation_host.environment_fingerprint_sha256),
         )
     if not all(test_present):
         raise ValueError("Phase 08 locked-test evidence bundle is incomplete")

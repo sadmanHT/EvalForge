@@ -34,12 +34,7 @@ def _ground_truth(
     dataset_version: str,
     incident_ids: set[str],
 ) -> dict[str, str]:
-    path = (
-        root
-        / "datasets/incident_diagnosis/processed"
-        / dataset_version
-        / "incidents.jsonl"
-    )
+    path = root / "datasets/incident_diagnosis/processed" / dataset_version / "incidents.jsonl"
     labels: dict[str, str] = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip():

@@ -63,8 +63,13 @@ def main() -> int:
     args = parser.parse_args()
 
     protocol, suite = load_rag_protocol(ROOT)
-    if protocol.state is not RAGProtocolState.VALIDATION or protocol.locked_test_authorized:
-        raise SystemExit("PHASE08_PROTOCOL_FREEZE=FAIL protocol must be validation/unlocked")
+    if (
+        protocol.state is not RAGProtocolState.VALIDATION
+        or protocol.locked_test_authorized
+    ):
+        raise SystemExit(
+            "PHASE08_PROTOCOL_FREEZE=FAIL protocol must be validation/unlocked"
+        )
 
     evidence_dir = _resolve(args.evidence_dir)
     evidence_by_variant = {
@@ -115,7 +120,9 @@ def main() -> int:
     raw_protocol["locked_test_authorized"] = True
     frozen = RAGProtocol.model_validate(raw_protocol)
     if frozen.scientific_config_hash() != scientific_hash:
-        raise RuntimeError("freezing Phase 08 unexpectedly changed the scientific config hash")
+        raise RuntimeError(
+            "freezing Phase 08 unexpectedly changed the scientific config hash"
+        )
 
     protocol_path.write_text(
         json.dumps(raw_protocol, indent=2, sort_keys=True) + "\n",

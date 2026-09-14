@@ -38,11 +38,15 @@ def _resolve(path: Path) -> Path:
 def _assert_locked_test_host_matches_freeze(environment_fingerprint: str) -> None:
     freeze_path = ROOT / FREEZE_RECORD_PATH
     if not freeze_path.is_file():
-        raise ValueError("locked test requires committed Phase 08 protocol-freeze evidence")
+        raise ValueError(
+            "locked test requires committed Phase 08 protocol-freeze evidence"
+        )
     freeze = _load_json(freeze_path)
     expected = freeze.get("gpu_environment_fingerprint_sha256")
     if expected != environment_fingerprint:
-        raise ValueError("locked-test GPU/software fingerprint differs from Phase 08 freeze")
+        raise ValueError(
+            "locked-test GPU/software fingerprint differs from Phase 08 freeze"
+        )
 
 
 def main() -> int:
@@ -77,7 +81,9 @@ def main() -> int:
         contract=host_contract,
     )
     if args.split == "test":
-        _assert_locked_test_host_matches_freeze(host_evidence.environment_fingerprint_sha256)
+        _assert_locked_test_host_matches_freeze(
+            host_evidence.environment_fingerprint_sha256
+        )
 
     payload = {
         "split": args.split,
