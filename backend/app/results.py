@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import CostRecord, Experiment, Metric, Prediction, Run
+from app.models import CostRecord, Experiment, Metric, Prediction, RetrievalTrace, Run
 
 
 def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | None:
@@ -21,6 +21,12 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
     ).all()
     costs = session.scalars(
         select(CostRecord).where(CostRecord.run_id == run_id).order_by(CostRecord.cost_record_id)
+    ).all()
+    traces = session.scalars(
+        select(RetrievalTrace)
+        .join(Prediction, RetrievalTrace.prediction_id == Prediction.prediction_id)
+        .where(Prediction.run_id == run_id)
+        .order_by(Prediction.incident_id, RetrievalTrace.rank)
     ).all()
     return {
         "experiment": {
@@ -54,5 +60,18 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
                 "amount_usd": format(row.amount_usd, "f"),
             }
             for row in costs
+        ],
+        "stored_retrieval_trace_count": len(traces),
+        "retrieval_traces": [
+            {
+                "retrieval_trace_id": row.retrieval_trace_id,
+                "prediction_id": row.prediction_id,
+                "kb_version": row.kb_version,
+                "chunk_id": row.chunk_id,
+                "rank": row.rank,
+                "score": row.score,
+                "metadata": dict(row.trace_metadata),
+            }
+            for row in traces
         ],
     }
