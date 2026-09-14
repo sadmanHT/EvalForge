@@ -32,8 +32,19 @@ class ExperimentTracker(Protocol):
         summary: Mapping[str, object],
     ) -> TrackingEvidence: ...
 
+    def log_rag(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence: ...
+
 
 class DisabledTracker:
+    def _disabled(self) -> TrackingEvidence:
+        return TrackingEvidence(provider="wandb", configured=False)
+
     def log_baseline(
         self,
         *,
@@ -42,7 +53,17 @@ class DisabledTracker:
         summary: Mapping[str, object],
     ) -> TrackingEvidence:
         del run_id, protocol_payload, summary
-        return TrackingEvidence(provider="wandb", configured=False)
+        return self._disabled()
+
+    def log_rag(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence:
+        del run_id, protocol_payload, summary
+        return self._disabled()
 
 
 class WandbTracker:
@@ -54,12 +75,13 @@ class WandbTracker:
         self.project = project.strip()
         self.entity = entity.strip() if entity and entity.strip() else None
 
-    def log_baseline(
+    def _log_evaluation(
         self,
         *,
         run_id: str,
         protocol_payload: Mapping[str, object],
         summary: Mapping[str, object],
+        job_type: str,
     ) -> TrackingEvidence:
         try:
             wandb: Any = importlib.import_module("wandb")
@@ -71,7 +93,7 @@ class WandbTracker:
             project=self.project,
             entity=self.entity,
             name=run_id,
-            job_type="phase6-zero-shot-baseline",
+            job_type=job_type,
             config=dict(protocol_payload),
             reinit=True,
         )
@@ -104,6 +126,34 @@ class WandbTracker:
             )
         finally:
             run.finish()
+
+    def log_baseline(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence:
+        return self._log_evaluation(
+            run_id=run_id,
+            protocol_payload=protocol_payload,
+            summary=summary,
+            job_type="phase6-zero-shot-baseline",
+        )
+
+    def log_rag(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence:
+        return self._log_evaluation(
+            run_id=run_id,
+            protocol_payload=protocol_payload,
+            summary=summary,
+            job_type="phase8-rag",
+        )
 
 
 def build_tracker_from_env() -> ExperimentTracker:
