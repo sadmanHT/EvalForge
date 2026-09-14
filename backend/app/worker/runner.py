@@ -8,6 +8,7 @@ from redis import Redis
 
 from app.config import Settings
 from app.inference.orchestration import Phase6BaselineJobHandler
+from app.inference.rag_orchestration import Phase8RAGJobHandler
 from app.worker.queue import TaskHandler, process_one
 
 _running = True
@@ -24,6 +25,7 @@ def main() -> None:
     client: Any = Redis.from_url(settings.redis_url, decode_responses=True)
     task_handlers: dict[str, TaskHandler] = {
         "phase6_baseline": Phase6BaselineJobHandler(),
+        "phase8_rag": Phase8RAGJobHandler(),
     }
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
