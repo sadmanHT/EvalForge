@@ -55,7 +55,8 @@ def main() -> int:
         if existing is not None:
             if _variant_index_identity(existing) != _variant_index_identity(variant):
                 raise SystemExit(
-                    "PHASE08_RAG_VARIANT_INDEX=FAIL shared KB version has inconsistent index identity"
+                    "PHASE08_RAG_VARIANT_INDEX=FAIL shared KB version has "
+                    "inconsistent index identity"
                 )
             continue
         index_variants[variant.knowledge_base_version] = variant
