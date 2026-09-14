@@ -166,3 +166,34 @@ Until the real external validation/freeze/test evidence is committed, Phase 08 i
 incomplete and `phase8-exit` must not be added to the cumulative `verify-all` dependency list.
 After the gate passes, add it to cumulative CI, run the full suite, and run the clean Compose/reindex
 smoke before declaring Phase 08 complete.
+
+## Completed locked-test record
+
+The single authorized locked-test attempt was consumed on 2026-09-14 from frozen commit
+`af48887816634f444a57010a8e76881caefae7cc` using `rag-top-k1`. The canonical runner completed
+successfully, persisted all six held-out predictions and retrieval traces, recomputed metrics,
+sealed raw `evidence/phase-08/test-run.json`, and uploaded the W&B result artifact.
+
+The notebook then encountered a **post-run diagnostic bug**: its local sanity-check cell accessed
+`trace["provenance"]` even though the canonical retrieval-trace schema stores provenance at
+`trace["metadata"]["provenance"]`. Because this happened only after the canonical runner printed
+`PHASE08_LOCKED_TEST_RUN=PASS` and emitted sealed evidence, it is classified as notebook
+post-processing failure rather than model/inference invalidation. The locked test was therefore not
+rerun. The deterministic paired comparison was generated later from the sealed evidence. The raw
+`test-run.json` emitted by the runner is preserved in-repo as deterministic `test-run.json.gz`;
+repository validators transparently decompress it and revalidate the original evidence seal.
+
+Final locked-test facts:
+
+- selected variant: `rag-top-k1`
+- run ID: `phase8-rag-top-k1-test-kaggle-v1`
+- test evidence SHA-256: `bb8e12f9f63ee939e630535bd38f815779f09f23779202be19cf7c0164e0d956`
+- environment fingerprint: `45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff`
+- RAG exact accuracy: `5/6`
+- frozen Phase 06 baseline exact accuracy: `6/6`
+- paired delta: `-1/6`
+- exact McNemar p-value: `1.0`
+- paired bootstrap 95% interval: `[-0.5, 0.0]`
+- comparison SHA-256: `f763e9ffa94b7fecbe7e445e55d4249f6d81cc1fd729a8f7e0a96097a24ee13f`
+
+These held-out outcomes are final Phase 08 evidence, not tuning feedback.

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import sys
 from pathlib import Path
@@ -25,7 +26,11 @@ def _resolve(path: Path) -> Path:
 
 
 def _load_json(path: Path) -> dict[str, Any]:
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    if path.suffix == ".gz":
+        text = gzip.decompress(path.read_bytes()).decode("utf-8")
+    else:
+        text = path.read_text(encoding="utf-8")
+    payload = json.loads(text)
     if not isinstance(payload, dict):
         raise ValueError(f"JSON document must contain an object: {path}")
     return {str(key): value for key, value in payload.items()}

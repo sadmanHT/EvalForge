@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 from dataclasses import dataclass
@@ -26,7 +27,7 @@ VALIDATION_GPU_HOST_PATH = PHASE8_EVIDENCE_DIR / "validation-gpu-host.json"
 ABLATION_REPORT_PATH = PHASE8_EVIDENCE_DIR / "ablation-report.json"
 VALIDATION_COMPARISON_PATH = PHASE8_EVIDENCE_DIR / "validation-comparison.json"
 FREEZE_RECORD_PATH = PHASE8_EVIDENCE_DIR / "protocol-freeze.json"
-TEST_RUN_PATH = PHASE8_EVIDENCE_DIR / "test-run.json"
+TEST_RUN_PATH = PHASE8_EVIDENCE_DIR / "test-run.json.gz"
 TEST_GPU_HOST_PATH = PHASE8_EVIDENCE_DIR / "test-gpu-host.json"
 TEST_COMPARISON_PATH = PHASE8_EVIDENCE_DIR / "baseline-vs-rag-test-comparison.json"
 
@@ -60,7 +61,11 @@ def _path(root: Path, relative: Path) -> Path:
 
 
 def _load_json(path: Path) -> dict[str, Any]:
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    if path.suffix == ".gz":
+        with gzip.open(path, "rt", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    else:
+        payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError(f"Phase 08 JSON artifact must contain an object: {path}")
     return {str(key): value for key, value in payload.items()}
