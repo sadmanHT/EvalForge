@@ -63,13 +63,8 @@ def main() -> int:
     args = parser.parse_args()
 
     protocol, suite = load_rag_protocol(ROOT)
-    if (
-        protocol.state is not RAGProtocolState.VALIDATION
-        or protocol.locked_test_authorized
-    ):
-        raise SystemExit(
-            "PHASE08_PROTOCOL_FREEZE=FAIL protocol must be validation/unlocked"
-        )
+    if protocol.state is not RAGProtocolState.VALIDATION or protocol.locked_test_authorized:
+        raise SystemExit("PHASE08_PROTOCOL_FREEZE=FAIL protocol must be validation/unlocked")
 
     evidence_dir = _resolve(args.evidence_dir)
     evidence_by_variant = {
@@ -93,9 +88,7 @@ def main() -> int:
     expected_descriptor = hardware_runtime_descriptor(host)
     for variant_id, evidence in evidence_by_variant.items():
         if evidence.get("hardware_runtime_descriptor") != expected_descriptor:
-            raise ValueError(
-                f"Phase 08 validation host binding disagrees for variant {variant_id}"
-            )
+            raise ValueError(f"Phase 08 validation host binding disagrees for variant {variant_id}")
 
     selected_variant_id = report.get("selected_variant_id")
     if not isinstance(selected_variant_id, str) or selected_variant_id not in {
@@ -120,9 +113,7 @@ def main() -> int:
     raw_protocol["locked_test_authorized"] = True
     frozen = RAGProtocol.model_validate(raw_protocol)
     if frozen.scientific_config_hash() != scientific_hash:
-        raise RuntimeError(
-            "freezing Phase 08 unexpectedly changed the scientific config hash"
-        )
+        raise RuntimeError("freezing Phase 08 unexpectedly changed the scientific config hash")
 
     protocol_path.write_text(
         json.dumps(raw_protocol, indent=2, sort_keys=True) + "\n",

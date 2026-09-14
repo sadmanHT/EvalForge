@@ -143,12 +143,8 @@ def main() -> int:
                     "variant_id": variant.variant_id,
                     "run_id": result["run_id"],
                     "evidence_sha256": evidence["evidence_sha256"],
-                    "primary_exact_accuracy": evidence["metrics"][
-                        "primary.exact_accuracy"
-                    ],
-                    "retrieval_context_recall": evidence["metrics"][
-                        "retrieval.context_recall"
-                    ],
+                    "primary_exact_accuracy": evidence["metrics"]["primary.exact_accuracy"],
+                    "retrieval_context_recall": evidence["metrics"]["retrieval.context_recall"],
                     "evidence_path": str(output),
                 }
             )

@@ -27,9 +27,7 @@ def main() -> int:
     if status.comparison_sha256 is not None:
         print(f"BASELINE_RAG_COMPARISON_SHA256={status.comparison_sha256}")
     if status.gpu_environment_fingerprint_sha256 is not None:
-        print(
-            f"GPU_ENVIRONMENT_FINGERPRINT={status.gpu_environment_fingerprint_sha256}"
-        )
+        print(f"GPU_ENVIRONMENT_FINGERPRINT={status.gpu_environment_fingerprint_sha256}")
     if not status.complete:
         print(f"PHASE08_EXIT=FAIL {status.blocker}")
         return 1
