@@ -1,0 +1,147 @@
+# Phase 08 — RAG pipeline and controlled ablations
+
+Phase 08 compares a retrieval-augmented pipeline against the frozen Phase 06 zero-shot baseline
+without changing the base model, dataset, taxonomy, generation settings, or deterministic primary
+evaluator. Retrieval configuration is selected from **validation only** and the locked test is run
+once after that selection is sealed.
+
+## Scientific rules
+
+- Keep `configs/phase8-rag.json` in `state=validation` while running every ablation.
+- Run exactly the variants registered in `configs/phase8-rag-ablations.json`; do not add a variant
+  in response to validation results without treating that as a new protocol revision.
+- The deterministic selection policy is fixed before results: exact accuracy, hierarchical
+  accuracy, retrieval recall, lower ECE, lower p95 latency, then lexical variant ID.
+- Never use locked-test outcomes to select a RAG variant, tune retrieval, edit prompts, or change
+  context budgets.
+- The Phase 08 locked test may run only after the validation ablation report and protocol-freeze
+  record are committed. A disappointing test score is not a reason to rerun it.
+- RAGAS/faithfulness is supporting evidence only. If an LLM judge is used, preserve its exact
+  evaluator revision, judge model/revision, and prompt version. Supporting judge scores never
+  participate in primary RAG selection.
+
+## Required runtime
+
+Use the same Phase 06 GPU-host contract and software fingerprint for all real Phase 08 validation
+runs and the locked test. A validation session should capture one sealed GPU-host evidence file and
+reuse that exact environment for all seven variants.
+
+For Kaggle free GPU quota, the only accepted zero-direct-cost snapshot is
+`kaggle-free-quota-no-direct-usd-per-gpu-hour` with `gpu_hour_usd=0.0`. Do not substitute a made-up
+positive hourly price.
+
+W&B tracking is required for accepted real Phase 08 validation and locked-test evidence. Set
+`WANDB_PROJECT=evalforge-phase8`, authenticate before inference, and preserve the run and artifact
+references written into each evidence file.
+
+## Validation execution
+
+Start from a clean checkout of the exact commit being evaluated. Migrate PostgreSQL, import the
+Phase 03 dataset through the existing importer, capture/validate GPU-host evidence, and build all
+registered Phase 08 knowledge-base variants before model inference.
+
+```bash
+python scripts/index_phase8_rag_variants.py \
+  --output-dir /tmp/evalforge-phase8-runtime-evidence
+```
+
+Run each registered variant exactly once on the validation split. Use distinct experiment/run IDs
+and write evidence to `evidence/phase-08/validation/<variant-id>.json`.
+
+```bash
+python evals/rag_runner.py \
+  --split validation \
+  --variant-id <variant-id> \
+  --git-commit <40-hex-commit> \
+  --gpu-host-evidence evidence/phase-08/validation-gpu-host.json \
+  --cost-rate-snapshot-version kaggle-free-quota-no-direct-usd-per-gpu-hour \
+  --gpu-hour-usd 0.0 \
+  --experiment-id phase8-<variant-id>-validation \
+  --run-id phase8-<variant-id>-validation \
+  --evidence-output evidence/phase-08/validation/<variant-id>.json
+```
+
+Do not run the test split during this stage. If a validation run fails technically, classify and
+repair the infrastructure defect before deciding whether a clean replacement run is scientifically
+valid; never replace a run because its score is low.
+
+## Select and freeze
+
+After all registered validation evidence exists, build the deterministic ablation report. This
+revalidates every evidence seal, exact split coverage, retrieval traces, leakage constraints, W&B
+references, and the common GPU-host binding before selecting one variant.
+
+```bash
+python scripts/build_phase8_ablation_report.py \
+  --gpu-host-evidence evidence/phase-08/validation-gpu-host.json
+```
+
+Build the validation baseline-vs-RAG comparison for the selected variant. The comparison requires
+identical validation incident IDs and writes paired correctness, a paired bootstrap accuracy CI, and
+an exact McNemar test.
+
+```bash
+python scripts/build_phase8_comparison.py \
+  --split validation \
+  --rag-evidence evidence/phase-08/validation/<selected-variant-id>.json \
+  --output evidence/phase-08/validation-comparison.json
+```
+
+Verify freeze readiness without mutation first, then apply it once.
+
+```bash
+python scripts/freeze_phase8_protocol.py \
+  --gpu-host-evidence evidence/phase-08/validation-gpu-host.json
+
+python scripts/freeze_phase8_protocol.py \
+  --gpu-host-evidence evidence/phase-08/validation-gpu-host.json \
+  --apply
+```
+
+Commit the seven validation run files, validation GPU-host evidence, ablation report, validation
+comparison, frozen `configs/phase8-rag.json`, and `evidence/phase-08/protocol-freeze.json` together.
+Do not change scientific fields after this commit.
+
+## Single locked test
+
+Use a fresh runtime that reproduces the validation GPU/software fingerprint. Capture
+`evidence/phase-08/test-gpu-host.json` and verify it matches the freeze record before invoking the
+runner. The frozen protocol rejects every variant except `selected_variant_id`.
+
+```bash
+python evals/rag_runner.py \
+  --split test \
+  --variant-id <selected-variant-id> \
+  --git-commit <frozen-commit> \
+  --gpu-host-evidence evidence/phase-08/test-gpu-host.json \
+  --cost-rate-snapshot-version kaggle-free-quota-no-direct-usd-per-gpu-hour \
+  --gpu-hour-usd 0.0 \
+  --experiment-id phase8-rag-test \
+  --run-id phase8-rag-test \
+  --evidence-output evidence/phase-08/test-run.json
+```
+
+Once real locked-test inference begins, treat that authorized attempt as consumed. Do not rerun for
+score, calibration, retrieval tuning, or presentation quality. If the attempt fails, preserve the
+logs and classify the failure before any rerun decision.
+
+Build the paired held-out comparison only after the locked test succeeds:
+
+```bash
+python scripts/build_phase8_comparison.py \
+  --split test \
+  --rag-evidence evidence/phase-08/test-run.json \
+  --output evidence/phase-08/baseline-vs-rag-test-comparison.json
+```
+
+## Exit gate
+
+`python scripts/check_phase8_exit.py` passes only when the repository contains the complete sealed
+validation bundle, deterministic selection report, frozen protocol record, one valid locked-test
+run on the selected variant, matching GPU-host evidence, and the paired Phase 06 baseline-vs-RAG
+test comparison.
+
+Until the real external validation/freeze/test evidence is committed, Phase 08 is intentionally
+incomplete and `phase8-exit` must not be added to the cumulative `verify-all` dependency list.
+After the gate passes, add it to cumulative CI, run the full suite, and run the clean Compose/reindex
+smoke before declaring Phase 08 complete.
