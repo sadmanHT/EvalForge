@@ -37,7 +37,9 @@ def test_ece_omission_requires_positive_parse_failure_rate() -> None:
 
 
 def test_ece_omission_requires_a_parse_failure_missing_confidence() -> None:
-    with pytest.raises(ValueError, match="without a parse-failure prediction lacking confidence"):
+    with pytest.raises(
+        ValueError, match="without a parse-failure prediction lacking confidence"
+    ):
         _validate_ece_contract(
             metrics={"quality.parse_failure_rate": 1.0},
             predictions=[_parse_failure_prediction(with_confidence=True)],
