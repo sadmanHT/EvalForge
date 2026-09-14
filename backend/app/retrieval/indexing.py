@@ -347,12 +347,27 @@ def _chunk_metadata(chunk: ChunkRecord, document: DocumentInput) -> dict[str, ob
     }
 
 
-def _embedding_matches(stored: list[float] | None, expected: list[float]) -> bool:
-    if stored is None or len(stored) != len(expected):
+def _embedding_matches(
+    stored: list[float] | str | None, expected: list[float]
+) -> bool:
+    if stored is None:
+        return False
+    if isinstance(stored, str):
+        serialized = stored.strip()
+        if not (serialized.startswith("[") and serialized.endswith("]")):
+            return False
+        body = serialized[1:-1].strip()
+        try:
+            stored_values = [] if not body else [float(value) for value in body.split(",")]
+        except ValueError:
+            return False
+    else:
+        stored_values = stored
+    if len(stored_values) != len(expected):
         return False
     return all(
         abs(float(actual) - target) <= 1e-6
-        for actual, target in zip(stored, expected, strict=False)
+        for actual, target in zip(stored_values, expected, strict=False)
     )
 
 
