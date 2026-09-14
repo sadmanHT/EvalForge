@@ -16,3 +16,5 @@ scientific evidence. It stopped after `rag-top-k3` when the Phase 08 evidence la
 evaluator-undefined ECE on a parse failure as a hard schema error. The preserved external bundle
 is diagnostic evidence for the infrastructure repair only. Accepted Phase 08 validation evidence
 must come from the complete clean replacement suite under the amended missing-ECE selection rule.
+The replacement must start from a fresh database/runtime and use distinct run identifiers; partial
+runs or W&B artifacts from the incomplete attempt must not be mixed into the accepted suite.
