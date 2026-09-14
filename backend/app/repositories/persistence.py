@@ -9,7 +9,11 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.experiment_config import ExperimentConfig, experiment_config_hash
+from app.core.experiment_config import (
+    ExperimentConfig,
+    canonical_config_payload,
+    experiment_config_hash,
+)
 from app.models import (
     AdapterVersion,
     DatasetVersion,
@@ -34,11 +38,6 @@ class PersistenceRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    @contextmanager
-    def transaction(self) -> Iterator[None]:
-        with self.session.begin():
-            yield
-
     def ensure_model_version(
         self,
         model_id: str,
@@ -60,7 +59,7 @@ class PersistenceRepository:
             model_id=model_id,
             revision=revision,
             license=license_name,
-            metadata_json=metadata or {},
+            model_metadata=metadata or {},
         )
         self.session.add(row)
         self.session.flush()
@@ -71,13 +70,13 @@ class PersistenceRepository:
         experiment_id: str,
         config: ExperimentConfig,
         *,
-        status: str = "planned",
+        status: str = "created",
     ) -> Experiment:
         config_hash = experiment_config_hash(config)
-        existing = self.session.scalar(
-            select(Experiment).where(Experiment.config_hash == config_hash)
-        )
+        existing = self.session.get(Experiment, experiment_id)
         if existing is not None:
+            if existing.config_hash != config_hash:
+                raise ValueError("experiment_id already exists with a different config hash")
             return existing
         dataset = self.session.get(DatasetVersion, config.dataset_version)
         if dataset is None:
@@ -136,7 +135,7 @@ class PersistenceRepository:
             hardware_runtime_descriptor=config.hardware_runtime_descriptor,
             cost_rate_snapshot_version=config.cost_rate_snapshot_version,
             status=status,
-            config_json=config.model_dump(mode="json", exclude_none=False),
+            config_json=canonical_config_payload(config),
             config_hash=config_hash,
         )
         self.session.add(row)
@@ -158,9 +157,10 @@ class PersistenceRepository:
             if (
                 existing.kind != kind
                 or existing.payload_hash != payload_hash
+                or existing.payload_json != payload
                 or existing.experiment_id != experiment_id
             ):
-                raise ValueError("idempotency key reused with different job semantics")
+                raise ValueError("idempotency key reused with a different job payload")
             return existing
         row = Job(
             job_id=job_id,
@@ -175,3 +175,27 @@ class PersistenceRepository:
         self.session.add(row)
         self.session.flush()
         return row
+
+    @contextmanager
+    def claim_job(self, job_id: str) -> Iterator[Job]:
+        job = self.session.get(Job, job_id, with_for_update=True)
+        if job is None:
+            raise ValueError(f"unknown job: {job_id}")
+        if job.status == "completed":
+            yield job
+            return
+        if job.status != "queued":
+            raise ValueError(f"job is not claimable from status={job.status}")
+        job.status = "running"
+        self.session.flush()
+        try:
+            yield job
+        except Exception as exc:
+            job.status = "failed"
+            job.error = f"{type(exc).__name__}: {exc}"
+            self.session.flush()
+            raise
+        else:
+            if job.status == "running":
+                job.status = "completed"
+            self.session.flush()
