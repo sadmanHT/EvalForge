@@ -8,6 +8,13 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+_PHASE8_OPTIONAL_RETRIEVAL_FIELDS = (
+    "retrieval_policy_version",
+    "context_policy_version",
+    "max_context_tokens",
+    "max_chunk_tokens",
+)
+
 
 class PipelineType(StrEnum):
     ZERO_SHOT = "ZERO_SHOT"
@@ -116,11 +123,18 @@ def _reject_non_finite(value: Any) -> None:
             _reject_non_finite(item)
 
 
-def canonical_config_json(config: ExperimentConfig) -> str:
+def canonical_config_payload(config: ExperimentConfig) -> dict[str, Any]:
     payload = config.model_dump(mode="python", exclude_none=False)
+    for field in _PHASE8_OPTIONAL_RETRIEVAL_FIELDS:
+        if payload[field] is None:
+            payload.pop(field)
     _reject_non_finite(payload)
+    return payload
+
+
+def canonical_config_json(config: ExperimentConfig) -> str:
     return json.dumps(
-        payload,
+        canonical_config_payload(config),
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,
