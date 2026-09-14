@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import delete, text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.models import KBDocument, KnowledgeBaseVersion
+from app.models import KBChunk, KBDocument, KnowledgeBaseVersion
 from app.retrieval.embeddings import (
     EmbeddingConfig,
     HashEmbeddingAdapter,
@@ -323,6 +323,81 @@ def _vector_literal(values: list[float]) -> str:
     return "[" + ",".join(format(value, ".12g") for value in values) + "]"
 
 
+def _document_metadata(document: DocumentInput) -> dict[str, object]:
+    return {
+        "source_uri": document.source_uri,
+        "source_type": document.source_type,
+        "source_version": document.source_version,
+        "source_timestamp": document.source_timestamp,
+        "source_family_id": document.source_family_id,
+        "source_split": document.source_split,
+        "root_cause_code": document.root_cause_code,
+        "research_eligible": document.research_eligible,
+    }
+
+
+def _chunk_metadata(chunk: ChunkRecord, document: DocumentInput) -> dict[str, object]:
+    return {
+        "start_offset": chunk.start_offset,
+        "end_offset": chunk.end_offset,
+        "text_checksum": chunk.text_checksum,
+        "source_type": document.source_type,
+        "source_split": document.source_split,
+        "research_eligible": document.research_eligible,
+    }
+
+
+def _embedding_matches(stored: list[float] | None, expected: list[float]) -> bool:
+    if stored is None or len(stored) != len(expected):
+        return False
+    return all(abs(float(actual) - target) <= 1e-6 for actual, target in zip(stored, expected))
+
+
+def _validate_persisted_index(session: Session, plan: IndexPlan) -> tuple[int, int] | None:
+    documents = session.scalars(
+        select(KBDocument)
+        .where(KBDocument.kb_version == plan.config.kb_version)
+        .order_by(KBDocument.document_id)
+    ).all()
+    chunks = session.scalars(
+        select(KBChunk)
+        .where(KBChunk.kb_version == plan.config.kb_version)
+        .order_by(KBChunk.chunk_id)
+    ).all()
+    if not documents and not chunks:
+        return None
+    if len(documents) != len(plan.documents) or len(chunks) != len(plan.chunks):
+        raise ValueError("existing knowledge-base index is incomplete or has unexpected rows")
+
+    expected_documents = {item.document_id: item for item in plan.documents}
+    for row in documents:
+        expected = expected_documents.get(row.document_id)
+        if expected is None or (
+            row.source_uri != expected.source_uri
+            or row.source_checksum != expected.source_checksum
+            or row.title != expected.title
+            or row.document_metadata != _document_metadata(expected)
+        ):
+            raise ValueError("existing knowledge-base document disagrees with the sealed index plan")
+
+    expected_chunks = {item.chunk_id: item for item in plan.chunks}
+    for row in chunks:
+        expected = expected_chunks.get(row.chunk_id)
+        if expected is None:
+            raise ValueError("existing knowledge-base chunk is absent from the sealed index plan")
+        document = expected_documents[expected.document_id]
+        if (
+            row.document_id != expected.document_id
+            or row.chunk_index != expected.chunk_index
+            or row.text != expected.text
+            or row.source_family_id != expected.source_family_id
+            or row.chunk_metadata != _chunk_metadata(expected, document)
+            or not _embedding_matches(row.embedding, expected.embedding)
+        ):
+            raise ValueError("existing knowledge-base chunk disagrees with the sealed index plan")
+    return len(documents), len(chunks)
+
+
 def persist_index(session: Session, plan: IndexPlan) -> tuple[int, int]:
     existing = session.get(KnowledgeBaseVersion, plan.config.kb_version)
     if existing is None:
@@ -356,13 +431,9 @@ def persist_index(session: Session, plan: IndexPlan) -> tuple[int, int]:
             raise ValueError("knowledge-base embedding model id disagrees with config")
         if existing.embedding_model_revision != plan.config.embedding.revision:
             raise ValueError("knowledge-base embedding model revision disagrees with config")
-
-    session.execute(
-        text("DELETE FROM kb_chunks WHERE kb_version = :kb_version"),
-        {"kb_version": plan.config.kb_version},
-    )
-    session.execute(delete(KBDocument).where(KBDocument.kb_version == plan.config.kb_version))
-    session.flush()
+        persisted = _validate_persisted_index(session, plan)
+        if persisted is not None:
+            return persisted
 
     documents_by_id = {item.document_id: item for item in plan.documents}
     for document in plan.documents:
@@ -373,16 +444,7 @@ def persist_index(session: Session, plan: IndexPlan) -> tuple[int, int]:
                 source_uri=document.source_uri,
                 source_checksum=document.source_checksum,
                 title=document.title,
-                document_metadata={
-                    "source_uri": document.source_uri,
-                    "source_type": document.source_type,
-                    "source_version": document.source_version,
-                    "source_timestamp": document.source_timestamp,
-                    "source_family_id": document.source_family_id,
-                    "source_split": document.source_split,
-                    "root_cause_code": document.root_cause_code,
-                    "research_eligible": document.research_eligible,
-                },
+                document_metadata=_document_metadata(document),
             )
         )
     session.flush()
@@ -410,16 +472,7 @@ def persist_index(session: Session, plan: IndexPlan) -> tuple[int, int]:
                 "text": chunk.text,
                 "embedding": _vector_literal(chunk.embedding),
                 "source_family_id": chunk.source_family_id,
-                "chunk_metadata": _canonical_json(
-                    {
-                        "start_offset": chunk.start_offset,
-                        "end_offset": chunk.end_offset,
-                        "text_checksum": chunk.text_checksum,
-                        "source_type": document.source_type,
-                        "source_split": document.source_split,
-                        "research_eligible": document.research_eligible,
-                    }
-                ),
+                "chunk_metadata": _canonical_json(_chunk_metadata(chunk, document)),
             },
         )
     session.flush()
