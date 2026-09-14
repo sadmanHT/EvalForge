@@ -1,0 +1,77 @@
+name: phase8-accept-xz
+
+on:
+  push:
+    branches:
+      - phase-08-rag-pipeline-controlled-ablations
+    paths:
+      - .github/workflows/phase8-accept-xz.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore and validate accepted Phase 08 validation evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat \
+            .phase8_payload_xz/part00a.txt \
+            .phase8_payload_xz/part00b.txt \
+            .phase8_payload_xz/part00c.txt \
+            .phase8_payload_xz/part01.txt \
+            .phase8_payload_xz/part02.txt \
+            .phase8_payload_xz/part03.txt \
+            .phase8_payload_xz/part04.txt \
+            .phase8_payload_xz/part05.txt \
+            | tr -d '\r\n\t ' \
+            | base64 -d > /tmp/phase8-accept-full.tar.xz
+          echo '8f1e8a647adb68813e31293795128631836511b6bae2d6826d88738d3f102f7f  /tmp/phase8-accept-full.tar.xz' | sha256sum -c -
+          tar -xJf /tmp/phase8-accept-full.tar.xz -C .
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          protocol = json.loads(Path('configs/phase8-rag.json').read_text())
+          report = json.loads(Path('evidence/phase-08/ablation-report.json').read_text())
+          freeze = json.loads(Path('evidence/phase-08/protocol-freeze.json').read_text())
+          validation = sorted(Path('evidence/phase-08/validation').glob('*.json'))
+
+          expected = 'rag-top-k1'
+          assert protocol['state'] == 'frozen'
+          assert protocol['locked_test_authorized'] is True
+          assert protocol['selected_variant_id'] == expected
+          assert report['selected_variant_id'] == expected
+          assert freeze['selected_variant_id'] == expected
+          assert freeze['locked_test_authorized'] is True
+          assert len(freeze['validation_evidence']) == 7
+          assert len(validation) == 7
+          print('PHASE08_VALIDATION_FREEZE_PAYLOAD=PASS')
+          PY
+
+      - name: Commit accepted validation evidence and freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          rm -rf .phase8_payload .phase8_payload_xz
+          rm -f \
+            .github/workflows/phase8-accept-validation-freeze.yml \
+            .github/workflows/phase8-publish-validation-freeze.yml \
+            .github/workflows/phase8-publish-runner.yml \
+            .github/workflows/phase8-accept-xz.yml
+
+          git add -A
+          git status --short
+          git commit -m 'phase8: freeze validation-selected RAG protocol'
+          git push origin HEAD:phase-08-rag-pipeline-controlled-ablations
