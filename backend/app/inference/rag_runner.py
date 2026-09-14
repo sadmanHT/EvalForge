@@ -83,7 +83,9 @@ def _validate_registered_variant(
     by_id = {candidate.variant_id: candidate for candidate in suite.variants}
     registered = by_id.get(variant.variant_id)
     if registered is None or registered != variant:
-        raise ValueError("RAG variant is not an exact member of the registered Phase 08 ablation suite")
+        raise ValueError(
+            "RAG variant is not an exact member of the registered Phase 08 ablation suite"
+        )
     if split == "test" and variant.variant_id != protocol.selected_variant_id:
         raise ValueError("locked test may run only the validation-selected frozen RAG variant")
 
@@ -249,7 +251,10 @@ def _completed_summary(
         relevant_chunk_ids_by_incident=relevance_references,
         upfront_cost_usd=upfront_cost_usd,
     )
-    if snapshot.result_hash != rescored.result_hash or snapshot.metric_values != rescored.metric_map():
+    if (
+        snapshot.result_hash != rescored.result_hash
+        or snapshot.metric_values != rescored.metric_map()
+    ):
         raise RuntimeError("completed RAG run failed metric recomputation")
     scientific_hash = protocol.scientific_config_hash()
     if run.runtime_metadata.get("phase8_scientific_config_hash") != scientific_hash:
