@@ -113,14 +113,13 @@ def test_rag_pgvector_prompt_evaluation_and_trace_persistence(engine: Engine) ->
         PersistenceRepository(session).create_experiment("exp-phase8-rag-integration", config)
         session.commit()
 
-    labels = tuple(item["id"] for item in json.loads(
+    taxonomy_payload = json.loads(
         (ROOT / "configs/label-taxonomy.yaml").read_text(encoding="utf-8")
-    )["labels"])
+    )
+    labels = tuple(item["id"] for item in taxonomy_payload["labels"])
     categories = {
         item["id"]: item["category"]
-        for item in json.loads(
-            (ROOT / "configs/label-taxonomy.yaml").read_text(encoding="utf-8")
-        )["labels"]
+        for item in taxonomy_payload["labels"]
     }
     relevant_document_by_label = {
         document.root_cause_code: document.document_id
