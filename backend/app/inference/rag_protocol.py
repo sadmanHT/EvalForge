@@ -11,7 +11,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from app.core.experiment_config import ExperimentConfig, PipelineType
 from app.inference.base_model import GenerationConfig, RuntimeConfig
 from app.inference.prompts import RAG_PROMPT_VERSION
-from app.inference.protocol import BaselineProtocol, dependency_lock_checksum, load_baseline_protocol
+from app.inference.protocol import (
+    BaselineProtocol,
+    dependency_lock_checksum,
+    load_baseline_protocol,
+)
 from app.inference.rag_ablations import RAGAblationSuite, RAGVariant, load_ablation_suite
 
 RAG_PROTOCOL_PATH = Path("configs/phase8-rag.json")
@@ -55,7 +59,9 @@ class RAGProtocol(BaseModel):
             raise ValueError("Phase 08 protocol must use the registered RAG prompt version")
         if self.state is RAGProtocolState.VALIDATION:
             if self.selected_variant_id is not None or self.locked_test_authorized:
-                raise ValueError("validation protocol may not select or authorize the locked-test config")
+                raise ValueError(
+                    "validation protocol may not select or authorize the locked-test config"
+                )
         else:
             if not self.selected_variant_id:
                 raise ValueError("frozen Phase 08 protocol requires selected_variant_id")
