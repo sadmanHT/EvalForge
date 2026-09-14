@@ -75,6 +75,22 @@ def test_frozen_protocol_allows_only_the_validation_selected_variant_on_test() -
         )
 
 
+def test_selection_freeze_does_not_retroactively_change_scientific_hash() -> None:
+    protocol, _suite = load_rag_protocol(ROOT)
+    frozen_payload = protocol.model_dump(mode="python")
+    frozen_payload.update(
+        {
+            "state": "frozen",
+            "selected_variant_id": "rag-default-k5",
+            "locked_test_authorized": True,
+        }
+    )
+    frozen = RAGProtocol.model_validate(frozen_payload)
+
+    assert frozen.scientific_payload() == protocol.scientific_payload()
+    assert frozen.scientific_config_hash() == protocol.scientific_config_hash()
+
+
 def test_rag_protocol_rejects_phase6_common_identity_drift() -> None:
     protocol, _suite = load_rag_protocol(ROOT)
     baseline = load_baseline_protocol(ROOT)
