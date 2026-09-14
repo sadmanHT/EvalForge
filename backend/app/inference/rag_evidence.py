@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -16,7 +17,7 @@ from app.inference.evidence import (
     seal_run_evidence,
 )
 from app.inference.protocol import load_taxonomy
-from app.inference.rag_ablations import RAGVariant
+from app.inference.rag_ablations import RAGAblationSuite, RAGVariant, load_ablation_suite
 from app.inference.rag_protocol import RAGProtocol
 from app.inference.rag_runner import RELEVANCE_REFERENCE_VERSION, _runbook_relevance_references
 from app.models import Experiment, Incident, KnowledgeBaseVersion, Run
@@ -52,6 +53,13 @@ def _tracking_payload(run: Run) -> dict[str, object]:
     }
 
 
+def _load_suite_for_evidence(root: Path, protocol: RAGProtocol) -> RAGAblationSuite:
+    suite = load_ablation_suite(root / protocol.ablation_suite_path)
+    if suite.config_hash() != protocol.ablation_suite_hash:
+        raise ValueError("Phase 08 evidence ablation suite hash disagrees with protocol")
+    return suite
+
+
 def _prediction_incident_ids(predictions: object) -> tuple[str, ...]:
     if not isinstance(predictions, list):
         raise ValueError("RAG run evidence predictions must be a list")
@@ -59,8 +67,7 @@ def _prediction_incident_ids(predictions: object) -> tuple[str, ...]:
     for raw in predictions:
         if not isinstance(raw, dict):
             raise ValueError("RAG run evidence predictions must contain objects")
-        prediction = Prediction.model_validate(raw)
-        incident_ids.append(prediction.incident_id)
+        incident_ids.append(Prediction.model_validate(raw).incident_id)
     if len(incident_ids) != len(set(incident_ids)):
         raise ValueError("RAG run evidence contains duplicate prediction incident IDs")
     return tuple(incident_ids)
@@ -73,18 +80,27 @@ def _validate_trace_contract(
     prediction_id_by_incident: Mapping[str, str],
     family_id_by_incident: Mapping[str, str],
 ) -> None:
+    if set(prediction_id_by_incident) != set(family_id_by_incident):
+        raise ValueError("RAG evidence trace identities do not cover the same incident set")
     incident_by_prediction_id = {
-        prediction_id: incident_id for incident_id, prediction_id in prediction_id_by_incident.items()
+        prediction_id: incident_id
+        for incident_id, prediction_id in prediction_id_by_incident.items()
     }
+    if len(incident_by_prediction_id) != len(prediction_id_by_incident):
+        raise ValueError("RAG evidence reuses one prediction ID across incidents")
     traces_by_incident: dict[str, list[dict[str, object]]] = {
         incident_id: [] for incident_id in prediction_id_by_incident
     }
+
     for trace in traces:
         prediction_id = trace.get("prediction_id")
+        incident_id = trace.get("incident_id")
         if not isinstance(prediction_id, str) or prediction_id not in incident_by_prediction_id:
             raise ValueError("RAG retrieval trace references an unknown prediction")
-        incident_id = incident_by_prediction_id[prediction_id]
-        traces_by_incident[incident_id].append(trace)
+        expected_incident_id = incident_by_prediction_id[prediction_id]
+        if incident_id != expected_incident_id:
+            raise ValueError("RAG retrieval trace incident identity disagrees with prediction")
+        traces_by_incident[expected_incident_id].append(trace)
 
         metadata = trace.get("metadata")
         if not isinstance(metadata, dict):
@@ -96,14 +112,16 @@ def _validate_trace_contract(
             raise ValueError("RAG retrieval trace is not research eligible")
         if provenance.get("source_split") in {"validation", "test"}:
             raise ValueError("RAG retrieval trace leaks validation or test source material")
-        source_family_id = provenance.get("source_family_id")
-        if source_family_id == family_id_by_incident[incident_id]:
+        if provenance.get("source_family_id") == family_id_by_incident[expected_incident_id]:
             raise ValueError("RAG retrieval trace leaks the query incident family")
 
-    prediction_by_incident = {
-        Prediction.model_validate(raw).incident_id: Prediction.model_validate(raw)
-        for raw in predictions
-    }
+    prediction_by_incident: dict[str, Prediction] = {}
+    for raw in predictions:
+        prediction = Prediction.model_validate(raw)
+        prediction_by_incident[prediction.incident_id] = prediction
+    if set(prediction_by_incident) != set(prediction_id_by_incident):
+        raise ValueError("RAG evidence predictions and persisted IDs cover different incidents")
+
     for incident_id, prediction in prediction_by_incident.items():
         incident_traces = sorted(
             traces_by_incident[incident_id],
@@ -112,8 +130,8 @@ def _validate_trace_contract(
         ranks = tuple(int(item["rank"]) for item in incident_traces)
         if ranks != tuple(range(1, len(incident_traces) + 1)):
             raise ValueError("RAG retrieval trace ranks must be contiguous and start at one")
-        trace_chunk_ids = tuple(str(item["chunk_id"]) for item in incident_traces)
-        if trace_chunk_ids != prediction.retrieved_chunk_ids:
+        chunk_ids = tuple(str(item["chunk_id"]) for item in incident_traces)
+        if chunk_ids != prediction.retrieved_chunk_ids:
             raise ValueError("RAG retrieval traces disagree with prediction retrieved_chunk_ids")
         included = tuple(
             str(item["chunk_id"])
@@ -123,6 +141,35 @@ def _validate_trace_contract(
         )
         if included != prediction.evidence_citations:
             raise ValueError("RAG prompt citations disagree with persisted retrieval traces")
+
+
+def _family_ids_from_dataset(
+    root: Path,
+    *,
+    dataset_version: str,
+    incident_ids: tuple[str, ...],
+) -> dict[str, str]:
+    path = (
+        root
+        / "datasets"
+        / "incident_diagnosis"
+        / "processed"
+        / dataset_version
+        / "incidents.jsonl"
+    )
+    family_ids: dict[str, str] = {}
+    wanted = set(incident_ids)
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        if not raw_line.strip():
+            continue
+        row = json.loads(raw_line)
+        incident_id = row.get("incident_id")
+        family_id = row.get("incident_family_id")
+        if incident_id in wanted and isinstance(incident_id, str) and isinstance(family_id, str):
+            family_ids[incident_id] = family_id
+    if set(family_ids) != wanted:
+        raise ValueError("Phase 08 RAG evidence cannot resolve incident family identities")
+    return family_ids
 
 
 def export_phase8_rag_run_evidence(
@@ -176,11 +223,15 @@ def export_phase8_rag_run_evidence(
     split = next(iter(splits))
     if split not in {"validation", "test"}:
         raise RuntimeError(f"Phase 08 RAG evidence has unsupported split: {split}")
-    protocol.assert_variant_allowed(
+
+    suite = _load_suite_for_evidence(root, protocol)
+    registered_variant = protocol.assert_variant_allowed(
         split=split,
         variant_id=variant.variant_id,
-        suite=_load_suite_for_evidence(root, protocol),
+        suite=suite,
     )
+    if registered_variant != variant:
+        raise RuntimeError("Phase 08 RAG evidence variant is not the registered suite variant")
 
     expected_ids = expected_split_incident_ids(
         root,
@@ -290,6 +341,7 @@ def export_phase8_rag_run_evidence(
         "upfront_cost_usd": upfront_cost_usd,
         "expected_incident_ids": list(expected_ids),
         "prediction_incident_ids": list(incident_ids),
+        "prediction_ids_by_incident": dict(sorted(prediction_id_by_incident.items())),
         "stored_prediction_count": len(predictions),
         "stored_retrieval_trace_count": len(traces),
         "stored_cost_record_count": readback.get("stored_cost_record_count"),
@@ -308,15 +360,6 @@ def export_phase8_rag_run_evidence(
         "completed_at": run.completed_at.isoformat() if run.completed_at else None,
     }
     return seal_run_evidence(payload)
-
-
-def _load_suite_for_evidence(root: Path, protocol: RAGProtocol):  # type: ignore[no-untyped-def]
-    from app.inference.rag_ablations import load_ablation_suite
-
-    suite = load_ablation_suite(root / protocol.ablation_suite_path)
-    if suite.config_hash() != protocol.ablation_suite_hash:
-        raise ValueError("Phase 08 evidence ablation suite hash disagrees with protocol")
-    return suite
 
 
 def validate_phase8_rag_run_evidence(
@@ -359,8 +402,9 @@ def validate_phase8_rag_run_evidence(
         dataset_version=protocol.dataset_version,
         split=expected_split,
     )
-    prediction_ids = payload.get("prediction_incident_ids")
-    if prediction_ids != list(expected_ids):
+    if payload.get("expected_incident_ids") != list(expected_ids):
+        raise ValueError("Phase 08 RAG evidence expected incident IDs disagree with dataset")
+    if payload.get("prediction_incident_ids") != list(expected_ids):
         raise ValueError("Phase 08 RAG evidence prediction IDs do not exactly match the split")
     if payload.get("stored_prediction_count") != len(expected_ids):
         raise ValueError("Phase 08 RAG evidence prediction count is incomplete")
@@ -376,55 +420,38 @@ def validate_phase8_rag_run_evidence(
 
     predictions = payload.get("predictions")
     traces = payload.get("retrieval_traces")
+    raw_prediction_ids = payload.get("prediction_ids_by_incident")
     if not isinstance(predictions, list) or not all(isinstance(item, dict) for item in predictions):
         raise ValueError("Phase 08 RAG evidence predictions are malformed")
     if not isinstance(traces, list) or not all(isinstance(item, dict) for item in traces):
         raise ValueError("Phase 08 RAG evidence retrieval traces are malformed")
+    if not isinstance(raw_prediction_ids, dict):
+        raise ValueError("Phase 08 RAG evidence prediction ID map is malformed")
+    prediction_ids = {
+        str(incident_id): str(prediction_id)
+        for incident_id, prediction_id in raw_prediction_ids.items()
+    }
+    if set(prediction_ids) != set(expected_ids):
+        raise ValueError("Phase 08 RAG evidence prediction ID map is incomplete")
     if payload.get("stored_retrieval_trace_count") != len(traces):
         raise ValueError("Phase 08 RAG evidence retrieval trace count is inconsistent")
 
-    family_ids: dict[str, str] = {}
-    for raw_line in (
-        root
-        / "datasets"
-        / "incident_diagnosis"
-        / "processed"
-        / protocol.dataset_version
-        / "incidents.jsonl"
-    ).read_text(encoding="utf-8").splitlines():
-        if not raw_line.strip():
-            continue
-        import json
-
-        row = json.loads(raw_line)
-        incident_id = row.get("incident_id")
-        family_id = row.get("incident_family_id")
-        if incident_id in expected_ids and isinstance(family_id, str):
-            family_ids[incident_id] = family_id
-    if set(family_ids) != set(expected_ids):
-        raise ValueError("Phase 08 RAG evidence cannot resolve incident family identities")
-
-    prediction_id_by_incident: dict[str, str] = {}
-    for trace in traces:
-        prediction_id = trace.get("prediction_id")
-        if not isinstance(prediction_id, str):
-            raise ValueError("Phase 08 RAG evidence trace is missing prediction_id")
-    for raw in predictions:
-        prediction = Prediction.model_validate(raw)
-        matching_prediction_ids = {
-            str(trace["prediction_id"])
-            for trace in traces
-            if trace.get("chunk_id") in prediction.retrieved_chunk_ids
-        }
-        if len(matching_prediction_ids) == 1:
-            prediction_id_by_incident[prediction.incident_id] = next(iter(matching_prediction_ids))
-        elif prediction.retrieved_chunk_ids:
-            raise ValueError("Phase 08 RAG evidence trace ownership is ambiguous")
-    if len(prediction_id_by_incident) != len(expected_ids):
-        raise ValueError("Phase 08 RAG evidence requires retrieval traces for every prediction")
+    family_ids = _family_ids_from_dataset(
+        root,
+        dataset_version=protocol.dataset_version,
+        incident_ids=expected_ids,
+    )
     _validate_trace_contract(
         predictions=[dict(item) for item in predictions],
         traces=[dict(item) for item in traces],
-        prediction_id_by_incident=prediction_id_by_incident,
+        prediction_id_by_incident=prediction_ids,
         family_id_by_incident=family_ids,
     )
+
+    cost_records = payload.get("cost_records")
+    if not isinstance(cost_records, list) or len(cost_records) != len(expected_ids):
+        raise ValueError("Phase 08 RAG evidence requires one cost record per prediction")
+    if payload.get("stored_cost_record_count") != len(cost_records):
+        raise ValueError("Phase 08 RAG evidence cost-record count is inconsistent")
+    if payload.get("experiment_status") != "completed" or payload.get("run_status") != "completed":
+        raise ValueError("Phase 08 RAG evidence requires completed experiment and run status")
