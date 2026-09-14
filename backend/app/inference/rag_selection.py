@@ -84,9 +84,7 @@ def select_primary_rag_variant(
             "hierarchical_accuracy": float(
                 candidate.metric_values["supporting.hierarchical_accuracy"]
             ),
-            "retrieval_context_recall": float(
-                candidate.metric_values["retrieval.context_recall"]
-            ),
+            "retrieval_context_recall": float(candidate.metric_values["retrieval.context_recall"]),
             "ece": float(candidate.metric_values["calibration.ece"]),
             "p95_latency_ms": float(candidate.metric_values["latency.p95_ms"]),
         }

@@ -150,12 +150,7 @@ def _family_ids_from_dataset(
     incident_ids: tuple[str, ...],
 ) -> dict[str, str]:
     path = (
-        root
-        / "datasets"
-        / "incident_diagnosis"
-        / "processed"
-        / dataset_version
-        / "incidents.jsonl"
+        root / "datasets" / "incident_diagnosis" / "processed" / dataset_version / "incidents.jsonl"
     )
     family_ids: dict[str, str] = {}
     wanted = set(incident_ids)
@@ -246,9 +241,7 @@ def export_phase8_rag_run_evidence(
         .where(PredictionRow.run_id == run_id)
         .order_by(PredictionRow.incident_id)
     ).all()
-    prediction_id_by_incident = {
-        row.incident_id: row.prediction_id for row in prediction_rows
-    }
+    prediction_id_by_incident = {row.incident_id: row.prediction_id for row in prediction_rows}
     if set(prediction_id_by_incident) != set(incident_ids):
         raise RuntimeError("Phase 08 RAG persisted prediction rows are incomplete")
     family_id_by_incident = {
