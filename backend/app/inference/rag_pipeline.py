@@ -369,9 +369,7 @@ class RAGPipeline:
                     rank=rank,
                     raw_similarity_score=raw.score,
                     reranker_score=(
-                        None
-                        if self.reranker.reranker_id == "none"
-                        else reranked_result.score
+                        None if self.reranker.reranker_id == "none" else reranked_result.score
                     ),
                     final_score=reranked_result.score,
                     included_in_prompt=position is not None,
