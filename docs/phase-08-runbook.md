@@ -20,6 +20,27 @@ once after that selection is sealed.
   evaluator revision, judge model/revision, and prompt version. Supporting judge scores never
   participate in primary RAG selection.
 
+### Validation amendment: undefined ECE on parse failures
+
+The first external validation attempt on commit
+`9ff1f93ac645102ea0a9ada7fe2ed1cefd17421a` exposed an implementation edge case after the
+`rag-top-k3` run had completed: the common Phase 05 evaluator correctly omitted
+`calibration.ece` because one non-OK parse prediction had no generated-label confidence, while
+the Phase 08 evidence/selection layer incorrectly required ECE unconditionally. The attempt is
+classified as a technical/incomplete validation suite and is not eligible for variant selection.
+
+Selection policy `phase8-validation-selection-v2-missing-ece-worst` completes the predeclared
+ordering without changing any model, prompt, dataset, retrieval, generation, or evaluator setting.
+Exact accuracy, hierarchical accuracy, and retrieval recall remain the first three ranking keys.
+At the existing ECE tie-break position only, an evaluator-undefined ECE caused by a parse failure
+is ranked after every defined ECE; lower p95 latency and lexical variant ID remain the final
+tie-breakers. The missing-ECE rule can never improve a candidate's rank at the ECE position.
+
+Evidence may omit `calibration.ece` only when `quality.parse_failure_rate` is positive and the
+sealed predictions contain a non-OK parse outcome with no confidence value. All other required
+metrics remain mandatory. After this repair, run a complete clean replacement validation suite
+from one new commit; do not mix the partial first-attempt runs into the accepted ablation report.
+
 ## Required runtime
 
 Use the same Phase 06 GPU-host contract and software fingerprint for all real Phase 08 validation
