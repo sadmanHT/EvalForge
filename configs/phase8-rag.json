@@ -1,0 +1,37 @@
+{
+  "ablation_suite_hash": "5ba66de888528f0bef3c01772e3ac8762a5ba32b19361de7a9b7e2e3267297c8",
+  "ablation_suite_path": "configs/phase8-rag-ablations.json",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "calibration_version": null,
+  "confidence_method": "normalized_label_sequence_log_likelihood",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "ece_bins": 10,
+  "evaluator_version": "phase5-evaluator-v1",
+  "generation_config": {
+    "do_sample": false,
+    "max_new_tokens": 128,
+    "temperature": 0.0
+  },
+  "label_taxonomy_version": "1.0.0",
+  "locked_test_authorized": false,
+  "output_schema_version": "root-cause-prediction-v1",
+  "prompt_version": "rag-context-v1",
+  "protocol_version": "phase8-rag-protocol-v1",
+  "research_policy_version": "phase7-leakage-policy-v1",
+  "runtime_config": {
+    "bnb_4bit_use_double_quant": true,
+    "device": "auto",
+    "dtype": "float16",
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "quantization": "bitsandbytes_4bit_nf4",
+    "revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+    "seed": 20260908
+  },
+  "seed": 20260908,
+  "selected_variant_id": null,
+  "state": "validation",
+  "study_id": "evalforge-incident-diagnosis-primary-v1",
+  "supporting_evaluator_versions": null,
+  "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d"
+}
