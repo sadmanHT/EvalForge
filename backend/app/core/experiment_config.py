@@ -36,6 +36,10 @@ class ExperimentConfig(BaseModel):
     top_k: int | None = None
     reranker_id: str | None = None
     reranker_revision: str | None = None
+    retrieval_policy_version: str | None = None
+    context_policy_version: str | None = None
+    max_context_tokens: int | None = None
+    max_chunk_tokens: int | None = None
     prompt_version: str = Field(min_length=1)
     output_schema_version: str = Field(min_length=1)
     generation_config: dict[str, Any]
@@ -63,6 +67,10 @@ class ExperimentConfig(BaseModel):
             self.chunk_size,
             self.overlap,
             self.top_k,
+            self.retrieval_policy_version,
+            self.context_policy_version,
+            self.max_context_tokens,
+            self.max_chunk_tokens,
         )
         if uses_rag:
             if any(value is None for value in retrieval):
@@ -70,13 +78,20 @@ class ExperimentConfig(BaseModel):
             assert self.chunk_size is not None
             assert self.overlap is not None
             assert self.top_k is not None
+            assert self.max_context_tokens is not None
+            assert self.max_chunk_tokens is not None
             if (
                 self.chunk_size <= 0
                 or self.overlap < 0
                 or self.overlap >= self.chunk_size
                 or self.top_k <= 0
+                or self.max_context_tokens <= 0
+                or self.max_chunk_tokens <= 0
+                or self.max_chunk_tokens > self.max_context_tokens
             ):
                 raise ValueError("invalid retrieval configuration")
+            if (self.reranker_id is None) != (self.reranker_revision is None):
+                raise ValueError("reranker id and revision must be present together")
         elif (
             any(value is not None for value in retrieval)
             or self.reranker_id
