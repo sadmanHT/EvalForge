@@ -20,7 +20,7 @@ def _candidate(
     exact: float = 0.5,
     hierarchical: float = 0.6,
     recall: float = 0.7,
-    ece: float = 0.1,
+    ece: float | None = 0.1,
     p95: float = 100.0,
     split: str = "validation",
 ) -> RAGValidationCandidate:
@@ -31,7 +31,7 @@ def _candidate(
             "primary.exact_accuracy": exact,
             "supporting.hierarchical_accuracy": hierarchical,
             "retrieval.context_recall": recall,
-            "calibration.ece": ece,
+            **({"calibration.ece": ece} if ece is not None else {}),
             "latency.p95_ms": p95,
         },
         result_hash=f"result-{variant_id}",
@@ -81,3 +81,41 @@ def test_selection_requires_every_controlled_ablation_variant() -> None:
 
     with pytest.raises(ValueError, match="every suite variant"):
         select_primary_rag_variant(suite, candidates)
+
+
+def test_selection_ranks_undefined_ece_after_defined_ece_on_tie() -> None:
+    _protocol, suite = load_rag_protocol(ROOT)
+    candidates = [_candidate(variant.variant_id) for variant in suite.variants]
+    missing_id = suite.variants[0].variant_id
+    defined_id = suite.variants[1].variant_id
+    candidates = [
+        _candidate(
+            candidate.variant_id,
+            ece=None if candidate.variant_id == missing_id else 0.1,
+        )
+        for candidate in candidates
+    ]
+
+    result = select_primary_rag_variant(suite, candidates)
+
+    assert result.ranked_variant_ids.index(defined_id) < result.ranked_variant_ids.index(missing_id)
+    row = next(item for item in result.ranking_rows if item["variant_id"] == missing_id)
+    assert row["ece"] is None
+    assert row["ece_defined"] is False
+
+
+def test_undefined_ece_does_not_override_higher_priority_accuracy() -> None:
+    _protocol, suite = load_rag_protocol(ROOT)
+    preferred = suite.variants[0].variant_id
+    candidates = [
+        _candidate(
+            variant.variant_id,
+            exact=0.9 if variant.variant_id == preferred else 0.5,
+            ece=None if variant.variant_id == preferred else 0.01,
+        )
+        for variant in suite.variants
+    ]
+
+    result = select_primary_rag_variant(suite, candidates)
+
+    assert result.selected_variant_id == preferred
