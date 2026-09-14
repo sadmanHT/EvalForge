@@ -14,9 +14,7 @@ def _parse_failure_prediction(*, with_confidence: bool = False) -> dict[str, obj
         raw_model_output="{",
         label_probabilities={"a": 0.8, "b": 0.2},
         confidence_probability=0.8 if with_confidence else None,
-        confidence_source=(
-            "normalized_label_sequence_log_likelihood" if with_confidence else None
-        ),
+        confidence_source=("normalized_label_sequence_log_likelihood" if with_confidence else None),
     )
     return prediction.model_dump(mode="json")
 
@@ -37,9 +35,7 @@ def test_ece_omission_requires_positive_parse_failure_rate() -> None:
 
 
 def test_ece_omission_requires_a_parse_failure_missing_confidence() -> None:
-    with pytest.raises(
-        ValueError, match="without a parse-failure prediction lacking confidence"
-    ):
+    with pytest.raises(ValueError, match="without a parse-failure prediction lacking confidence"):
         _validate_ece_contract(
             metrics={"quality.parse_failure_rate": 1.0},
             predictions=[_parse_failure_prediction(with_confidence=True)],
