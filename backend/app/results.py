@@ -28,6 +28,9 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
         .where(Prediction.run_id == run_id)
         .order_by(Prediction.incident_id, RetrievalTrace.rank)
     ).all()
+    incident_by_prediction_id = {
+        row.prediction_id: row.incident_id for row in predictions
+    }
     return {
         "experiment": {
             "experiment_id": experiment.experiment_id,
@@ -66,6 +69,7 @@ def load_run_evidence(session: Session, *, run_id: str) -> dict[str, object] | N
             {
                 "retrieval_trace_id": row.retrieval_trace_id,
                 "prediction_id": row.prediction_id,
+                "incident_id": incident_by_prediction_id[row.prediction_id],
                 "kb_version": row.kb_version,
                 "chunk_id": row.chunk_id,
                 "rank": row.rank,
