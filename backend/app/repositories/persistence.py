@@ -59,7 +59,7 @@ class PersistenceRepository:
             model_id=model_id,
             revision=revision,
             license=license_name,
-            model_metadata=metadata or {},
+            metadata_json=metadata or {},
         )
         self.session.add(row)
         self.session.flush()
@@ -70,7 +70,7 @@ class PersistenceRepository:
         experiment_id: str,
         config: ExperimentConfig,
         *,
-        status: str = "created",
+        status: str = "planned",
     ) -> Experiment:
         config_hash = experiment_config_hash(config)
         existing = self.session.get(Experiment, experiment_id)
