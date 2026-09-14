@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.evaluation.contracts import Prediction
+from app.evaluation.contracts import ParseStatus, Prediction
 from app.evaluation.harness import EvaluationHarness
 from app.evaluation.persistence import reload_evaluation, score_stored_run
 from app.inference.evidence import (
@@ -31,7 +31,6 @@ _REQUIRED_METRICS = (
     "supporting.top3_accuracy",
     "quality.parse_failure_rate",
     "calibration.normalized_multiclass_brier",
-    "calibration.ece",
     "latency.p50_ms",
     "latency.p95_ms",
     "cost.marginal_mean_usd",
@@ -39,6 +38,8 @@ _REQUIRED_METRICS = (
     "retrieval.context_precision",
     "retrieval.context_recall",
 )
+
+_ECE_METRIC = "calibration.ece"
 
 
 def _tracking_payload(run: Run) -> dict[str, object]:
@@ -71,6 +72,53 @@ def _prediction_incident_ids(predictions: object) -> tuple[str, ...]:
     if len(incident_ids) != len(set(incident_ids)):
         raise ValueError("RAG run evidence contains duplicate prediction incident IDs")
     return tuple(incident_ids)
+
+
+def _validate_ece_contract(
+    *,
+    metrics: Mapping[str, object],
+    predictions: list[dict[str, object]],
+) -> None:
+    """Allow canonical ECE omission only for the evaluator's parse-failure edge case.
+
+    Phase 05's common evaluator intentionally omits ECE when any prediction lacks a
+    confidence value. A non-OK parse result is a first-class prediction outcome and
+    can legitimately have no generated-label confidence even though its full label
+    probability distribution remains available for Brier scoring.
+
+    Phase 08 selection treats such an undefined ECE conservatively as worse than any
+    defined ECE at the already-declared ECE tie-break position. This validator keeps
+    the exception narrow so unrelated metric loss cannot silently pass.
+    """
+
+    if _ECE_METRIC in metrics:
+        value = metrics[_ECE_METRIC]
+        if isinstance(value, bool) or not isinstance(value, int | float):
+            raise ValueError("Phase 08 RAG ECE metric must be numeric when present")
+        return
+
+    parse_failure_rate = metrics.get("quality.parse_failure_rate")
+    if (
+        isinstance(parse_failure_rate, bool)
+        or not isinstance(parse_failure_rate, int | float)
+        or float(parse_failure_rate) <= 0.0
+    ):
+        raise ValueError(
+            "Phase 08 RAG evidence may omit calibration.ece only when parse failures occurred"
+        )
+
+    parsed = [Prediction.model_validate(item) for item in predictions]
+    missing_confidence_parse_failures = [
+        prediction
+        for prediction in parsed
+        if prediction.parse_status is not ParseStatus.OK
+        and prediction.confidence_probability is None
+    ]
+    if not missing_confidence_parse_failures:
+        raise ValueError(
+            "Phase 08 RAG evidence omitted calibration.ece without a parse-failure "
+            "prediction lacking confidence"
+        )
 
 
 def _trace_rank(trace: Mapping[str, object]) -> int:
@@ -429,6 +477,7 @@ def validate_phase8_rag_run_evidence(
         raise ValueError("Phase 08 RAG evidence retrieval traces are malformed")
     if not isinstance(raw_prediction_ids, dict):
         raise ValueError("Phase 08 RAG evidence prediction ID map is malformed")
+    _validate_ece_contract(metrics=metrics, predictions=[dict(item) for item in predictions])
     prediction_ids = {
         str(incident_id): str(prediction_id)
         for incident_id, prediction_id in raw_prediction_ids.items()
