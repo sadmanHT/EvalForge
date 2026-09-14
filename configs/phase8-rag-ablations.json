@@ -93,10 +93,10 @@
       "chunk_size": 96,
       "chunker_version": "phase7-token-window-v1",
       "context_policy_version": "phase8-context-budget-v1",
-      "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
-      "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "embedding_model_id": "evalforge/feature-hash-unigram-embedding",
+      "embedding_model_revision": "phase8-feature-hash-unigram-v1",
       "factor": "embedding",
-      "knowledge_base_version": "evalforge-kb-v0.1.0-minilm-l6-v2",
+      "knowledge_base_version": "evalforge-kb-v0.1.0-unigram",
       "max_chunk_tokens": 128,
       "max_context_tokens": 384,
       "overlap": 24,
@@ -104,7 +104,7 @@
       "reranker_id": null,
       "reranker_revision": null,
       "top_k": 5,
-      "variant_id": "rag-embedding-minilm"
+      "variant_id": "rag-embedding-unigram"
     },
     {
       "chunk_size": 96,
