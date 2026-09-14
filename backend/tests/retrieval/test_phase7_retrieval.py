@@ -7,6 +7,7 @@ from app.retrieval.embeddings import EmbeddingConfig, HashEmbeddingAdapter
 from app.retrieval.indexing import (
     ChunkingConfig,
     DocumentInput,
+    _embedding_matches,
     build_index_plan,
     chunk_document,
     load_kb_config,
@@ -30,6 +31,15 @@ def test_hash_embeddings_are_deterministic_normalized_and_dimensioned() -> None:
     assert first == second
     assert len(first) == 32
     assert math.isclose(math.sqrt(sum(value * value for value in first)), 1.0)
+
+
+def test_persisted_pgvector_text_round_trip_matches_expected_embedding() -> None:
+    expected = [0.0, 0.125, -0.25]
+
+    assert _embedding_matches("[0,0.125,-0.25]", expected)
+    assert _embedding_matches(expected, expected)
+    assert not _embedding_matches("[0,0.125,-0.24]", expected)
+    assert not _embedding_matches("not-a-vector", expected)
 
 
 def test_chunking_has_stable_ids_and_offsets() -> None:
