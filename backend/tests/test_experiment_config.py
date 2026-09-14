@@ -43,6 +43,21 @@ def _config(**overrides: Any) -> ExperimentConfig:
     return ExperimentConfig.model_validate(payload)
 
 
+def _rag_identity() -> dict[str, object]:
+    return {
+        "knowledge_base_version": "kb-v1",
+        "embedding_model_revision": "embed-rev",
+        "chunker_version": "chunker-v1",
+        "chunk_size": 512,
+        "overlap": 64,
+        "top_k": 5,
+        "retrieval_policy_version": "research-policy-v1",
+        "context_policy_version": "context-policy-v1",
+        "max_context_tokens": 1024,
+        "max_chunk_tokens": 256,
+    }
+
+
 def test_zero_shot_config_is_valid_and_canonical() -> None:
     config = _config()
     canonical = canonical_config_json(config)
@@ -90,16 +105,9 @@ def test_rag_requires_complete_retrieval_identity() -> None:
     with pytest.raises(ValidationError, match="complete retrieval identity"):
         _config(pipeline_type=PipelineType.RAG, knowledge_base_version="kb-v1")
 
-    config = _config(
-        pipeline_type=PipelineType.RAG,
-        knowledge_base_version="kb-v1",
-        embedding_model_revision="embed-rev",
-        chunker_version="chunker-v1",
-        chunk_size=512,
-        overlap=64,
-        top_k=5,
-    )
+    config = _config(pipeline_type=PipelineType.RAG, **_rag_identity())
     assert config.top_k == 5
+    assert config.context_policy_version == "context-policy-v1"
 
 
 def test_non_rag_pipeline_rejects_retrieval_identity() -> None:
@@ -123,23 +131,30 @@ def test_finetuned_requires_adapter_and_zero_shot_forbids_it() -> None:
 
 
 @pytest.mark.parametrize(
-    ("chunk_size", "overlap", "top_k"),
-    [(0, 0, 5), (512, 512, 5), (512, -1, 5), (512, 64, 0)],
+    ("field", "value"),
+    [
+        ("chunk_size", 0),
+        ("overlap", 512),
+        ("overlap", -1),
+        ("top_k", 0),
+        ("max_context_tokens", 0),
+        ("max_chunk_tokens", 0),
+        ("max_chunk_tokens", 2048),
+    ],
 )
-def test_invalid_rag_geometry_is_rejected(
-    chunk_size: int,
-    overlap: int,
-    top_k: int,
-) -> None:
+def test_invalid_rag_geometry_is_rejected(field: str, value: int) -> None:
+    identity = _rag_identity()
+    identity[field] = value
     with pytest.raises(ValidationError, match="invalid retrieval configuration"):
+        _config(pipeline_type=PipelineType.RAG, **identity)
+
+
+def test_rag_reranker_identity_is_all_or_nothing() -> None:
+    with pytest.raises(ValidationError, match="reranker id and revision"):
         _config(
             pipeline_type=PipelineType.RAG,
-            knowledge_base_version="kb-v1",
-            embedding_model_revision="embed-rev",
-            chunker_version="chunker-v1",
-            chunk_size=chunk_size,
-            overlap=overlap,
-            top_k=top_k,
+            **_rag_identity(),
+            reranker_id="reranker-only",
         )
 
 
