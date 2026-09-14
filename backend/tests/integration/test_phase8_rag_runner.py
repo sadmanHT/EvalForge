@@ -214,7 +214,7 @@ def test_rag_runner_is_reproducible_aligned_and_leakage_safe(engine: Engine) -> 
             assert "root_cause_code" not in provenance
 
 
-def test_rag_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -> None:
+def test_rag_runner_refuses_nonselected_variant_after_protocol_freeze(engine: Engine) -> None:
     protocol, suite = load_rag_protocol(ROOT)
     variant = next(item for item in suite.variants if item.variant_id == suite.baseline_variant_id)
     kb_config = load_kb_config(ROOT / "configs/phase7-kb.json")
@@ -241,7 +241,10 @@ def test_rag_runner_refuses_locked_test_before_protocol_freeze(engine: Engine) -
                 policy_version=variant.context_policy_version,
             ),
         )
-        with pytest.raises(ValueError, match="locked test requires a frozen"):
+        with pytest.raises(
+            ValueError,
+            match="locked test may run only the validation-selected frozen RAG variant",
+        ):
             run_rag_experiment(
                 session,
                 root=ROOT,
