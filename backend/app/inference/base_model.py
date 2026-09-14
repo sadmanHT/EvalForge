@@ -104,6 +104,77 @@ class BaseModelBackend(Protocol):
     ) -> BackendOutput: ...
 
 
+def build_prediction_from_backend_output(
+    *,
+    incident_id: str,
+    output: BackendOutput,
+    allowed_labels: Sequence[str],
+    pipeline_metadata: Mapping[str, object],
+    retrieved_chunk_ids: Sequence[str] | None = None,
+    evidence_citations: Sequence[str] | None = None,
+) -> Prediction:
+    """Apply the canonical parsing, confidence, token, and ranking contract to model output."""
+
+    labels = tuple(allowed_labels)
+    if not labels or len(labels) != len(set(labels)):
+        raise ValueError("allowed_labels must be a non-empty unique sequence")
+    if set(output.label_log_likelihoods) != set(labels):
+        raise InferenceError("backend label scores do not exactly cover the frozen label set")
+    probabilities = normalize_label_sequence_log_likelihoods(
+        output.label_log_likelihoods,
+        allowed_labels=labels,
+    )
+    metadata = dict(pipeline_metadata)
+    metadata.setdefault("label_log_likelihoods", dict(output.label_log_likelihoods))
+    metadata.setdefault("runtime", dict(output.runtime_metadata or {}))
+    parsed = parse_baseline_output(
+        incident_id=incident_id,
+        raw_output=output.raw_text,
+        allowed_labels=labels,
+        latency_ms=output.latency_ms,
+        pipeline_metadata=metadata,
+    )
+    payload = parsed.model_dump(mode="python", exclude_none=False)
+    payload.update(
+        {
+            "input_tokens": output.input_tokens,
+            "output_tokens": output.output_tokens,
+            "total_tokens": output.input_tokens + output.output_tokens,
+            "cost_usd": output.cost_usd,
+            "label_probabilities": probabilities,
+        }
+    )
+    if retrieved_chunk_ids is not None:
+        payload["retrieved_chunk_ids"] = tuple(retrieved_chunk_ids)
+    if evidence_citations is not None:
+        payload["evidence_citations"] = tuple(evidence_citations)
+    if parsed.parse_status is ParseStatus.OK and parsed.predicted_root_cause_code is not None:
+        predicted = parsed.predicted_root_cause_code
+        payload["confidence_probability"] = probabilities[predicted]
+        payload["confidence_source"] = ConfidenceSource.NORMALIZED_LABEL_SEQUENCE_LOG_LIKELIHOOD
+        ranked_labels = sorted(
+            labels,
+            key=lambda label: (float(output.label_log_likelihoods[label]), label),
+            reverse=True,
+        )
+        if ranked_labels[0] == predicted:
+            payload["ranked_labels"] = tuple(
+                RankedLabel(
+                    label=label,
+                    score=float(output.label_log_likelihoods[label]),
+                    probability=probabilities[label],
+                )
+                for label in ranked_labels
+            )
+        else:
+            normalized_metadata = dict(payload["pipeline_metadata"])
+            normalized_metadata["ranked_labels_omitted"] = (
+                "generated_label_disagrees_with_score_argmax"
+            )
+            payload["pipeline_metadata"] = normalized_metadata
+    return Prediction.model_validate(payload)
+
+
 def _oom_like(exc: BaseException) -> bool:
     text = str(exc).lower()
     return "out of memory" in text or "cuda error: out of memory" in text
@@ -337,60 +408,18 @@ class ZeroShotBaselineAdapter:
             allowed_labels=self.allowed_labels,
             generation_config=self.generation_config,
         )
-        if set(output.label_log_likelihoods) != set(self.allowed_labels):
-            raise InferenceError("backend label scores do not exactly cover the frozen label set")
-        probabilities = normalize_label_sequence_log_likelihoods(
-            output.label_log_likelihoods,
-            allowed_labels=self.allowed_labels,
-        )
         metadata: dict[str, object] = {
             "pipeline_type": "ZERO_SHOT",
             "prompt_version": self.prompt_template.version,
             "output_schema_version": self.prompt_template.output_schema_version,
             "generation_config": self.generation_config.model_dump(mode="json"),
-            "label_log_likelihoods": dict(output.label_log_likelihoods),
-            "runtime": dict(output.runtime_metadata or {}),
         }
-        parsed = parse_baseline_output(
+        return build_prediction_from_backend_output(
             incident_id=incident.incident_id,
-            raw_output=output.raw_text,
+            output=output,
             allowed_labels=self.allowed_labels,
-            latency_ms=output.latency_ms,
             pipeline_metadata=metadata,
         )
-        payload = parsed.model_dump(mode="python", exclude_none=False)
-        payload.update(
-            {
-                "input_tokens": output.input_tokens,
-                "output_tokens": output.output_tokens,
-                "total_tokens": output.input_tokens + output.output_tokens,
-                "cost_usd": output.cost_usd,
-                "label_probabilities": probabilities,
-            }
-        )
-        if parsed.parse_status is ParseStatus.OK and parsed.predicted_root_cause_code is not None:
-            predicted = parsed.predicted_root_cause_code
-            payload["confidence_probability"] = probabilities[predicted]
-            payload["confidence_source"] = ConfidenceSource.NORMALIZED_LABEL_SEQUENCE_LOG_LIKELIHOOD
-            ranked_labels = sorted(
-                self.allowed_labels,
-                key=lambda label: (float(output.label_log_likelihoods[label]), label),
-                reverse=True,
-            )
-            if ranked_labels[0] == predicted:
-                payload["ranked_labels"] = tuple(
-                    RankedLabel(
-                        label=label,
-                        score=float(output.label_log_likelihoods[label]),
-                        probability=probabilities[label],
-                    )
-                    for label in ranked_labels
-                )
-            else:
-                metadata = dict(payload["pipeline_metadata"])
-                metadata["ranked_labels_omitted"] = "generated_label_disagrees_with_score_argmax"
-                payload["pipeline_metadata"] = metadata
-        return Prediction.model_validate(payload)
 
     def predict_batch(self, incidents: Sequence[IncidentInput]) -> tuple[Prediction, ...]:
         seen: set[str] = set()
