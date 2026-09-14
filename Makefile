@@ -41,7 +41,7 @@ test-phase7:
 	cd backend && pytest tests/retrieval/test_phase7_retrieval.py tests/retrieval/test_phase7_completion_gate.py tests/integration/test_phase7_retrieval_integration.py
 
 test-phase8:
-	cd backend && pytest tests/inference/test_phase8_rag_pipeline.py tests/inference/test_phase8_rag_protocol.py tests/retrieval/test_phase8_variant_indexing.py tests/integration/test_phase8_rag_integration.py tests/integration/test_phase8_rag_runner.py tests/integration/test_phase8_worker_api.py
+	cd backend && pytest tests/inference/test_phase8_rag_pipeline.py tests/inference/test_phase8_rag_protocol.py tests/inference/test_phase8_rag_selection.py tests/inference/test_phase8_ragas.py tests/retrieval/test_phase8_variant_indexing.py tests/integration/test_phase8_rag_integration.py tests/integration/test_phase8_rag_runner.py tests/integration/test_phase8_worker_api.py
 
 test-integration:
 	cd backend && pytest tests/integration -m integration
