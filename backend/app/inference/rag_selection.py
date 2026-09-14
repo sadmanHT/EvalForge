@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
 from app.inference.rag_ablations import RAGAblationSuite
 
@@ -31,7 +31,9 @@ class RAGSelectionResult:
     ranking_rows: tuple[dict[str, object], ...]
 
 
-def _selection_key(candidate: RAGValidationCandidate) -> tuple[float, float, float, float, float, str]:
+def _selection_key(
+    candidate: RAGValidationCandidate,
+) -> tuple[float, float, float, float, float, str]:
     metrics = candidate.metric_values
     return (
         -float(metrics["primary.exact_accuracy"]),
@@ -64,9 +66,11 @@ def select_primary_rag_variant(
             raise ValueError("Phase 08 primary RAG selection may use validation evidence only")
         missing = [name for name in _REQUIRED_METRICS if name not in candidate.metric_values]
         if missing:
-            raise ValueError(
-                f"Phase 08 validation candidate {candidate.variant_id} is missing metrics: {missing}"
+            message = (
+                f"Phase 08 validation candidate {candidate.variant_id} "
+                f"is missing metrics: {missing}"
             )
+            raise ValueError(message)
         if not candidate.result_hash:
             raise ValueError("Phase 08 validation selection requires sealed result hashes")
 
