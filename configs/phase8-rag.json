@@ -14,7 +14,7 @@
     "temperature": 0.0
   },
   "label_taxonomy_version": "1.0.0",
-  "locked_test_authorized": false,
+  "locked_test_authorized": true,
   "output_schema_version": "root-cause-prediction-v1",
   "prompt_version": "rag-context-v1",
   "protocol_version": "phase8-rag-protocol-v1",
@@ -29,8 +29,8 @@
     "seed": 20260908
   },
   "seed": 20260908,
-  "selected_variant_id": null,
-  "state": "validation",
+  "selected_variant_id": "rag-top-k1",
+  "state": "frozen",
   "study_id": "evalforge-incident-diagnosis-primary-v1",
   "supporting_evaluator_versions": null,
   "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d"

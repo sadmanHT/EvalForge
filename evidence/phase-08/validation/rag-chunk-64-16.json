@@ -1,0 +1,1690 @@
+{
+  "ablation_suite_hash": "c08e351c61215fb96fa5965dd9a51da37042a7fbec7db78a74fea7a819a68d62",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "completed_at": "2026-09-14T10:10:06.594100+00:00",
+  "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+  "cost_records": [
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-15184ebaac267c631b518aaa",
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 861,
+        "latency_ms": 12956.185251000079,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 99,
+        "total_tokens": 960
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-39ddf26f64a4d23e10c351f2",
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 771,
+        "latency_ms": 9650.983634999875,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 52,
+        "total_tokens": 823
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-8aba1bd40ca761e14535ec47",
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 803,
+        "latency_ms": 10458.718199000032,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 64,
+        "total_tokens": 867
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-c5ac304879e5a8a54295688d",
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 782,
+        "latency_ms": 10894.47520900012,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 72,
+        "total_tokens": 854
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-c863a1a5c795079fc189d921",
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 942,
+        "latency_ms": 13610.720733000107,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 98,
+        "total_tokens": 1040
+      }
+    },
+    {
+      "amount_usd": "0.00000000",
+      "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+      "cost_record_id": "cost-f9f37a639568647306626d2a",
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "units": {
+        "gpu_hour_usd": 0.0,
+        "input_tokens": 854,
+        "latency_ms": 13966.312076000122,
+        "method": "active_inference_wall_time_x_gpu_hour_rate",
+        "output_tokens": 118,
+        "total_tokens": 972
+      }
+    }
+  ],
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "dependency_lock_checksum": "917fb1f22c38b666d0baadcfaa8a1d9b22d424b0991321e7c622c0da45ae8a95",
+  "evaluator_version": "phase5-evaluator-v1",
+  "evidence_sha256": "6ebf41cbdc4bcc7962483546d96262d286aca6a8e7fa54c6c388bbae54dba178",
+  "evidence_version": "phase8-rag-run-evidence-v1",
+  "expected_incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "experiment_config_hash": "2970fef60b0a10abb2c26b02306b5ef45e90026cbbbc81567b3bbbc26560b7b5",
+  "experiment_id": "phase8-rag-chunk-64-16-validation-kaggle-v2",
+  "experiment_status": "completed",
+  "failure_codes": [
+    [
+      "incident-ad8c9deca73f25af4d3cffe5",
+      "RETRIEVAL_MISS"
+    ]
+  ],
+  "generation_config": {
+    "do_sample": false,
+    "max_new_tokens": 128,
+    "temperature": 0.0
+  },
+  "git_commit": "46c187476076c4b5874267fb1fee9d07133371e9",
+  "hardware_runtime_descriptor": "phase6-gpu-host-v1 environment=45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff torch=2.10.0+cu128 cuda=12.8 gpus=Tesla T4",
+  "inference_retry_count": 0,
+  "knowledge_base": {
+    "chunk_size": 64,
+    "chunker_version": "phase7-token-window-v1",
+    "embedding_model_id": "evalforge/feature-hash-embedding",
+    "embedding_model_revision": "phase7-feature-hash-v1",
+    "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+    "manifest_checksum": "715e1f951b2addafee828105a7ed38ed7f7b86f918a9e1b3eb060c9288df03f1",
+    "overlap": 16
+  },
+  "locked_test_authorized_at_export": false,
+  "metric_recomputation_verified": true,
+  "metrics": {
+    "calibration.ece": 0.07452122338100699,
+    "calibration.normalized_multiclass_brier": 0.012087965727486383,
+    "cost.amortized_mean_usd": 0.0,
+    "cost.marginal_mean_usd": 0.0,
+    "latency.p50_ms": 11925.3302300001,
+    "latency.p95_ms": 13877.41424025012,
+    "primary.exact_accuracy": 0.8333333333333334,
+    "quality.parse_failure_rate": 0.0,
+    "retrieval.context_precision": 0.16666666666666666,
+    "retrieval.context_recall": 0.4166666666666667,
+    "supporting.hierarchical_accuracy": 0.8333333333333334,
+    "supporting.top3_accuracy": 0.8333333333333334
+  },
+  "no_context_prediction_count": 0,
+  "output_schema_version": "root-cause-prediction-v1",
+  "prediction_ids_by_incident": {
+    "incident-215133387692e86f737df1e9": "prediction-09f9580f19a6e8d75a474b66",
+    "incident-5c738a9915b665b34c08ea44": "prediction-90657ad763f30a53e3f5f2c8",
+    "incident-65655551f36946ee7b819481": "prediction-00db9f4a94a2835a08949871",
+    "incident-ad8c9deca73f25af4d3cffe5": "prediction-0c84f3643db08eec07ceec72",
+    "incident-cf508a1cff474450be546677": "prediction-470b813ad107a41b0ede8a4b",
+    "incident-e7286f91b513711ffee7ddc1": "prediction-10ad5b1d3237582e62f14b83"
+  },
+  "prediction_incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "predictions": [
+    {
+      "confidence_probability": 0.8349820628377645,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-a2976495a137f956416a5d24b5087b37",
+        "chunk-89aedb0700afe9b875d5aea09479d35d",
+        "chunk-c5c7a6a865724361dc76458a7ae7efd2",
+        "chunk-1d735724368905ca9b81d366f6610d38",
+        "chunk-839ca35aeca9be52ea69187af9bf977f"
+      ],
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "input_tokens": 803,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.8349820628377645,
+        "database_connection_leak": 0.1618685019597337,
+        "disk_exhaustion": 0.0015259946837016564,
+        "memory_leak": 0.00031738996447949096,
+        "n_plus_one_query": 0.0009985294893131574,
+        "no_fault": 0.00030752106500680354
+      },
+      "latency_ms": 10458.718199000032,
+      "output_tokens": 64,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -11.034269332885742,
+          "database_connection_leak": -12.674895286560059,
+          "disk_exhaustion": -17.339033126831055,
+          "memory_leak": -18.909303665161133,
+          "n_plus_one_query": -17.763151168823242,
+          "no_fault": -18.94089126586914
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-a2976495a137f956416a5d24b5087b37\nPayment incidents can be caused by configuration changes rather than payment-provider capacity. Indicators include failures beginning immediately after a rollout, a narrow card, region, gateway, or authentication segment being affected, normal infrastructure health, and recovery after reverting configuration. Investigation should compare the active configuration with the previous known-good version, check routing, 3DS, firewall, merchant, and entitlement rules, and correlate failure codes with the changed\n\n[C2] chunk_id=chunk-89aedb0700afe9b875d5aea09479d35d\ntracing one request, grouping SQL by normalized statement, and comparing unbatched and batched call counts. Typical fixes are eager loading, joins, batch fetch APIs, prefetching, or restructuring the data-access layer so a list is resolved in a bounded number of queries.\n\n[C3] chunk_id=chunk-c5c7a6a865724361dc76458a7ae7efd2\nversion, check routing, 3DS, firewall, merchant, and entitlement rules, and correlate failure codes with the changed scope. Treat rollback as a mitigation and add validation, staged rollout, and configuration-diff observability before retrying the change.\n\n[C4] chunk_id=chunk-1d735724368905ca9b81d366f6610d38\nA no-fault classification is appropriate when investigation shows the observed symptom does not represent a production defect in the diagnosed service. Examples include stale dashboards, version skew in monitoring, expected maintenance behavior, upstream test traffic, or an alert whose assumptions are wrong. The diagnosis should be supported by independent health signals, request traces, deployment state, and reproduction attempts. Closing as no-fault should still record\n\n[C5] chunk_id=chunk-839ca35aeca9be52ea69187af9bf977f\nPayment Issues\n\nElevenLabs investigated payment-processing issues affecting ElevenAPI on April 22, 2026. The official update identified a billing-system misconfiguration that delayed subscription provisioning; error rates returned to baseline and full resolution was confirmed.",
+        "prompt_context_sha256": "f9250f82dae15b443fef3e7800c0269f62347ba2ef423a76eb593c0139be3916",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-f9f1dc6724fb2b0168459f2f",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "broken_payment_configuration",
+      "ranked_labels": [
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.8349820628377645,
+          "score": -11.034269332885742
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.1618685019597337,
+          "score": -12.674895286560059
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.0015259946837016564,
+          "score": -17.339033126831055
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.0009985294893131574,
+          "score": -17.763151168823242
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.00031738996447949096,
+          "score": -18.909303665161133
+        },
+        {
+          "label": "no_fault",
+          "probability": 0.00030752106500680354,
+          "score": -18.94089126586914
+        }
+      ],
+      "raw_model_output": "{\"root_cause_code\":\"broken_payment_configuration\",\"reasoning\":\"The incident description indicates a production payment-configuration update prevented affected U.S. credit-card payments from processing. This aligns with the definition of 'broken_payment_configuration' in the provided label set.\"}",
+      "reasoning": "The incident description indicates a production payment-configuration update prevented affected U.S. credit-card payments from processing. This aligns with the definition of 'broken_payment_configuration' in the provided label set.",
+      "retrieved_chunk_ids": [
+        "chunk-a2976495a137f956416a5d24b5087b37",
+        "chunk-89aedb0700afe9b875d5aea09479d35d",
+        "chunk-c5c7a6a865724361dc76458a7ae7efd2",
+        "chunk-1d735724368905ca9b81d366f6610d38",
+        "chunk-839ca35aeca9be52ea69187af9bf977f"
+      ],
+      "total_tokens": 867
+    },
+    {
+      "confidence_probability": 0.9243470183194069,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-709fe186e5112c6daf3f70b43869b250",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-b24f6d773a46ae6033ef1c79ac101425",
+        "chunk-839ca35aeca9be52ea69187af9bf977f",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998"
+      ],
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "input_tokens": 771,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.007864081568169737,
+        "database_connection_leak": 0.01450904963163784,
+        "disk_exhaustion": 0.0446900388723358,
+        "memory_leak": 0.0012097535253026335,
+        "n_plus_one_query": 0.007380058083146321,
+        "no_fault": 0.9243470183194069
+      },
+      "latency_ms": 9650.983634999875,
+      "output_tokens": 52,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -16.84039306640625,
+          "database_connection_leak": -16.22792625427246,
+          "disk_exhaustion": -15.102948188781738,
+          "memory_leak": -18.712282180786133,
+          "n_plus_one_query": -16.90391731262207,
+          "no_fault": -12.07361125946045
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-709fe186e5112c6daf3f70b43869b250\nGitLab Versions differ across zonal clusters\n\nGitLab opened an incident because production component versions appeared out of sync across zonal clusters after deployment. Investigation determined the condition was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited. No traffic was reaching the lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the\n\n[C2] chunk_id=chunk-7308d31d453c7b8e8cee217ba133357d\nthe lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.\n\n[C3] chunk_id=chunk-b24f6d773a46ae6033ef1c79ac101425\nindependent health signals, request traces, deployment state, and reproduction attempts. Closing as no-fault should still record why the alert fired and whether observability or alert logic needs correction so the same false positive does not repeatedly consume incident response time.\n\n[C4] chunk_id=chunk-839ca35aeca9be52ea69187af9bf977f\nPayment Issues\n\nElevenLabs investigated payment-processing issues affecting ElevenAPI on April 22, 2026. The official update identified a billing-system misconfiguration that delayed subscription provisioning; error rates returned to baseline and full resolution was confirmed.\n\n[C5] chunk_id=chunk-4e495ccf36ffd18ba1d9a714a783e998\nanother as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal.",
+        "prompt_context_sha256": "b66878af6731de49e132a971f17545356331ab9d9cd312baed0f4bfa5471a11e",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-621166be1953e3cbfe9665a7",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "no_fault",
+      "ranked_labels": [
+        {
+          "label": "no_fault",
+          "probability": 0.9243470183194069,
+          "score": -12.07361125946045
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.0446900388723358,
+          "score": -15.102948188781738
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.01450904963163784,
+          "score": -16.22792625427246
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.007864081568169737,
+          "score": -16.84039306640625
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.007380058083146321,
+          "score": -16.90391731262207
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.0012097535253026335,
+          "score": -18.712282180786133
+        }
+      ],
+      "raw_model_output": "{\"root_cause_code\":\"no_fault\",\"reasoning\":\"The incident was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited, as confirmed by GitLab's investigation.\"}",
+      "reasoning": "The incident was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited, as confirmed by GitLab's investigation.",
+      "retrieved_chunk_ids": [
+        "chunk-709fe186e5112c6daf3f70b43869b250",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-b24f6d773a46ae6033ef1c79ac101425",
+        "chunk-839ca35aeca9be52ea69187af9bf977f",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998"
+      ],
+      "total_tokens": 823
+    },
+    {
+      "confidence_probability": 0.9998594831773508,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-9a27ae83011e1b43569d8f23506b2e3e",
+        "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-89aedb0700afe9b875d5aea09479d35d"
+      ],
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "input_tokens": 782,
+      "label_probabilities": {
+        "broken_payment_configuration": 1.0875324290768774e-08,
+        "database_connection_leak": 0.00013763310561632752,
+        "disk_exhaustion": 1.022309858550241e-06,
+        "memory_leak": 0.9998594831773508,
+        "n_plus_one_query": 1.8496569627723013e-06,
+        "no_fault": 8.748870698516036e-10
+      },
+      "latency_ms": 10894.47520900012,
+      "output_tokens": 72,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -29.086868286132812,
+          "database_connection_leak": -19.64101791381836,
+          "disk_exhaustion": -24.54354476928711,
+          "memory_leak": -10.750239372253418,
+          "n_plus_one_query": -23.95060920715332,
+          "no_fault": -31.607025146484375
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-9a27ae83011e1b43569d8f23506b2e3e\nA memory leak is sustained retention of memory that should have been released. Production symptoms often show resident memory rising across otherwise similar traffic windows, more frequent garbage collection, swap or OOM pressure, and recovery after restarting the leaking process. Investigation should compare heap growth with request volume, inspect retained object types, review caches and listener lifecycles, and distinguish a leak from an intentionally\n\n[C2] chunk_id=chunk-fb52b92a21c0b0a0ffe509c0646964f6\nIncident Report: Running Dry on Memory Without Noticing\n\nHoneycomb reported four roughly 20-minute ingest brownouts in which 1\u20133% of customer telemetry was rejected. The incident trigger was explicitly identified as a slow memory leak that accumulated over hours across ingest backends. The backends crashed within minutes of one another as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak\n\n[C3] chunk_id=chunk-4e495ccf36ffd18ba1d9a714a783e998\nanother as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal.\n\n[C4] chunk_id=chunk-7308d31d453c7b8e8cee217ba133357d\nthe lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.\n\n[C5] chunk_id=chunk-89aedb0700afe9b875d5aea09479d35d\ntracing one request, grouping SQL by normalized statement, and comparing unbatched and batched call counts. Typical fixes are eager loading, joins, batch fetch APIs, prefetching, or restructuring the data-access layer so a list is resolved in a bounded number of queries.",
+        "prompt_context_sha256": "846f9d60c67b915e739280780f217dd10736ea7641bf774a15c9246061ee6ad3",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-8d152a69f81f6cc6594b6e03",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "memory_leak",
+      "ranked_labels": [
+        {
+          "label": "memory_leak",
+          "probability": 0.9998594831773508,
+          "score": -10.750239372253418
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.00013763310561632752,
+          "score": -19.64101791381836
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 1.8496569627723013e-06,
+          "score": -23.95060920715332
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 1.022309858550241e-06,
+          "score": -24.54354476928711
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 1.0875324290768774e-08,
+          "score": -29.086868286132812
+        },
+        {
+          "label": "no_fault",
+          "probability": 8.748870698516036e-10,
+          "score": -31.607025146484375
+        }
+      ],
+      "raw_model_output": "{\"root_cause_code\":\"memory_leak\",\"reasoning\":\"The evidence from multiple sources, including Honeycomb reports of memory leaks causing service crashes and memory pressure, and an incident narrative explicitly identifying an EBS data-collection-agent memory leak, suggests that the root cause of the production incident is a memory leak.\"}",
+      "reasoning": "The evidence from multiple sources, including Honeycomb reports of memory leaks causing service crashes and memory pressure, and an incident narrative explicitly identifying an EBS data-collection-agent memory leak, suggests that the root cause of the production incident is a memory leak.",
+      "retrieved_chunk_ids": [
+        "chunk-9a27ae83011e1b43569d8f23506b2e3e",
+        "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-89aedb0700afe9b875d5aea09479d35d"
+      ],
+      "total_tokens": 854
+    },
+    {
+      "confidence_probability": 0.20432329445823252,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-c1b34aee7e8dec2a34b2b430016477de",
+        "chunk-c5c7a6a865724361dc76458a7ae7efd2"
+      ],
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "input_tokens": 854,
+      "label_probabilities": {
+        "broken_payment_configuration": 8.593241500985073e-06,
+        "database_connection_leak": 0.20432329445823252,
+        "disk_exhaustion": 0.7955120614466854,
+        "memory_leak": 0.0001508791723641824,
+        "n_plus_one_query": 5.152540885622994e-06,
+        "no_fault": 1.9140331536937386e-08
+      },
+      "latency_ms": 13966.312076000122,
+      "output_tokens": 118,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -21.297698974609375,
+          "database_connection_leak": -11.221216201782227,
+          "disk_exhaustion": -9.861933708190918,
+          "memory_leak": -18.43219566345215,
+          "n_plus_one_query": -21.809185028076172,
+          "no_fault": -27.404632568359375
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-4e495ccf36ffd18ba1d9a714a783e998\nanother as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal.\n\n[C2] chunk_id=chunk-fb52b92a21c0b0a0ffe509c0646964f6\nIncident Report: Running Dry on Memory Without Noticing\n\nHoneycomb reported four roughly 20-minute ingest brownouts in which 1\u20133% of customer telemetry was rejected. The incident trigger was explicitly identified as a slow memory leak that accumulated over hours across ingest backends. The backends crashed within minutes of one another as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak\n\n[C3] chunk_id=chunk-7308d31d453c7b8e8cee217ba133357d\nthe lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.\n\n[C4] chunk_id=chunk-c1b34aee7e8dec2a34b2b430016477de\nIncident: gitlab.git.nrw outage\n\ngit.nrw reported a complete GitLab outage lasting 5 hours 45 minutes. Database replication had silently stopped, leaving one database node to accumulate WAL transaction logs. The remaining database node's disk filled with WAL logs and the service went down. The incident was resolved by increasing disk capacity and restoring replication, with WAL-size monitoring added as follow-up.\n\n[C5] chunk_id=chunk-c5c7a6a865724361dc76458a7ae7efd2\nversion, check routing, 3DS, firewall, merchant, and entitlement rules, and correlate failure codes with the changed scope. Treat rollback as a mitigation and add validation, staged rollout, and configuration-diff observability before retrying the change.",
+        "prompt_context_sha256": "ec3d9363043ee0a60cfeaa9605151ab0069feb3054c449a46351e511e0471a06",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-91a1dff26eb9da2e2b8a2041",
+        "ranked_labels_omitted": "generated_label_disagrees_with_score_argmax",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "database_connection_leak",
+      "ranked_labels": [],
+      "raw_model_output": "{\"root_cause_code\":\"database_connection_leak\",\"reasoning\":\"The incident was caused by a database connection leak, as evidenced by the accumulation of WAL transaction logs that filled the disk and caused a complete GitLab outage (C4). This is similar to the incident described in 'Incident: git.nrw outage', where a similar issue led to a MySQL binary log partition expanding and filling completely, causing a partial binlog write, corrupted final event, and stopping slave replication (C5).\"}",
+      "reasoning": "The incident was caused by a database connection leak, as evidenced by the accumulation of WAL transaction logs that filled the disk and caused a complete GitLab outage (C4). This is similar to the incident described in 'Incident: git.nrw outage', where a similar issue led to a MySQL binary log partition expanding and filling completely, causing a partial binlog write, corrupted final event, and stopping slave replication (C5).",
+      "retrieved_chunk_ids": [
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-c1b34aee7e8dec2a34b2b430016477de",
+        "chunk-c5c7a6a865724361dc76458a7ae7efd2"
+      ],
+      "total_tokens": 972
+    },
+    {
+      "confidence_probability": 0.9999562272560047,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-a92d08d0c1dc2a4d7ce7c0d6270ebda6",
+        "chunk-c60288d25a7a441cc4e4607096f169d3",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-c1b34aee7e8dec2a34b2b430016477de"
+      ],
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "input_tokens": 861,
+      "label_probabilities": {
+        "broken_payment_configuration": 1.0496823207585562e-06,
+        "database_connection_leak": 0.9999562272560047,
+        "disk_exhaustion": 4.132599484591002e-05,
+        "memory_leak": 1.3360755877959601e-06,
+        "n_plus_one_query": 5.940840693975798e-08,
+        "no_fault": 1.582833194361932e-09
+      },
+      "latency_ms": 12956.185251000079,
+      "output_tokens": 99,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -25.970182418823242,
+          "database_connection_leak": -12.203203201293945,
+          "disk_exhaustion": -22.297178268432617,
+          "memory_leak": -25.728933334350586,
+          "n_plus_one_query": -28.841989517211914,
+          "no_fault": -32.46720886230469
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-4e495ccf36ffd18ba1d9a714a783e998\nanother as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal.\n\n[C2] chunk_id=chunk-a92d08d0c1dc2a4d7ce7c0d6270ebda6\nPostgreSQL gevent-pool connection leak on live-stream teardown drains the per-worker pool\n\nA checked-out PostgreSQL connection is not returned on live-stream teardown; the per-worker pool drains to 8/8, database-dependent requests time out or 504, the pool remains exhausted after streams end, and restart clears the leaked state.\n\n[C3] chunk_id=chunk-c60288d25a7a441cc4e4607096f169d3\nA database connection leak occurs when application code checks out a connection from a pool but fails to return it on every teardown path. Typical signals include an increasing count of checked-out connections, a pool that remains exhausted after request load falls, database-dependent requests timing out, and temporary recovery after process restart. Diagnose by comparing pool checkout and checkin counts, inspecting long-lived sessions, and\n\n[C4] chunk_id=chunk-7308d31d453c7b8e8cee217ba133357d\nthe lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.\n\n[C5] chunk_id=chunk-c1b34aee7e8dec2a34b2b430016477de\nIncident: gitlab.git.nrw outage\n\ngit.nrw reported a complete GitLab outage lasting 5 hours 45 minutes. Database replication had silently stopped, leaving one database node to accumulate WAL transaction logs. The remaining database node's disk filled with WAL logs and the service went down. The incident was resolved by increasing disk capacity and restoring replication, with WAL-size monitoring added as follow-up.",
+        "prompt_context_sha256": "a373a3dbce0361e9bd59283f89f2821d4f3e9a1bd226465e68bea305619368bd",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-14508c1e36018fe52b664439",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "database_connection_leak",
+      "ranked_labels": [
+        {
+          "label": "database_connection_leak",
+          "probability": 0.9999562272560047,
+          "score": -12.203203201293945
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 4.132599484591002e-05,
+          "score": -22.297178268432617
+        },
+        {
+          "label": "memory_leak",
+          "probability": 1.3360755877959601e-06,
+          "score": -25.728933334350586
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 1.0496823207585562e-06,
+          "score": -25.970182418823242
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 5.940840693975798e-08,
+          "score": -28.841989517211914
+        },
+        {
+          "label": "no_fault",
+          "probability": 1.582833194361932e-09,
+          "score": -32.46720886230469
+        }
+      ],
+      "raw_model_output": "{\"root_cause_code\":\"database_connection_leak\",\"reasoning\":\"The evidence from context [C2], [C3], and [C5] suggests a database connection leak. Context [C2] and [C3] describe a PostgreSQL gevent-pool connection leak on live-stream teardown, and context [C5] mentions BoneCP database connections not being returned to the pool, leading to a service outage.\"}",
+      "reasoning": "The evidence from context [C2], [C3], and [C5] suggests a database connection leak. Context [C2] and [C3] describe a PostgreSQL gevent-pool connection leak on live-stream teardown, and context [C5] mentions BoneCP database connections not being returned to the pool, leading to a service outage.",
+      "retrieved_chunk_ids": [
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-a92d08d0c1dc2a4d7ce7c0d6270ebda6",
+        "chunk-c60288d25a7a441cc4e4607096f169d3",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-c1b34aee7e8dec2a34b2b430016477de"
+      ],
+      "total_tokens": 960
+    },
+    {
+      "confidence_probability": 0.9980511625816636,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [
+        "chunk-95ccfb2a27690fbf3b25b6fd6c86fc98",
+        "chunk-f8a3977596e9de7407785561c317b104",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-709fe186e5112c6daf3f70b43869b250"
+      ],
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "input_tokens": 942,
+      "label_probabilities": {
+        "broken_payment_configuration": 8.844543943614564e-07,
+        "database_connection_leak": 0.0019205207624555273,
+        "disk_exhaustion": 2.633588570206311e-05,
+        "memory_leak": 1.021287505441674e-06,
+        "n_plus_one_query": 0.9980511625816636,
+        "no_fault": 7.502827825449533e-08
+      },
+      "latency_ms": 13610.720733000107,
+      "output_tokens": 98,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "context_policy_version": "phase8-context-budget-v1",
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "included_context_count": 5,
+        "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -30.144771575927734,
+          "database_connection_leak": -22.46163558959961,
+          "disk_exhaustion": -26.751054763793945,
+          "memory_leak": -30.00092315673828,
+          "n_plus_one_query": -16.20842742919922,
+          "no_fault": -32.61187744140625
+        },
+        "max_chunk_tokens": 128,
+        "max_context_tokens": 384,
+        "no_context_fallback": false,
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "RAG",
+        "prompt_context": "[C1] chunk_id=chunk-95ccfb2a27690fbf3b25b6fd6c86fc98\nperf: N+1 queries on thing table causing 3.8M single-row DB lookups\n\nProduction pg_stat_statements showed SELECT-by-key as the database's highest-volume query with 3,830,328 calls in the observation window. The existing batched equivalent accounted for only 134,057 calls, a reported 28:1 ratio of unbatched to batched lookups. The issue explicitly diagnoses pages that resolve list items individually as an N+1 pattern and recommends replacing loops with\n\n[C2] chunk_id=chunk-f8a3977596e9de7407785561c317b104\ndiagnoses pages that resolve list items individually as an N+1 pattern and recommends replacing loops with the existing get_many batching path. The repeated single-row lookups consumed roughly 2.5 million milliseconds of database time and increased cache/I/O pressure on the production database.\n\n[C3] chunk_id=chunk-7308d31d453c7b8e8cee217ba133357d\nthe lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the alert; the visible deployment/version disparity was therefore a distractor rather than an active service fault.\n\n[C4] chunk_id=chunk-4e495ccf36ffd18ba1d9a714a783e998\nanother as memory pressure accumulated, causing in-flight and new ingest requests to fail. After the leak was identified, Honeycomb reverted the bad commit and deployed a fixed release; memory behavior and service health returned to normal.\n\n[C5] chunk_id=chunk-709fe186e5112c6daf3f70b43869b250\nGitLab Versions differ across zonal clusters\n\nGitLab opened an incident because production component versions appeared out of sync across zonal clusters after deployment. Investigation determined the condition was a false alarm caused by stale metadata for a ContainerStatusUnknown pod whose containers had already exited. No traffic was reaching the lingering pod and GitLab explicitly reported no customer impact. Deleting the stale pod cleared the",
+        "prompt_context_sha256": "7b56322763fff49d7317e629e686d49546fe8a2433609a5615e87c60aef20154",
+        "prompt_version": "rag-context-v1",
+        "query_family_id": "family-aca6d963c80e83936a8639d3",
+        "reranker_id": "none",
+        "reranker_revision": "phase7-noop-v1",
+        "research_mode": true,
+        "retrieval_trace_count": 5,
+        "runtime": {
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        },
+        "top_k": 5
+      },
+      "predicted_root_cause_code": "n_plus_one_query",
+      "ranked_labels": [
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.9980511625816636,
+          "score": -16.20842742919922
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0019205207624555273,
+          "score": -22.46163558959961
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 2.633588570206311e-05,
+          "score": -26.751054763793945
+        },
+        {
+          "label": "memory_leak",
+          "probability": 1.021287505441674e-06,
+          "score": -30.00092315673828
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 8.844543943614564e-07,
+          "score": -30.144771575927734
+        },
+        {
+          "label": "no_fault",
+          "probability": 7.502827825449533e-08,
+          "score": -32.61187744140625
+        }
+      ],
+      "raw_model_output": "{\"root_cause_code\":\"n_plus_one_query\",\"reasoning\":\"The incident description and the retrieved context [C1] and [C2] indicate that the production system is experiencing an N+1 query pattern, where individual list items are resolved through single-row lookups instead of using a batched path. This results in a high volume of unbatched lookups, causing increased database time consumption and cache/I/O pressure.\"}",
+      "reasoning": "The incident description and the retrieved context [C1] and [C2] indicate that the production system is experiencing an N+1 query pattern, where individual list items are resolved through single-row lookups instead of using a batched path. This results in a high volume of unbatched lookups, causing increased database time consumption and cache/I/O pressure.",
+      "retrieved_chunk_ids": [
+        "chunk-95ccfb2a27690fbf3b25b6fd6c86fc98",
+        "chunk-f8a3977596e9de7407785561c317b104",
+        "chunk-7308d31d453c7b8e8cee217ba133357d",
+        "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+        "chunk-709fe186e5112c6daf3f70b43869b250"
+      ],
+      "total_tokens": 1040
+    }
+  ],
+  "prompt_version": "rag-context-v1",
+  "protocol_state_at_export": "validation",
+  "protocol_version": "phase8-rag-protocol-v1",
+  "relevance_reference_version": "phase8-runbook-root-cause-reference-v1",
+  "result_hash": "30eb012aeb6288dda9ba9b18e50a82e88eeef3961ac7143466add3f9536c0a13",
+  "retrieval_traces": [
+    {
+      "chunk_id": "chunk-a2976495a137f956416a5d24b5087b37",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-5050a06713706f7f67d9b1dd6545770e",
+        "final_score": 0.17357306699672548,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/payment-configuration",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.17357306699672548,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-bf35049b822e729c4608ae94",
+      "score": 0.17357306699672548
+    },
+    {
+      "chunk_id": "chunk-89aedb0700afe9b875d5aea09479d35d",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 41,
+        "context_truncated": false,
+        "document_id": "doc-438041e88c2e4e677a9bd7c619ac80fd",
+        "final_score": 0.09526610374450684,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/n-plus-one-query",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.09526610374450684,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-71b347b8baaf8d8a9bde0369",
+      "score": 0.09526610374450684
+    },
+    {
+      "chunk_id": "chunk-c5c7a6a865724361dc76458a7ae7efd2",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 34,
+        "context_truncated": false,
+        "document_id": "doc-5050a06713706f7f67d9b1dd6545770e",
+        "final_score": 0.0837019756436348,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/payment-configuration",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.0837019756436348,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-440e566b81e41e9b5aefcf0e",
+      "score": 0.0837019756436348
+    },
+    {
+      "chunk_id": "chunk-1d735724368905ca9b81d366f6610d38",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-e6bc6fb8cb0801d57229e2fd7184cafd",
+        "final_score": 0.07147585919643296,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/no-fault",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.07147585919643296,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-79b605261b6989b9cb266476",
+      "score": 0.07147585919643296
+    },
+    {
+      "chunk_id": "chunk-839ca35aeca9be52ea69187af9bf977f",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 33,
+        "context_truncated": false,
+        "document_id": "doc-2a633fd1132d2fcea0eabde088152afd",
+        "final_score": 0.06853228062391281,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-f297e0961ae02bfb73826981",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65",
+          "source_version": "a7574408bb85db0b150c668a0e3688ca5d87fae15114602334c9dc011a480345"
+        },
+        "raw_similarity_score": 0.06853228062391281,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-09f9580f19a6e8d75a474b66",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-ba645dd215c77b9d47e95b4a",
+      "score": 0.06853228062391281
+    },
+    {
+      "chunk_id": "chunk-709fe186e5112c6daf3f70b43869b250",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.20000346004963487,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.20000346004963487,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-d3bc3c7779504466ed04aed6",
+      "score": 0.20000346004963487
+    },
+    {
+      "chunk_id": "chunk-7308d31d453c7b8e8cee217ba133357d",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 31,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.1742956846112842,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.1742956846112842,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-35c80b8acdfe139d46e21fba",
+      "score": 0.1742956846112842
+    },
+    {
+      "chunk_id": "chunk-b24f6d773a46ae6033ef1c79ac101425",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 40,
+        "context_truncated": false,
+        "document_id": "doc-e6bc6fb8cb0801d57229e2fd7184cafd",
+        "final_score": 0.16032870535000743,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/no-fault",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.16032870535000743,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-1e3dd834b18992af49e633d0",
+      "score": 0.16032870535000743
+    },
+    {
+      "chunk_id": "chunk-839ca35aeca9be52ea69187af9bf977f",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 33,
+        "context_truncated": false,
+        "document_id": "doc-2a633fd1132d2fcea0eabde088152afd",
+        "final_score": 0.1521561327166726,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-f297e0961ae02bfb73826981",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://status.elevenlabs.io/incidents/01KPTTQSDT67Y0ZHAQRH7BNC65",
+          "source_version": "a7574408bb85db0b150c668a0e3688ca5d87fae15114602334c9dc011a480345"
+        },
+        "raw_similarity_score": 0.1521561327166726,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-59d8ad58300e80d6a92f339e",
+      "score": 0.1521561327166726
+    },
+    {
+      "chunk_id": "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 36,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.14626397445964612,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.14626397445964612,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-90657ad763f30a53e3f5f2c8",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-54c1e2ae4dd4bd046cd58cdb",
+      "score": 0.14626397445964612
+    },
+    {
+      "chunk_id": "chunk-9a27ae83011e1b43569d8f23506b2e3e",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-949c75b178c2c7134ee44d95492936f9",
+        "final_score": 0.21220235301270207,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/memory-leak",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.21220235301270207,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-652764f19d340b201b3eab5f",
+      "score": 0.21220235301270207
+    },
+    {
+      "chunk_id": "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.21196025788191908,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.21196025788191908,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-b8f8fcf31a8eb1b5aabd8ea3",
+      "score": 0.21196025788191908
+    },
+    {
+      "chunk_id": "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 36,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.1842720861516025,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.1842720861516025,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-bd5748766e9f057b2b90a572",
+      "score": 0.1842720861516025
+    },
+    {
+      "chunk_id": "chunk-7308d31d453c7b8e8cee217ba133357d",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 31,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.17229220784581334,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.17229220784581334,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-e409b2c05aa11ca8b94eb224",
+      "score": 0.17229220784581334
+    },
+    {
+      "chunk_id": "chunk-89aedb0700afe9b875d5aea09479d35d",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 41,
+        "context_truncated": false,
+        "document_id": "doc-438041e88c2e4e677a9bd7c619ac80fd",
+        "final_score": 0.15031868667360215,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/n-plus-one-query",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.15031868667360215,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-00db9f4a94a2835a08949871",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-261a61447b93bd6abe773496",
+      "score": 0.15031868667360215
+    },
+    {
+      "chunk_id": "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 36,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.2410926890698878,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.2410926890698878,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-aaaac7cfc2c72b936ea99af3",
+      "score": 0.2410926890698878
+    },
+    {
+      "chunk_id": "chunk-fb52b92a21c0b0a0ffe509c0646964f6",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.24068412790956117,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.24068412790956117,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-da7282d059a9cb476beb08d6",
+      "score": 0.24068412790956117
+    },
+    {
+      "chunk_id": "chunk-7308d31d453c7b8e8cee217ba133357d",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 31,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.22894097056808993,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.22894097056808993,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-fbf1bb3191d41f21aeb25a9b",
+      "score": 0.22894097056808993
+    },
+    {
+      "chunk_id": "chunk-c1b34aee7e8dec2a34b2b430016477de",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 59,
+        "context_truncated": false,
+        "document_id": "doc-b6d17eee241c9d48362e95d65e5f3cd8",
+        "final_score": 0.21892378571856752,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-ac7b13ea99b64ae5b9e239fc",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/",
+          "source_version": "a75f2af6cb23e09f23fa1646536a188d94eb955ed35a0cf276b09d6392a06572"
+        },
+        "raw_similarity_score": 0.21892378571856752,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-a16d088a2cad6bbe13daac89",
+      "score": 0.21892378571856752
+    },
+    {
+      "chunk_id": "chunk-c5c7a6a865724361dc76458a7ae7efd2",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 34,
+        "context_truncated": false,
+        "document_id": "doc-5050a06713706f7f67d9b1dd6545770e",
+        "final_score": 0.2082025172770774,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/payment-configuration",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.2082025172770774,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-0c84f3643db08eec07ceec72",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-96dd2b0b141dec415db5dc57",
+      "score": 0.2082025172770774
+    },
+    {
+      "chunk_id": "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 36,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.2648742041066767,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.2648742041066767,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-56445590e50a591b8aaf3405",
+      "score": 0.2648742041066767
+    },
+    {
+      "chunk_id": "chunk-a92d08d0c1dc2a4d7ce7c0d6270ebda6",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 46,
+        "context_truncated": false,
+        "document_id": "doc-08d956e291c5f2cfb7b71bddfc776c16",
+        "final_score": 0.25734935657087865,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3bef41da30bd246c54ffafc2",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://github.com/Dispatcharr/Dispatcharr/issues/1416",
+          "source_version": "6bedb460a3a5ee1a2711cb75c21cd715e4295223dbd81ef91a561b394aee4f14"
+        },
+        "raw_similarity_score": 0.25734935657087865,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-842657f64accbaac7029c1dd",
+      "score": 0.25734935657087865
+    },
+    {
+      "chunk_id": "chunk-c60288d25a7a441cc4e4607096f169d3",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-238bd17f6ab9922c49c4effd828193d0",
+        "final_score": 0.2398303759300261,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": null,
+          "source_split": null,
+          "source_timestamp": null,
+          "source_type": "runbook",
+          "source_uri": "evalforge://runbooks/database-connection-leak",
+          "source_version": "phase7-authored-v1"
+        },
+        "raw_similarity_score": 0.2398303759300261,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-c1291243af62c968e71e6725",
+      "score": 0.2398303759300261
+    },
+    {
+      "chunk_id": "chunk-7308d31d453c7b8e8cee217ba133357d",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 31,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.23203641283295118,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.23203641283295118,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-3ab4fc77a0daaa065f476ac0",
+      "score": 0.23203641283295118
+    },
+    {
+      "chunk_id": "chunk-c1b34aee7e8dec2a34b2b430016477de",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 59,
+        "context_truncated": false,
+        "document_id": "doc-b6d17eee241c9d48362e95d65e5f3cd8",
+        "final_score": 0.20801605784701616,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-ac7b13ea99b64ae5b9e239fc",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://git.nrw/en/news/2025-05-09-incident-gitlab-outage/",
+          "source_version": "a75f2af6cb23e09f23fa1646536a188d94eb955ed35a0cf276b09d6392a06572"
+        },
+        "raw_similarity_score": 0.20801605784701616,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-470b813ad107a41b0ede8a4b",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-6c86bc0a80f90bfcea5381c2",
+      "score": 0.20801605784701616
+    },
+    {
+      "chunk_id": "chunk-95ccfb2a27690fbf3b25b6fd6c86fc98",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-920588d6da8237974666b5f331c59d07",
+        "final_score": 0.3616497028365644,
+        "included_in_prompt": true,
+        "prompt_citation": "C1",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-489b34dd2bf0b227fdaaad66",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://github.com/internetarchive/openlibrary/issues/12432",
+          "source_version": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904"
+        },
+        "raw_similarity_score": 0.3616497028365644,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "rank": 1,
+      "retrieval_trace_id": "retrieval-dea64060061b7c2e0eb9b614",
+      "score": 0.3616497028365644
+    },
+    {
+      "chunk_id": "chunk-f8a3977596e9de7407785561c317b104",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 41,
+        "context_truncated": false,
+        "document_id": "doc-920588d6da8237974666b5f331c59d07",
+        "final_score": 0.29956114292144775,
+        "included_in_prompt": true,
+        "prompt_citation": "C2",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-489b34dd2bf0b227fdaaad66",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://github.com/internetarchive/openlibrary/issues/12432",
+          "source_version": "8d2b834f3f61d34b7d57a6201e8ba45c293e920261158094dd08375527e57904"
+        },
+        "raw_similarity_score": 0.29956114292144775,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "rank": 2,
+      "retrieval_trace_id": "retrieval-4b5cdf754b8309e2f82690ed",
+      "score": 0.29956114292144775
+    },
+    {
+      "chunk_id": "chunk-7308d31d453c7b8e8cee217ba133357d",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 31,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.230374276638031,
+        "included_in_prompt": true,
+        "prompt_citation": "C3",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.230374276638031,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "rank": 3,
+      "retrieval_trace_id": "retrieval-d702e070a235e497abec82f2",
+      "score": 0.230374276638031
+    },
+    {
+      "chunk_id": "chunk-4e495ccf36ffd18ba1d9a714a783e998",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 36,
+        "context_truncated": false,
+        "document_id": "doc-408bee0ee5c64ec7749b6885ee8d429d",
+        "final_score": 0.19670438766479492,
+        "included_in_prompt": true,
+        "prompt_citation": "C4",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-1dbeaf17e214fecdfbf5c432",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://www.honeycomb.io/blog/incident-report-running-dry-on-memory-without-noticing",
+          "source_version": "a4304852c539532570539c9c4671eb87be433534f7eefeaa5566095dc0074a35"
+        },
+        "raw_similarity_score": 0.19670438766479492,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "rank": 4,
+      "retrieval_trace_id": "retrieval-e1b01f2031a56c91b6ebda8d",
+      "score": 0.19670438766479492
+    },
+    {
+      "chunk_id": "chunk-709fe186e5112c6daf3f70b43869b250",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "kb_version": "evalforge-kb-v0.1.0-c64-o16",
+      "metadata": {
+        "context_token_count": 64,
+        "context_truncated": false,
+        "document_id": "doc-6d44879f185bdb82426946787c5e9420",
+        "final_score": 0.1807185196019997,
+        "included_in_prompt": true,
+        "prompt_citation": "C5",
+        "provenance": {
+          "research_eligible": true,
+          "source_family_id": "family-3ca58a74d431f36af297f210",
+          "source_split": "train",
+          "source_timestamp": null,
+          "source_type": "historical_incident",
+          "source_uri": "https://gitlab.com/gitlab-com/gl-infra/production/-/issues/19803",
+          "source_version": "ab3d127716a1678fdd7195fcac2b37550b744bbcbaeb90d70ee669f0537f8b58"
+        },
+        "raw_similarity_score": 0.1807185196019997,
+        "reranker_score": null
+      },
+      "prediction_id": "prediction-10ad5b1d3237582e62f14b83",
+      "rank": 5,
+      "retrieval_trace_id": "retrieval-ea34f2a0dbc193914c1aec96",
+      "score": 0.1807185196019997
+    }
+  ],
+  "run_id": "phase8-rag-chunk-64-16-validation-kaggle-v2",
+  "run_status": "completed",
+  "scientific_config_hash": "be9f7431892ca7d1f1568894a9d769147730593f7f1d51dffbf656b25510ae63",
+  "split": "validation",
+  "stored_cost_record_count": 6,
+  "stored_prediction_count": 6,
+  "stored_retrieval_trace_count": 30,
+  "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "tracking": {
+    "artifact_reference": "phase8-rag-chunk-64-16-validation-kaggle-v2-result",
+    "configured": true,
+    "provider": "wandb",
+    "run_reference": "https://wandb.ai/sadman-hasan-t-islamic-university-of-technology/evalforge-phase8/runs/zl2bfg3x"
+  },
+  "upfront_cost_usd": 0.0,
+  "variant": {
+    "chunk_size": 64,
+    "chunker_version": "phase7-token-window-v1",
+    "context_policy_version": "phase8-context-budget-v1",
+    "embedding_model_id": "evalforge/feature-hash-embedding",
+    "embedding_model_revision": "phase7-feature-hash-v1",
+    "factor": "chunking",
+    "knowledge_base_version": "evalforge-kb-v0.1.0-c64-o16",
+    "max_chunk_tokens": 128,
+    "max_context_tokens": 384,
+    "overlap": 16,
+    "prompt_version": "rag-context-v1",
+    "reranker_id": null,
+    "reranker_revision": null,
+    "top_k": 5,
+    "variant_id": "rag-chunk-64-16"
+  },
+  "variant_id": "rag-chunk-64-16"
+}

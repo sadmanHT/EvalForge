@@ -1,0 +1,95 @@
+{
+  "baseline": {
+    "evidence_sha256": "184ed6f973bfc69ff5bc7becac5f60b1650ce7368cb36cfec89bcd6e1e344e1f",
+    "exact_accuracy": 1.0,
+    "latency_p50_ms": 5781.507361000024,
+    "latency_p95_ms": 8296.013598999993,
+    "marginal_mean_cost_usd": 0.0,
+    "run_id": "phase6-zero-shot-validation-kaggle-v2"
+  },
+  "comparison_sha256": "5b26b8797557324862498257dc48c958977d951f0deef1b7bfedd83bea7293d7",
+  "comparison_version": "phase8-baseline-rag-comparison-v1",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "incident_ids": [
+    "incident-215133387692e86f737df1e9",
+    "incident-5c738a9915b665b34c08ea44",
+    "incident-65655551f36946ee7b819481",
+    "incident-ad8c9deca73f25af4d3cffe5",
+    "incident-cf508a1cff474450be546677",
+    "incident-e7286f91b513711ffee7ddc1"
+  ],
+  "paired_accuracy": {
+    "bootstrap_ci_lower": -0.5,
+    "bootstrap_ci_upper": 0.0,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260908,
+    "confidence_level": 0.95,
+    "mcnemar_a_only_correct": 1,
+    "mcnemar_b_only_correct": 0,
+    "mcnemar_discordant_pairs": 1,
+    "mcnemar_p_value": 1.0,
+    "rag_minus_baseline": -0.16666666666666666
+  },
+  "paired_rows": [
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "broken_payment_configuration",
+      "ground_truth": "broken_payment_configuration",
+      "incident_id": "incident-215133387692e86f737df1e9",
+      "rag_correct": true,
+      "rag_prediction": "broken_payment_configuration"
+    },
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "no_fault",
+      "ground_truth": "no_fault",
+      "incident_id": "incident-5c738a9915b665b34c08ea44",
+      "rag_correct": true,
+      "rag_prediction": "no_fault"
+    },
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "memory_leak",
+      "ground_truth": "memory_leak",
+      "incident_id": "incident-65655551f36946ee7b819481",
+      "rag_correct": true,
+      "rag_prediction": "memory_leak"
+    },
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "disk_exhaustion",
+      "ground_truth": "disk_exhaustion",
+      "incident_id": "incident-ad8c9deca73f25af4d3cffe5",
+      "rag_correct": false,
+      "rag_prediction": "memory_leak"
+    },
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "database_connection_leak",
+      "ground_truth": "database_connection_leak",
+      "incident_id": "incident-cf508a1cff474450be546677",
+      "rag_correct": true,
+      "rag_prediction": "database_connection_leak"
+    },
+    {
+      "baseline_correct": true,
+      "baseline_prediction": "n_plus_one_query",
+      "ground_truth": "n_plus_one_query",
+      "incident_id": "incident-e7286f91b513711ffee7ddc1",
+      "rag_correct": true,
+      "rag_prediction": "n_plus_one_query"
+    }
+  ],
+  "rag": {
+    "evidence_sha256": "5f2893ef322088b870d407f9f8579bd5cd44ca4f0969a469e0e360b25d605e7b",
+    "exact_accuracy": 0.8333333333333334,
+    "latency_p50_ms": 8014.229640500048,
+    "latency_p95_ms": 10275.968784249984,
+    "marginal_mean_cost_usd": 0.0,
+    "retrieval_context_precision": 0.16666666666666666,
+    "retrieval_context_recall": 0.16666666666666666,
+    "run_id": "phase8-rag-top-k1-validation-kaggle-v2",
+    "variant_id": "rag-top-k1"
+  },
+  "split": "validation"
+}

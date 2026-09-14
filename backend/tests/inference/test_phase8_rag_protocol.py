@@ -21,9 +21,9 @@ def test_phase8_protocol_preserves_frozen_phase6_scientific_identity() -> None:
     protocol, suite = load_rag_protocol(ROOT)
     baseline = load_baseline_protocol(ROOT)
 
-    assert protocol.state is RAGProtocolState.VALIDATION
-    assert protocol.selected_variant_id is None
-    assert protocol.locked_test_authorized is False
+    assert protocol.state is RAGProtocolState.FROZEN
+    assert protocol.selected_variant_id == "rag-top-k1"
+    assert protocol.locked_test_authorized is True
     assert protocol.base_model_id == baseline.base_model_id
     assert protocol.base_model_revision == baseline.base_model_revision
     assert protocol.runtime_config == baseline.runtime_config
@@ -32,16 +32,23 @@ def test_phase8_protocol_preserves_frozen_phase6_scientific_identity() -> None:
     assert len(protocol.scientific_config_hash()) == 64
 
 
-def test_validation_allows_registered_variants_but_locked_test_is_closed() -> None:
+def test_frozen_protocol_keeps_validation_registered_and_opens_only_selected_test_variant() -> None:
     protocol, suite = load_rag_protocol(ROOT)
-    variant = protocol.assert_variant_allowed(
+    validation_variant = protocol.assert_variant_allowed(
         split="validation",
         variant_id="rag-top-k1",
         suite=suite,
     )
-    assert variant.top_k == 1
+    assert validation_variant.top_k == 1
 
-    with pytest.raises(ValueError, match="locked test requires"):
+    selected = protocol.assert_variant_allowed(
+        split="test",
+        variant_id="rag-top-k1",
+        suite=suite,
+    )
+    assert selected.variant_id == "rag-top-k1"
+
+    with pytest.raises(ValueError, match="validation-selected frozen"):
         protocol.assert_variant_allowed(
             split="test",
             variant_id="rag-default-k5",

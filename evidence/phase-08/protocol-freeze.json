@@ -1,0 +1,52 @@
+{
+  "ablation_report_file_sha256": "cd1f0ed5936698fb7521fd10f07f328a9c7211d41e28de83e86e6e6a85bfddf8",
+  "ablation_report_sha256": "68bdd0435bc60a431343bf6eed2cc0b0465e99e443bb387ee7da97f46fa62ce1",
+  "ablation_suite_hash": "c08e351c61215fb96fa5965dd9a51da37042a7fbec7db78a74fea7a819a68d62",
+  "freeze_record_version": "phase8-rag-protocol-freeze-v1",
+  "frozen_at": "2026-09-14T10:22:25.734873+00:00",
+  "gpu_environment_fingerprint_sha256": "45e5ab6ceb7600352c94a5383f6721a21d8bfae9795e6be17a617c64379b5bff",
+  "gpu_host_evidence_file_sha256": "06311039843e3b4ef27a7e97b72f8bd292176f3f70901f360925a473ed7d9f3f",
+  "gpu_host_evidence_sha256": "5034751b178e29429f3df8d7cfc0c60581ebe6e04f09bff4f0ad1edc2ab31d06",
+  "locked_test_authorized": true,
+  "protocol_version": "phase8-rag-protocol-v1",
+  "scientific_config_hash": "be9f7431892ca7d1f1568894a9d769147730593f7f1d51dffbf656b25510ae63",
+  "selected_variant_id": "rag-top-k1",
+  "selection_policy_version": "phase8-validation-selection-v2-missing-ece-worst",
+  "validation_evidence": {
+    "rag-chunk-128-32": {
+      "evidence_sha256": "2e58e54b9b869995a5e7c1422d2159e4625e2ed744195e974d8df63201fcdfa0",
+      "file_sha256": "de04e9a82cd675d3a1607f83efe19ac529dadedd99cf06716b71d822e6fe39bd",
+      "run_id": "phase8-rag-chunk-128-32-validation-kaggle-v2"
+    },
+    "rag-chunk-64-16": {
+      "evidence_sha256": "6ebf41cbdc4bcc7962483546d96262d286aca6a8e7fa54c6c388bbae54dba178",
+      "file_sha256": "cacebeaea207fdc0512a209ae3a0e26f63f01d91f04834ff6828c05356befd5f",
+      "run_id": "phase8-rag-chunk-64-16-validation-kaggle-v2"
+    },
+    "rag-default-k5": {
+      "evidence_sha256": "4ca5555d7bec768e97f697f384a31b2f16494c4a30fe13e510dea90b4e421af2",
+      "file_sha256": "967d2c7ecc8ddc4e6ffe2ba9b5453a18f29821cc3faaf1a68fb7f8a576480ca4",
+      "run_id": "phase8-rag-default-k5-validation-kaggle-v2"
+    },
+    "rag-embedding-unigram": {
+      "evidence_sha256": "37833f35ca9ec98ceaa31838e0c63f404e03efecbfcca774b5ee41f8e0e1458e",
+      "file_sha256": "5ea0ec0ab6ce09ac4f1d8be3a9c29c7f7a0cc0ef39c1aac629eec867465cc835",
+      "run_id": "phase8-rag-embedding-unigram-validation-kaggle-v2"
+    },
+    "rag-reranker-token-overlap": {
+      "evidence_sha256": "58b4ed84d5d2fc99ee2e821672a2aa9362083ce168140d3a7c4986daeebf150e",
+      "file_sha256": "d7592478c0f969739231f763c428207f2225358f02aed2ee349cfb33ee9bc4e0",
+      "run_id": "phase8-rag-reranker-token-overlap-validation-kaggle-v2"
+    },
+    "rag-top-k1": {
+      "evidence_sha256": "5f2893ef322088b870d407f9f8579bd5cd44ca4f0969a469e0e360b25d605e7b",
+      "file_sha256": "07b7ede899d9bdc91bd9d18c709bf0e6968c8cba41b3a643f8cc3c9f218dc1e2",
+      "run_id": "phase8-rag-top-k1-validation-kaggle-v2"
+    },
+    "rag-top-k3": {
+      "evidence_sha256": "772f1f707409d7ab4d8e8a6efddd40bdcde66dc2c80572bfb9ac61ab224db725",
+      "file_sha256": "3e49b7b453071a18418c00dac63cae09248a4f86d6219d5a3a2cbb83313cb124",
+      "run_id": "phase8-rag-top-k3-validation-kaggle-v2"
+    }
+  }
+}
