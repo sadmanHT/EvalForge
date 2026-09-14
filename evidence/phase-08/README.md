@@ -9,3 +9,10 @@ Phase 08 index preparation reuses the Phase 07 persistence contract. CI verifies
 After those artifacts validate, `protocol-freeze.json` binds the selected variant, validation evidence, ablation report, and GPU/software fingerprint. Only then may the single authorized locked-test run produce `test-run.json` and `test-gpu-host.json`. `baseline-vs-rag-test-comparison.json` is generated from that held-out RAG evidence and the already frozen Phase 06 test evidence.
 
 Do not hand-author, backfill, or fabricate any run-evidence JSON in this directory. The Phase 08 exit gate treats incomplete or inconsistent evidence as a failure.
+
+The first external validation attempt from commit
+`9ff1f93ac645102ea0a9ada7fe2ed1cefd17421a` is intentionally not committed here as accepted
+scientific evidence. It stopped after `rag-top-k3` when the Phase 08 evidence layer treated an
+evaluator-undefined ECE on a parse failure as a hard schema error. The preserved external bundle
+is diagnostic evidence for the infrastructure repair only. Accepted Phase 08 validation evidence
+must come from the complete clean replacement suite under the amended missing-ECE selection rule.
