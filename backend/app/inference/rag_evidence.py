@@ -73,6 +73,18 @@ def _prediction_incident_ids(predictions: object) -> tuple[str, ...]:
     return tuple(incident_ids)
 
 
+def _trace_rank(trace: Mapping[str, object]) -> int:
+    value = trace.get("rank")
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError("RAG retrieval trace rank must be an integer")
+    return value
+
+
+def _trace_included_in_prompt(trace: Mapping[str, object]) -> bool:
+    metadata = trace.get("metadata")
+    return isinstance(metadata, dict) and metadata.get("included_in_prompt") is True
+
+
 def _validate_trace_contract(
     *,
     predictions: list[dict[str, object]],
@@ -125,19 +137,16 @@ def _validate_trace_contract(
     for incident_id, prediction in prediction_by_incident.items():
         incident_traces = sorted(
             traces_by_incident[incident_id],
-            key=lambda item: int(item["rank"]),
+            key=_trace_rank,
         )
-        ranks = tuple(int(item["rank"]) for item in incident_traces)
+        ranks = tuple(_trace_rank(item) for item in incident_traces)
         if ranks != tuple(range(1, len(incident_traces) + 1)):
             raise ValueError("RAG retrieval trace ranks must be contiguous and start at one")
         chunk_ids = tuple(str(item["chunk_id"]) for item in incident_traces)
         if chunk_ids != prediction.retrieved_chunk_ids:
             raise ValueError("RAG retrieval traces disagree with prediction retrieved_chunk_ids")
         included = tuple(
-            str(item["chunk_id"])
-            for item in incident_traces
-            if isinstance(item.get("metadata"), dict)
-            and item["metadata"].get("included_in_prompt") is True
+            str(item["chunk_id"]) for item in incident_traces if _trace_included_in_prompt(item)
         )
         if included != prediction.evidence_citations:
             raise ValueError("RAG prompt citations disagree with persisted retrieval traces")

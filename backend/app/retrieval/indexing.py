@@ -386,18 +386,18 @@ def _validate_persisted_index(session: Session, plan: IndexPlan) -> tuple[int, i
             )
 
     expected_chunks = {item.chunk_id: item for item in plan.chunks}
-    for row in chunks:
-        expected = expected_chunks.get(row.chunk_id)
-        if expected is None:
+    for chunk_row in chunks:
+        expected_chunk = expected_chunks.get(chunk_row.chunk_id)
+        if expected_chunk is None:
             raise ValueError("existing knowledge-base chunk is absent from the sealed index plan")
-        document = expected_documents[expected.document_id]
+        document = expected_documents[expected_chunk.document_id]
         if (
-            row.document_id != expected.document_id
-            or row.chunk_index != expected.chunk_index
-            or row.text != expected.text
-            or row.source_family_id != expected.source_family_id
-            or row.chunk_metadata != _chunk_metadata(expected, document)
-            or not _embedding_matches(row.embedding, expected.embedding)
+            chunk_row.document_id != expected_chunk.document_id
+            or chunk_row.chunk_index != expected_chunk.chunk_index
+            or chunk_row.text != expected_chunk.text
+            or chunk_row.source_family_id != expected_chunk.source_family_id
+            or chunk_row.chunk_metadata != _chunk_metadata(expected_chunk, document)
+            or not _embedding_matches(chunk_row.embedding, expected_chunk.embedding)
         ):
             raise ValueError("existing knowledge-base chunk disagrees with the sealed index plan")
     return len(documents), len(chunks)
