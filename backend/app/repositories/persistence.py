@@ -160,7 +160,7 @@ class PersistenceRepository:
                 or existing.payload_json != payload
                 or existing.experiment_id != experiment_id
             ):
-                raise ValueError("idempotency key reused with a different job payload")
+                raise ValueError("idempotency key reused with different job semantics")
             return existing
         row = Job(
             job_id=job_id,
@@ -175,6 +175,15 @@ class PersistenceRepository:
         self.session.add(row)
         self.session.flush()
         return row
+
+    @contextmanager
+    def transaction(self) -> Iterator[PersistenceRepository]:
+        try:
+            yield self
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
 
     @contextmanager
     def claim_job(self, job_id: str) -> Iterator[Job]:
