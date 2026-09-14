@@ -102,6 +102,12 @@ class RAGProtocol(BaseModel):
         return variant
 
     def scientific_payload(self) -> dict[str, object]:
+        """Scientific identity shared by validation and the post-selection locked test.
+
+        The selected variant is deliberately excluded. Its complete retrieval identity lives in
+        the ablation-suite hash plus each experiment config. Selection is an operational outcome
+        of validation and must not retroactively change the scientific identity of those runs.
+        """
         return {
             "protocol_version": self.protocol_version,
             "study_id": self.study_id,
@@ -121,7 +127,6 @@ class RAGProtocol(BaseModel):
             "ece_bins": self.ece_bins,
             "ablation_suite_hash": self.ablation_suite_hash,
             "research_policy_version": self.research_policy_version,
-            "selected_variant_id": self.selected_variant_id,
             "supporting_evaluator_versions": self.supporting_evaluator_versions,
         }
 
