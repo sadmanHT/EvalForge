@@ -117,10 +117,7 @@ def test_rag_pgvector_prompt_evaluation_and_trace_persistence(engine: Engine) ->
         (ROOT / "configs/label-taxonomy.yaml").read_text(encoding="utf-8")
     )
     labels = tuple(item["id"] for item in taxonomy_payload["labels"])
-    categories = {
-        item["id"]: item["category"]
-        for item in taxonomy_payload["labels"]
-    }
+    categories = {item["id"]: item["category"] for item in taxonomy_payload["labels"]}
     relevant_document_by_label = {
         document.root_cause_code: document.document_id
         for document in plan.documents
@@ -225,9 +222,7 @@ def test_rag_pgvector_prompt_evaluation_and_trace_persistence(engine: Engine) ->
         assert all(trace.rank >= 1 for trace in traces)
         assert all("raw_similarity_score" in trace.trace_metadata for trace in traces)
         assert all("provenance" in trace.trace_metadata for trace in traces)
-        assert all(
-            "root_cause_code" not in trace.trace_metadata["provenance"] for trace in traces
-        )
+        assert all("root_cause_code" not in trace.trace_metadata["provenance"] for trace in traces)
         assert all(
             trace.trace_metadata["provenance"].get("source_split") not in {"validation", "test"}
             for trace in traces
