@@ -13,6 +13,10 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.db import build_engine, sqlalchemy_database_url
 from app.inference.base_model import BackendOutput, GenerationConfig, RuntimeConfig
+from app.inference.rag_evidence import (
+    export_phase8_rag_run_evidence,
+    validate_phase8_rag_run_evidence,
+)
 from app.inference.rag_pipeline import ContextBudget, PgVectorRetriever, RAGPipeline
 from app.inference.rag_protocol import load_rag_protocol
 from app.inference.rag_runner import run_rag_experiment
@@ -140,6 +144,26 @@ def test_rag_runner_is_reproducible_aligned_and_leakage_safe(engine: Engine) -> 
         assert summary.recomputation_verified is True
         assert "retrieval.context_precision" in summary.metric_values
         assert "retrieval.context_recall" in summary.metric_values
+
+        evidence = export_phase8_rag_run_evidence(
+            session,
+            root=ROOT,
+            run_id=summary.run_id,
+            protocol=protocol,
+            variant=variant,
+        )
+        validate_phase8_rag_run_evidence(
+            evidence,
+            root=ROOT,
+            protocol=protocol,
+            expected_split="validation",
+            expected_variant=variant,
+        )
+        assert evidence["variant_id"] == variant.variant_id
+        assert evidence["stored_prediction_count"] == 6
+        assert evidence["stored_retrieval_trace_count"] == summary.retrieval_trace_count
+        assert evidence["metric_recomputation_verified"] is True
+        assert len(str(evidence["evidence_sha256"])) == 64
 
         repeated = run_rag_experiment(
             session,
