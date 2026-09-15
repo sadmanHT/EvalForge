@@ -11,11 +11,15 @@ BACKEND = ROOT / "backend"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from app.data.schemas import IncidentRecord, Split
-from app.inference.base_model import IncidentInput, RuntimeConfig, ZeroShotBaselineAdapter
-from app.inference.protocol import load_taxonomy
-from app.training.config import load_training_config
-from app.training.inference import PeftTransformersBackend
+from app.data.schemas import IncidentRecord, Split  # noqa: E402
+from app.inference.base_model import (  # noqa: E402
+    IncidentInput,
+    RuntimeConfig,
+    ZeroShotBaselineAdapter,
+)
+from app.inference.protocol import load_taxonomy  # noqa: E402
+from app.training.config import load_training_config  # noqa: E402
+from app.training.inference import PeftTransformersBackend  # noqa: E402
 
 
 def _first_validation_record(dataset_version: str) -> IncidentRecord:
