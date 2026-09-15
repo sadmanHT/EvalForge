@@ -79,10 +79,20 @@ def _training_payload(
 
 
 def _fake_complete_evidence_root(tmp_path: Path) -> tuple[Path, Path]:
-    config_dir = tmp_path / "training/configs"
-    config_dir.mkdir(parents=True)
-    shutil.copy(ROOT / "training/configs/lora_config.yaml", config_dir / "lora_config.yaml")
-    shutil.copy(ROOT / "training/configs/training_args.yaml", config_dir / "training_args.yaml")
+    training_config_dir = tmp_path / "training/configs"
+    training_config_dir.mkdir(parents=True)
+    shutil.copy(
+        ROOT / "training/configs/lora_config.yaml",
+        training_config_dir / "lora_config.yaml",
+    )
+    shutil.copy(
+        ROOT / "training/configs/training_args.yaml",
+        training_config_dir / "training_args.yaml",
+    )
+    model_config_dir = tmp_path / "configs"
+    model_config_dir.mkdir(parents=True)
+    shutil.copy(ROOT / "configs/model.yaml", model_config_dir / "model.yaml")
+
     bundle = load_training_config(tmp_path)
     config_hash = bundle.config_hash()
     adapter_sha256 = "f" * 64
