@@ -193,7 +193,10 @@ def _dependency_lock_checksum(root: Path) -> str:
 
 def _dataset_manifest(root: Path, dataset_version: str) -> dict[str, Any]:
     path = root / "datasets/incident_diagnosis/processed" / dataset_version / "manifest.json"
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    raw_payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw_payload, dict):
+        raise ValueError("dataset manifest must be a JSON object")
+    payload: dict[str, Any] = {str(key): value for key, value in raw_payload.items()}
     if payload.get("dataset_version") != dataset_version:
         raise ValueError("dataset manifest/version mismatch")
     return payload
