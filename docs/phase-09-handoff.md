@@ -8,7 +8,7 @@ Repository-side Phase 09 implementation is ready for validation, but the phase r
 
 The Phase 09 training system includes deterministic train/validation instruction formatting, held-out family and synthetic-lineage checks, frozen QLoRA/training configuration, a lazy Transformers/PEFT runtime, prompt-token loss masking, finite-signal checks, checkpointing and resume support, W&B tracking, adapter inference/reload support, adapter export, a CPU-only contract trainer, Redis worker orchestration, and Postgres registration of Job, AdapterVersion, Artifact, and candidate FINETUNED experiment records.
 
-The CPU worker artifact is explicitly `scientific_adapter=false`; it proves orchestration and persistence but is not a substitute for training the frozen 7B model.
+The production worker registers `phase9_training` with the real connected PEFT executor. That path fails closed without W&B configuration and relies on the runtime's CUDA requirement; the deterministic CPU executor is injected only by smoke/integration tests. Its artifact is explicitly `scientific_adapter=false`, so it proves orchestration and persistence without substituting for training the frozen 7B model.
 
 ## Frozen identity
 
