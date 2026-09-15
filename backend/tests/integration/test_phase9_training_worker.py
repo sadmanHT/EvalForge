@@ -103,7 +103,10 @@ def test_worker_smoke_persists_job_adapter_artifact_and_candidate_experiment(
         adapter = session.get(AdapterVersion, experiment.adapter_version_id)
         assert adapter is not None
         assert adapter.metadata_json["scientific_adapter"] is False
-        assert adapter.metadata_json["training_config_hash"] == processed.result["training_config_hash"]
+        assert (
+            adapter.metadata_json["training_config_hash"]
+            == processed.result["training_config_hash"]
+        )
 
         artifact = session.scalar(
             select(Artifact).where(Artifact.experiment_id == payload["experiment_id"])
