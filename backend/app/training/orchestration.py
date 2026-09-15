@@ -18,7 +18,9 @@ from app.repositories import PersistenceRepository
 from app.services.dataset_import import import_phase3_dataset
 from app.training.config import TrainingConfigBundle, load_training_config
 from app.training.formatter import PreparedDatasetManifest, prepare_training_dataset
+from app.training.runtime import PeftTrainingRuntime
 from app.training.smoke import SmokeAdapter, run_smoke_training
+from app.training.tracking import build_training_tracker_from_env
 
 
 @dataclass(frozen=True)
@@ -41,6 +43,93 @@ class TrainingExecutor(Protocol):
         prepared_dir: Path,
         bundle: TrainingConfigBundle,
     ) -> TrainingArtifactResult: ...
+
+
+class ConnectedPeftTrainingExecutor:
+    """Real CUDA/W&B Phase 09 executor used by the production worker."""
+
+    def __init__(self, *, root: Path, output_root: Path) -> None:
+        self.root = root
+        self.output_root = output_root
+
+    def execute(
+        self,
+        *,
+        payload: dict[str, Any],
+        prepared_dir: Path,
+        bundle: TrainingConfigBundle,
+    ) -> TrainingArtifactResult:
+        if not os.environ.get("WANDB_PROJECT", "").strip():
+            raise RuntimeError("real Phase 09 worker training requires WANDB_PROJECT")
+
+        job_id = _required_text(payload, "job_id")
+        run_id = str(payload.get("training_run_id") or job_id)
+        output_dir = self.output_root / job_id
+        raw_resume = payload.get("resume_from_checkpoint")
+        if raw_resume is not None and (not isinstance(raw_resume, str) or not raw_resume.strip()):
+            raise ValueError("resume_from_checkpoint must be a non-empty path when provided")
+        resume = Path(raw_resume).resolve() if isinstance(raw_resume, str) else None
+
+        prepared = PreparedDatasetManifest.model_validate_json(
+            (prepared_dir / "manifest.json").read_text(encoding="utf-8")
+        )
+        result = PeftTrainingRuntime(bundle).train(
+            train_path=prepared_dir / "train.jsonl",
+            validation_path=prepared_dir / "validation.jsonl",
+            output_dir=output_dir,
+            resume_from_checkpoint=resume,
+            report_to_wandb=True,
+        )
+        reproducibility_metadata: dict[str, object] = {
+            "phase": 9,
+            "training_config_hash": bundle.config_hash(),
+            "dataset_version": prepared.dataset_version,
+            "dataset_manifest_checksum": prepared.dataset_manifest_checksum,
+            "dataset_content_checksum": prepared.dataset_content_checksum,
+            "prepared_train_sha256": prepared.train_sha256,
+            "prepared_validation_sha256": prepared.validation_sha256,
+            "lineage_sha256": prepared.lineage_sha256,
+            "base_model_id": bundle.lora.base_model_id,
+            "base_model_revision": bundle.lora.base_model_revision,
+            "seed": bundle.training.seed,
+            "git_commit": _required_text(payload, "git_commit"),
+            "hardware_runtime_descriptor": _required_text(
+                payload, "hardware_runtime_descriptor"
+            ),
+            "resumed_from_checkpoint": str(resume) if resume is not None else None,
+        }
+        tracking = build_training_tracker_from_env().log_training(
+            run_id=run_id,
+            config=bundle.canonical_payload(),
+            reproducibility_metadata=reproducibility_metadata,
+            result=result,
+        )
+        if (
+            not tracking.configured
+            or tracking.run_reference is None
+            or tracking.artifact_reference is None
+        ):
+            raise RuntimeError("real Phase 09 worker training requires durable W&B references")
+
+        adapter_dir = Path(result.adapter_dir).resolve()
+        size_bytes = sum(path.stat().st_size for path in adapter_dir.rglob("*") if path.is_file())
+        adapter_id = str(payload.get("adapter_id") or "evalforge/mistral-7b-phase9-qlora")
+        revision = f"qlora-{result.adapter_sha256[:16]}"
+        return TrainingArtifactResult(
+            adapter_id=adapter_id,
+            adapter_revision=revision,
+            adapter_uri=adapter_dir.as_uri(),
+            adapter_sha256=result.adapter_sha256,
+            size_bytes=size_bytes,
+            selected_checkpoint=result.selected_checkpoint,
+            scientific_adapter=True,
+            metadata={
+                **reproducibility_metadata,
+                "checkpoint_paths": list(result.checkpoint_paths),
+                "train_metrics": result.train_metrics,
+                "tracking": tracking.as_dict(),
+            },
+        )
 
 
 class SmokeTrainingExecutor:
@@ -147,7 +236,7 @@ def _registration_experiment_config(
 
 
 class Phase9TrainingJobHandler:
-    """Queue-worker boundary for training smoke/jobs and persistence registration."""
+    """Queue-worker boundary for real training jobs and explicit CPU smoke tests."""
 
     def __init__(
         self,
@@ -160,7 +249,10 @@ class Phase9TrainingJobHandler:
         self.root = (root or Path(os.environ.get("EVALFORGE_ROOT", "."))).resolve()
         self.engine = engine or build_engine()
         self.work_root = (work_root or self.root / ".phase9-work").resolve()
-        self.executor = executor or SmokeTrainingExecutor(self.work_root / "smoke")
+        self.executor = executor or ConnectedPeftTrainingExecutor(
+            root=self.root,
+            output_root=self.work_root / "training",
+        )
 
     def __call__(self, payload: dict[str, Any]) -> dict[str, object]:
         job_id = _required_text(payload, "job_id")
