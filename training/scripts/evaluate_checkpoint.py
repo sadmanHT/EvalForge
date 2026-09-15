@@ -12,14 +12,13 @@ if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
 from app.data.schemas import IncidentRecord, Split  # noqa: E402
-from app.inference.base_model import (  # noqa: E402
-    IncidentInput,
-    RuntimeConfig,
-    ZeroShotBaselineAdapter,
-)
+from app.inference.base_model import IncidentInput, RuntimeConfig  # noqa: E402
 from app.inference.protocol import load_taxonomy  # noqa: E402
 from app.training.config import load_training_config  # noqa: E402
-from app.training.inference import PeftTransformersBackend  # noqa: E402
+from app.training.inference import (  # noqa: E402
+    FineTunedAdapterPipeline,
+    PeftTransformersBackend,
+)
 
 
 def _first_validation_record(dataset_version: str) -> IncidentRecord:
@@ -59,7 +58,7 @@ def main() -> int:
         adapter_id=args.adapter,
         adapter_revision=args.adapter_revision,
     )
-    pipeline = ZeroShotBaselineAdapter(backend=backend, allowed_labels=labels)
+    pipeline = FineTunedAdapterPipeline(backend=backend, allowed_labels=labels)
     record = _first_validation_record(args.dataset_version)
     prediction = pipeline.predict(
         IncidentInput(
@@ -72,6 +71,8 @@ def main() -> int:
     print(json.dumps(payload, sort_keys=True, allow_nan=False))
     if prediction.parse_status.value != "OK":
         raise RuntimeError(f"adapter validation smoke parse failed: {prediction.parse_status}")
+    if prediction.pipeline_metadata.get("pipeline_type") != "FINETUNED":
+        raise RuntimeError("adapter validation smoke did not use the fine-tuned pipeline contract")
     return 0
 
 
