@@ -5,8 +5,11 @@ on:
     branches:
       - phase-09-fine-tuning-system
 
+permissions:
+  contents: write
+
 jobs:
-  format-preview:
+  format-phase9:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,7 +18,16 @@ jobs:
           python-version: "3.11"
       - name: Install pinned Ruff
         run: python -m pip install ruff==0.12.0
-      - name: Show canonical Phase 09 formatting diff
+      - name: Apply canonical Phase 09 formatting and remove helper
         run: |
           cd backend
-          ruff format --diff app/training/ tests/training/
+          ruff format app/training/ tests/training/
+          cd ..
+          rm .github/workflows/phase9-format-preview.yml
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backend/app/training backend/tests/training .github/workflows/phase9-format-preview.yml
+          git commit -m "style: apply canonical Phase 09 formatting"
+          git push
