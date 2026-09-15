@@ -237,21 +237,26 @@ class PeftTrainingRuntime:
                     "labels": torch.tensor(padded_labels, dtype=torch.long),
                 }
 
-        class FiniteLossCallback(transformers.TrainerCallback):
-            def on_log(
-                self,
-                _args: Any,
-                _state: Any,
-                _control: Any,
-                logs: dict[str, object] | None = None,
-                **_kwargs: object,
-            ) -> None:
-                for key in ("loss", "eval_loss", "grad_norm"):
-                    if logs is None or key not in logs:
-                        continue
-                    value = logs[key]
-                    if isinstance(value, int | float) and not math.isfinite(float(value)):
-                        raise TrainingRuntimeError(f"non-finite training signal: {key}={value}")
+        def finite_loss_on_log(
+            _self: object,
+            _args: Any,
+            _state: Any,
+            _control: Any,
+            logs: dict[str, object] | None = None,
+            **_kwargs: object,
+        ) -> None:
+            for key in ("loss", "eval_loss", "grad_norm"):
+                if logs is None or key not in logs:
+                    continue
+                value = logs[key]
+                if isinstance(value, int | float) and not math.isfinite(float(value)):
+                    raise TrainingRuntimeError(f"non-finite training signal: {key}={value}")
+
+        finite_loss_callback = type(
+            "FiniteLossCallback",
+            (transformers.TrainerCallback,),
+            {"on_log": finite_loss_on_log},
+        )()
 
         training_kwargs: dict[str, object] = {
             "output_dir": str(output_dir),
@@ -295,7 +300,7 @@ class PeftTrainingRuntime:
                 train_dataset=InstructionDataset(train_rows),
                 eval_dataset=InstructionDataset(validation_rows),
                 data_collator=DataCollator(),
-                callbacks=[FiniteLossCallback()],
+                callbacks=[finite_loss_callback],
             )
             train_output = trainer.train(
                 resume_from_checkpoint=(
