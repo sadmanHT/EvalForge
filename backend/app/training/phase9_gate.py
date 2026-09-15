@@ -67,6 +67,7 @@ def validate_training_run_evidence(
         raise ValueError("training evidence changed the frozen base model ID")
     if payload.get("base_model_revision") != expected_model_revision:
         raise ValueError("training evidence changed the frozen base model revision")
+    _required_text(payload, "run_id")
     _required_text(payload, "dataset_version")
     _validate_sha256(payload.get("dataset_manifest_checksum"), "dataset_manifest_checksum")
     _validate_sha256(payload.get("dataset_content_checksum"), "dataset_content_checksum")
@@ -126,6 +127,7 @@ def _validate_reload_evidence(
     *,
     expected_model_id: str,
     expected_model_revision: str,
+    expected_dataset_version: str,
 ) -> None:
     if payload.get("validation_split") != "validation":
         raise ValueError("adapter-reload.json must use validation-only inference")
@@ -137,16 +139,26 @@ def _validate_reload_evidence(
         raise ValueError("adapter-reload.json changed the frozen base model ID")
     if payload.get("base_model_revision") != expected_model_revision:
         raise ValueError("adapter-reload.json changed the frozen base model revision")
+    if payload.get("dataset_version") != expected_dataset_version:
+        raise ValueError("adapter-reload.json dataset version does not match training run")
     _required_text(payload, "validation_incident_id")
-    _required_text(payload, "dataset_version")
     _required_text(payload, "adapter_id")
     _required_text(payload, "adapter_revision")
 
 
-def _validate_resume_evidence(payload: dict[str, Any]) -> None:
+def _validate_resume_evidence(
+    payload: dict[str, Any],
+    *,
+    expected_source_run_id: str,
+    expected_source_wandb_run_reference: str,
+    expected_dataset_version: str,
+    expected_dataset_manifest_checksum: str,
+) -> None:
     _required_text(payload, "resume_from_checkpoint")
-    _required_text(payload, "source_run_id")
-    _required_text(payload, "source_wandb_run_reference")
+    if payload.get("source_run_id") != expected_source_run_id:
+        raise ValueError("resume.json source run does not match training-run.json")
+    if payload.get("source_wandb_run_reference") != expected_source_wandb_run_reference:
+        raise ValueError("resume.json source W&B run does not match training-run.json")
     _required_text(payload, "resumed_run_id")
     _required_text(payload, "resumed_wandb_run_reference")
     _required_text(payload, "resumed_wandb_artifact_reference")
@@ -155,21 +167,77 @@ def _validate_resume_evidence(payload: dict[str, Any]) -> None:
         payload.get("resumed_training_evidence_sha256"),
         "resumed_training_evidence_sha256",
     )
-    _required_text(payload, "dataset_version")
-    _validate_sha256(payload.get("dataset_manifest_checksum"), "dataset_manifest_checksum")
+    if payload.get("dataset_version") != expected_dataset_version:
+        raise ValueError("resume.json dataset version does not match training run")
+    if payload.get("dataset_manifest_checksum") != expected_dataset_manifest_checksum:
+        raise ValueError("resume.json dataset manifest does not match training run")
 
 
-def _validate_export_evidence(payload: dict[str, Any], *, adapter_sha256: str) -> None:
+def _validate_export_evidence(
+    payload: dict[str, Any],
+    *,
+    adapter_sha256: str,
+    expected_model_id: str,
+    expected_model_revision: str,
+    expected_dataset_manifest_checksum: str,
+) -> None:
     if payload.get("exported_adapter_sha256") != adapter_sha256:
         raise ValueError("adapter-export.json copied adapter checksum does not match training run")
     _validate_sha256(payload.get("export_tree_sha256"), "export_tree_sha256")
     _required_text(payload, "destination")
     _required_text(payload, "manifest_path")
-    _validate_sha256(payload.get("dataset_manifest_checksum"), "dataset_manifest_checksum")
-    _required_text(payload, "base_model_id")
-    _required_text(payload, "base_model_revision")
+    if payload.get("dataset_manifest_checksum") != expected_dataset_manifest_checksum:
+        raise ValueError("adapter-export.json dataset manifest does not match training run")
+    if payload.get("base_model_id") != expected_model_id:
+        raise ValueError("adapter-export.json changed the frozen base model ID")
+    if payload.get("base_model_revision") != expected_model_revision:
+        raise ValueError("adapter-export.json changed the frozen base model revision")
     if payload.get("hub_push_requested") is not False:
         raise ValueError("Phase 09 export evidence must not pull Phase 10 public release forward")
+
+
+def _validate_resumed_training_evidence(
+    evidence_dir: Path,
+    *,
+    resume_payload: dict[str, Any],
+    training_payload: dict[str, Any],
+    expected_config_hash: str,
+    expected_model_id: str,
+    expected_model_revision: str,
+) -> None:
+    resumed_path = evidence_dir / "resume-training-run.json"
+    if not resumed_path.exists():
+        raise ValueError("missing resume-training-run.json")
+    recorded_sha = _validate_sha256(
+        resume_payload.get("resumed_training_evidence_sha256"),
+        "resumed_training_evidence_sha256",
+    )
+    if sha256_file(resumed_path) != recorded_sha:
+        raise ValueError("resume-training-run.json does not match resume.json")
+    resumed_payload = _read_json(resumed_path)
+    resumed_adapter_sha256, resumed_run_reference = validate_training_run_evidence(
+        resumed_payload,
+        expected_config_hash=expected_config_hash,
+        expected_model_id=expected_model_id,
+        expected_model_revision=expected_model_revision,
+    )
+    if resume_payload.get("resumed_adapter_sha256") != resumed_adapter_sha256:
+        raise ValueError("resume.json resumed adapter checksum does not match resumed run")
+    if resume_payload.get("resumed_wandb_run_reference") != resumed_run_reference:
+        raise ValueError("resume.json resumed W&B run does not match resumed run evidence")
+    if resumed_payload.get("run_id") != resume_payload.get("resumed_run_id"):
+        raise ValueError("resume.json resumed run ID does not match resumed run evidence")
+    if resumed_payload.get("dataset_version") != training_payload.get("dataset_version"):
+        raise ValueError("resumed run dataset version does not match source training run")
+    if resumed_payload.get("dataset_manifest_checksum") != training_payload.get(
+        "dataset_manifest_checksum"
+    ):
+        raise ValueError("resumed run dataset manifest does not match source training run")
+    resume_from_checkpoint = resumed_payload.get("resume_from_checkpoint")
+    if not isinstance(resume_from_checkpoint, str) or not resume_from_checkpoint.strip():
+        raise ValueError("resumed run did not record its recovery checkpoint")
+    if resume_payload.get("resume_from_checkpoint") != resume_from_checkpoint:
+        raise ValueError("resume.json checkpoint does not match resumed run evidence")
 
 
 def evaluate_phase9_repository_state(root: Path) -> Phase9RepositoryStatus:
@@ -228,11 +296,35 @@ def evaluate_phase9_repository_state(root: Path) -> Phase9RepositoryStatus:
             supporting["adapter-reload.json"],
             expected_model_id=bundle.lora.base_model_id,
             expected_model_revision=bundle.lora.base_model_revision,
+            expected_dataset_version=_required_text(training_payload, "dataset_version"),
         )
-        _validate_resume_evidence(supporting["resume.json"])
+        _validate_resume_evidence(
+            supporting["resume.json"],
+            expected_source_run_id=_required_text(training_payload, "run_id"),
+            expected_source_wandb_run_reference=run_reference,
+            expected_dataset_version=_required_text(training_payload, "dataset_version"),
+            expected_dataset_manifest_checksum=_validate_sha256(
+                training_payload.get("dataset_manifest_checksum"),
+                "dataset_manifest_checksum",
+            ),
+        )
+        _validate_resumed_training_evidence(
+            evidence_dir,
+            resume_payload=supporting["resume.json"],
+            training_payload=training_payload,
+            expected_config_hash=config_hash,
+            expected_model_id=bundle.lora.base_model_id,
+            expected_model_revision=bundle.lora.base_model_revision,
+        )
         _validate_export_evidence(
             supporting["adapter-export.json"],
             adapter_sha256=adapter_sha256,
+            expected_model_id=bundle.lora.base_model_id,
+            expected_model_revision=bundle.lora.base_model_revision,
+            expected_dataset_manifest_checksum=_validate_sha256(
+                training_payload.get("dataset_manifest_checksum"),
+                "dataset_manifest_checksum",
+            ),
         )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return Phase9RepositoryStatus(
