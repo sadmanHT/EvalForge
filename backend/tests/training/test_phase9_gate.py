@@ -36,6 +36,48 @@ def _write_json(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def _training_payload(
+    *,
+    config_hash: str,
+    base_model_id: str,
+    base_model_revision: str,
+    run_id: str,
+    adapter_sha256: str,
+    wandb_run_reference: str,
+    wandb_artifact_reference: str,
+    selected_checkpoint: str,
+    checkpoint_paths: list[str],
+    resume_from_checkpoint: str | None = None,
+) -> dict[str, object]:
+    return {
+        "evidence_version": "phase9-training-run-v1",
+        "run_id": run_id,
+        "status": "completed",
+        "training_config_hash": config_hash,
+        "dataset_version": "dataset-v1",
+        "dataset_manifest_checksum": "a" * 64,
+        "dataset_content_checksum": "b" * 64,
+        "prepared_train_sha256": "c" * 64,
+        "prepared_validation_sha256": "d" * 64,
+        "lineage_sha256": "e" * 64,
+        "base_model_id": base_model_id,
+        "base_model_revision": base_model_revision,
+        "git_commit": "abc123",
+        "hardware_runtime_descriptor": "Fake CUDA runner",
+        "resume_from_checkpoint": resume_from_checkpoint,
+        "adapter_sha256": adapter_sha256,
+        "selected_checkpoint": selected_checkpoint,
+        "checkpoint_paths": checkpoint_paths,
+        "gpu_environment": {"cuda_available": True, "gpu_name": "Fake GPU"},
+        "tracking": {
+            "provider": "wandb",
+            "configured": True,
+            "run_reference": wandb_run_reference,
+            "artifact_reference": wandb_artifact_reference,
+        },
+    }
+
+
 def _fake_complete_evidence_root(tmp_path: Path) -> tuple[Path, Path]:
     config_dir = tmp_path / "training/configs"
     config_dir.mkdir(parents=True)
@@ -48,32 +90,17 @@ def _fake_complete_evidence_root(tmp_path: Path) -> tuple[Path, Path]:
     training_path = evidence_dir / "training-run.json"
     _write_json(
         training_path,
-        {
-            "evidence_version": "phase9-training-run-v1",
-            "run_id": "phase9-gpu-run",
-            "status": "completed",
-            "training_config_hash": config_hash,
-            "dataset_version": "dataset-v1",
-            "dataset_manifest_checksum": "a" * 64,
-            "dataset_content_checksum": "b" * 64,
-            "prepared_train_sha256": "c" * 64,
-            "prepared_validation_sha256": "d" * 64,
-            "lineage_sha256": "e" * 64,
-            "base_model_id": bundle.lora.base_model_id,
-            "base_model_revision": bundle.lora.base_model_revision,
-            "git_commit": "abc123",
-            "hardware_runtime_descriptor": "Fake CUDA runner",
-            "adapter_sha256": adapter_sha256,
-            "selected_checkpoint": "/tmp/checkpoint-1",
-            "checkpoint_paths": ["/tmp/checkpoint-1"],
-            "gpu_environment": {"cuda_available": True, "gpu_name": "Fake GPU"},
-            "tracking": {
-                "provider": "wandb",
-                "configured": True,
-                "run_reference": "https://wandb.invalid/run/1",
-                "artifact_reference": "https://wandb.invalid/artifact/1",
-            },
-        },
+        _training_payload(
+            config_hash=config_hash,
+            base_model_id=bundle.lora.base_model_id,
+            base_model_revision=bundle.lora.base_model_revision,
+            run_id="phase9-gpu-run",
+            adapter_sha256=adapter_sha256,
+            wandb_run_reference="https://wandb.invalid/run/1",
+            wandb_artifact_reference="https://wandb.invalid/artifact/1",
+            selected_checkpoint="/tmp/checkpoint-2",
+            checkpoint_paths=["/tmp/checkpoint-1", "/tmp/checkpoint-2"],
+        ),
     )
     training_sha = sha256_file(training_path)
     common = {
@@ -98,6 +125,25 @@ def _fake_complete_evidence_root(tmp_path: Path) -> tuple[Path, Path]:
             "dataset_version": "dataset-v1",
         },
     )
+
+    resumed_training_path = evidence_dir / "resume-training-run.json"
+    resumed_adapter_sha256 = "1" * 64
+    _write_json(
+        resumed_training_path,
+        _training_payload(
+            config_hash=config_hash,
+            base_model_id=bundle.lora.base_model_id,
+            base_model_revision=bundle.lora.base_model_revision,
+            run_id="phase9-gpu-resume",
+            adapter_sha256=resumed_adapter_sha256,
+            wandb_run_reference="https://wandb.invalid/run/2",
+            wandb_artifact_reference="https://wandb.invalid/artifact/2",
+            selected_checkpoint="/tmp/resume-checkpoint-2",
+            checkpoint_paths=["/tmp/resume-checkpoint-2"],
+            resume_from_checkpoint="/tmp/checkpoint-1",
+        ),
+    )
+    resumed_training_sha = sha256_file(resumed_training_path)
     _write_json(
         evidence_dir / "resume.json",
         {
@@ -109,8 +155,8 @@ def _fake_complete_evidence_root(tmp_path: Path) -> tuple[Path, Path]:
             "resumed_run_id": "phase9-gpu-resume",
             "resumed_wandb_run_reference": "https://wandb.invalid/run/2",
             "resumed_wandb_artifact_reference": "https://wandb.invalid/artifact/2",
-            "resumed_adapter_sha256": "1" * 64,
-            "resumed_training_evidence_sha256": "2" * 64,
+            "resumed_adapter_sha256": resumed_adapter_sha256,
+            "resumed_training_evidence_sha256": resumed_training_sha,
             "dataset_version": "dataset-v1",
             "dataset_manifest_checksum": "a" * 64,
         },
