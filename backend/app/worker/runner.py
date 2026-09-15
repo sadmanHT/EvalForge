@@ -9,6 +9,7 @@ from redis import Redis
 from app.config import Settings
 from app.inference.orchestration import Phase6BaselineJobHandler
 from app.inference.rag_orchestration import Phase8RAGJobHandler
+from app.training.orchestration import Phase9TrainingJobHandler
 from app.worker.queue import TaskHandler, process_one
 
 _running = True
@@ -26,6 +27,7 @@ def main() -> None:
     task_handlers: dict[str, TaskHandler] = {
         "phase6_baseline": Phase6BaselineJobHandler(),
         "phase8_rag": Phase8RAGJobHandler(),
+        "phase9_training": Phase9TrainingJobHandler(),
     }
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
