@@ -102,10 +102,17 @@ class PeftTrainingRuntime:
         lora = self.bundle.lora
         args = self.bundle.training
 
+        cuda_available = bool(torch.cuda.is_available())
+        if lora.method == "qlora" and not cuda_available:
+            raise TrainingRuntimeError(
+                "Phase 09 QLoRA requires a CUDA GPU; do not silently fall back to CPU "
+                "or change the frozen base model"
+            )
+
         if hasattr(transformers, "set_seed"):
             transformers.set_seed(args.seed)
         torch.manual_seed(args.seed)
-        if torch.cuda.is_available():
+        if cuda_available:
             torch.cuda.manual_seed_all(args.seed)
 
         dtype = getattr(torch, lora.compute_dtype, None)
@@ -121,7 +128,7 @@ class PeftTrainingRuntime:
 
         model_kwargs: dict[str, object] = {
             "revision": lora.base_model_revision,
-            "device_map": "auto",
+            "device_map": {"": 0} if cuda_available else "cpu",
             "low_cpu_mem_usage": True,
         }
         if lora.method == "qlora":
@@ -139,6 +146,8 @@ class PeftTrainingRuntime:
                 lora.base_model_id,
                 **model_kwargs,
             )
+            if args.gradient_checkpointing and hasattr(model.config, "use_cache"):
+                model.config.use_cache = False
             if lora.method == "qlora":
                 model = peft.prepare_model_for_kbit_training(
                     model,
@@ -155,7 +164,7 @@ class PeftTrainingRuntime:
             model = peft.get_peft_model(model, peft_config)
         except RuntimeError as exc:
             if _oom_like(exc):
-                if torch.cuda.is_available():
+                if cuda_available:
                     torch.cuda.empty_cache()
                 raise TrainingOOMError(str(exc)) from exc
             raise TrainingRuntimeError(f"PEFT model initialization failed: {exc}") from exc
@@ -298,7 +307,7 @@ class PeftTrainingRuntime:
             tokenizer.save_pretrained(adapter_dir)
         except RuntimeError as exc:
             if _oom_like(exc):
-                if torch.cuda.is_available():
+                if cuda_available:
                     torch.cuda.empty_cache()
                 raise TrainingOOMError(str(exc)) from exc
             raise TrainingRuntimeError(f"training failed: {exc}") from exc
