@@ -50,7 +50,8 @@ def main() -> int:
 
     status = evaluate_phase9_repository_state(ROOT)
     if status.stage is Phase9Stage.TRAINING_EVIDENCE_READY and status.adapter_sha256 is None:
-        raise RuntimeError(f"Phase 09 repository contains invalid training evidence: {status.blocker}")
+        message = "Phase 09 repository contains invalid training evidence"
+        raise RuntimeError(f"{message}: {status.blocker}")
 
     print("PHASE09_CONTRACT=PASS")
     print(f"TRAINING_CONFIG_HASH={bundle.config_hash()}")
