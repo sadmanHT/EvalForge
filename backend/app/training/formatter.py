@@ -82,6 +82,9 @@ def format_incident(
         raise ValueError("locked test incidents may not be formatted for Phase 09 training")
     if record.root_cause_code not in allowed_labels:
         raise ValueError(f"unknown root_cause_code: {record.root_cause_code}")
+    source_split: Literal["train", "validation"] = (
+        "train" if record.split is Split.TRAIN else "validation"
+    )
     prompt = get_prompt_template(BASELINE_PROMPT_VERSION).render(
         title=record.title,
         description=record.description,
@@ -94,7 +97,7 @@ def format_incident(
     return TrainingExample(
         incident_id=record.incident_id,
         incident_family_id=record.incident_family_id,
-        source_split=record.split.value,
+        source_split=source_split,
         is_synthetic=record.is_synthetic,
         parent_incident_id=record.parent_incident_id,
         root_cause_code=record.root_cause_code,
