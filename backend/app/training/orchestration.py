@@ -78,7 +78,7 @@ class ConnectedPeftTrainingExecutor:
             validation_path=prepared_dir / "validation.jsonl",
             output_dir=output_dir,
             resume_from_checkpoint=resume,
-            report_to_wandb=True,
+            report_to_wandb=False,
         )
         reproducibility_metadata: dict[str, object] = {
             "phase": 9,
