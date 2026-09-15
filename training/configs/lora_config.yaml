@@ -1,0 +1,24 @@
+{
+  "config_version": "phase9-lora-config-v1",
+  "method": "qlora",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "bias": "none",
+  "task_type": "CAUSAL_LM",
+  "quantization": "bitsandbytes_4bit_nf4",
+  "compute_dtype": "float16",
+  "use_double_quant": true,
+  "seed": 20260908
+}

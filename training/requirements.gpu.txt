@@ -1,0 +1,10 @@
+# Phase 09 connected GPU environment.
+# The Phase 01 runtime versions are retained where available to reduce software drift.
+torch==2.10.0
+transformers==4.57.6
+accelerate==1.13.0
+bitsandbytes==0.50.2
+huggingface_hub==0.36.2
+safetensors==0.7.0
+peft==0.18.0
+wandb==0.28.1
