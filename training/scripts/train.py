@@ -98,6 +98,11 @@ def main() -> int:
         "seed": bundle.training.seed,
         "git_commit": args.git_commit,
         "hardware_runtime_descriptor": args.hardware_runtime_descriptor,
+        "resume_from_checkpoint": (
+            str(args.resume_from_checkpoint.resolve())
+            if args.resume_from_checkpoint is not None
+            else None
+        ),
         "gpu_environment": _environment_metadata(),
         "gpu_requirements_sha256": _sha256(ROOT / "training/requirements.gpu.txt"),
     }
