@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from app.training.config import load_training_config
+from app.training.evidence import sha256_file
 
 
 class Phase9Stage(StrEnum):
@@ -76,6 +77,12 @@ def validate_training_run_evidence(
     _required_text(payload, "hardware_runtime_descriptor")
     adapter_sha256 = _validate_sha256(payload.get("adapter_sha256"), "adapter_sha256")
     _required_text(payload, "selected_checkpoint")
+    checkpoint_paths = payload.get("checkpoint_paths")
+    if not isinstance(checkpoint_paths, list) or not checkpoint_paths:
+        raise ValueError("Phase 09 completion evidence requires at least one saved checkpoint")
+    for checkpoint in checkpoint_paths:
+        if not isinstance(checkpoint, str) or not checkpoint.strip():
+            raise ValueError("Phase 09 checkpoint_paths contains an invalid entry")
 
     environment = payload.get("gpu_environment")
     if not isinstance(environment, dict) or environment.get("cuda_available") is not True:
@@ -98,7 +105,8 @@ def _validate_pass_evidence(
     evidence_version: str,
     adapter_sha256: str,
     training_config_hash: str,
-) -> None:
+    training_evidence_sha256: str,
+) -> dict[str, Any]:
     payload = _read_json(path)
     if payload.get("evidence_version") != evidence_version:
         raise ValueError(f"unexpected evidence version in {path.name}")
@@ -108,6 +116,60 @@ def _validate_pass_evidence(
         raise ValueError(f"{path.name} adapter checksum does not match training run")
     if payload.get("training_config_hash") != training_config_hash:
         raise ValueError(f"{path.name} training config hash does not match")
+    if payload.get("training_evidence_sha256") != training_evidence_sha256:
+        raise ValueError(f"{path.name} is not linked to the current training-run.json")
+    return payload
+
+
+def _validate_reload_evidence(
+    payload: dict[str, Any],
+    *,
+    expected_model_id: str,
+    expected_model_revision: str,
+) -> None:
+    if payload.get("validation_split") != "validation":
+        raise ValueError("adapter-reload.json must use validation-only inference")
+    if payload.get("parse_status") != "OK":
+        raise ValueError("adapter-reload.json did not record schema-compatible inference")
+    if payload.get("pipeline_type") != "FINETUNED":
+        raise ValueError("adapter-reload.json did not use the FINETUNED pipeline contract")
+    if payload.get("base_model_id") != expected_model_id:
+        raise ValueError("adapter-reload.json changed the frozen base model ID")
+    if payload.get("base_model_revision") != expected_model_revision:
+        raise ValueError("adapter-reload.json changed the frozen base model revision")
+    _required_text(payload, "validation_incident_id")
+    _required_text(payload, "dataset_version")
+    _required_text(payload, "adapter_id")
+    _required_text(payload, "adapter_revision")
+
+
+def _validate_resume_evidence(payload: dict[str, Any]) -> None:
+    _required_text(payload, "resume_from_checkpoint")
+    _required_text(payload, "source_run_id")
+    _required_text(payload, "source_wandb_run_reference")
+    _required_text(payload, "resumed_run_id")
+    _required_text(payload, "resumed_wandb_run_reference")
+    _required_text(payload, "resumed_wandb_artifact_reference")
+    _validate_sha256(payload.get("resumed_adapter_sha256"), "resumed_adapter_sha256")
+    _validate_sha256(
+        payload.get("resumed_training_evidence_sha256"),
+        "resumed_training_evidence_sha256",
+    )
+    _required_text(payload, "dataset_version")
+    _validate_sha256(payload.get("dataset_manifest_checksum"), "dataset_manifest_checksum")
+
+
+def _validate_export_evidence(payload: dict[str, Any], *, adapter_sha256: str) -> None:
+    if payload.get("exported_adapter_sha256") != adapter_sha256:
+        raise ValueError("adapter-export.json copied adapter checksum does not match training run")
+    _validate_sha256(payload.get("export_tree_sha256"), "export_tree_sha256")
+    _required_text(payload, "destination")
+    _required_text(payload, "manifest_path")
+    _validate_sha256(payload.get("dataset_manifest_checksum"), "dataset_manifest_checksum")
+    _required_text(payload, "base_model_id")
+    _required_text(payload, "base_model_revision")
+    if payload.get("hub_push_requested") is not False:
+        raise ValueError("Phase 09 export evidence must not pull Phase 10 public release forward")
 
 
 def evaluate_phase9_repository_state(root: Path) -> Phase9RepositoryStatus:
@@ -133,6 +195,7 @@ def evaluate_phase9_repository_state(root: Path) -> Phase9RepositoryStatus:
             expected_model_id=bundle.lora.base_model_id,
             expected_model_revision=bundle.lora.base_model_revision,
         )
+        training_evidence_sha256 = sha256_file(training_path)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return Phase9RepositoryStatus(
             stage=Phase9Stage.TRAINING_EVIDENCE_READY,
@@ -149,16 +212,28 @@ def evaluate_phase9_repository_state(root: Path) -> Phase9RepositoryStatus:
         ("adapter-export.json", "phase9-adapter-export-evidence-v1"),
     )
     try:
+        supporting: dict[str, dict[str, Any]] = {}
         for filename, version in required:
             path = evidence_dir / filename
             if not path.exists():
                 raise ValueError(f"missing {filename}")
-            _validate_pass_evidence(
+            supporting[filename] = _validate_pass_evidence(
                 path,
                 evidence_version=version,
                 adapter_sha256=adapter_sha256,
                 training_config_hash=config_hash,
+                training_evidence_sha256=training_evidence_sha256,
             )
+        _validate_reload_evidence(
+            supporting["adapter-reload.json"],
+            expected_model_id=bundle.lora.base_model_id,
+            expected_model_revision=bundle.lora.base_model_revision,
+        )
+        _validate_resume_evidence(supporting["resume.json"])
+        _validate_export_evidence(
+            supporting["adapter-export.json"],
+            adapter_sha256=adapter_sha256,
+        )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return Phase9RepositoryStatus(
             stage=Phase9Stage.TRAINING_EVIDENCE_READY,
