@@ -54,7 +54,8 @@ def _select_resume_checkpoint(training_payload: dict[str, object]) -> str:
     checkpoints = [value for value in raw if isinstance(value, str) and value.strip()]
     if len(checkpoints) < 2:
         raise RuntimeError(
-            "connected completion requires at least two retained checkpoints so resume proves recovery"
+            "connected completion requires at least two retained checkpoints "
+            "so resume proves recovery"
         )
     ordered = sorted(checkpoints, key=_checkpoint_step)
     return ordered[0]
@@ -73,7 +74,9 @@ def _require_clean_repository(expected_commit: str) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Run the real connected Phase 09 QLoRA completion sequence without touching test data."
+        description=(
+            "Run the real connected Phase 09 QLoRA completion sequence without touching test data."
+        )
     )
     parser.add_argument(
         "--dataset-version",
