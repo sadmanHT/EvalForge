@@ -25,9 +25,7 @@ def test_prepare_dataset_is_deterministic_and_excludes_test(tmp_path: Path) -> N
     )
     assert manifest_a == manifest_b
     assert (first / "train.jsonl").read_bytes() == (second / "train.jsonl").read_bytes()
-    assert (first / "validation.jsonl").read_bytes() == (
-        second / "validation.jsonl"
-    ).read_bytes()
+    assert (first / "validation.jsonl").read_bytes() == (second / "validation.jsonl").read_bytes()
     train_rows = [
         json.loads(line)
         for line in (first / "train.jsonl").read_text(encoding="utf-8").splitlines()

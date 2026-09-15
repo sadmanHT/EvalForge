@@ -134,10 +134,7 @@ def run_smoke_training(
         loss = error * error
         grad_weight = 2.0 * error * feature
         grad_bias = 2.0 * error
-        if not all(
-            math.isfinite(value)
-            for value in (prediction, loss, grad_weight, grad_bias)
-        ):
+        if not all(math.isfinite(value) for value in (prediction, loss, grad_weight, grad_bias)):
             raise RuntimeError("non-finite smoke-training gradient or loss")
         adapter = SmokeAdapter(
             weight=adapter.weight - learning_rate * grad_weight,

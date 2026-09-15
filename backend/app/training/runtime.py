@@ -320,9 +320,7 @@ class PeftTrainingRuntime:
         )
         selected = getattr(trainer.state, "best_model_checkpoint", None)
         checkpoints = tuple(
-            str(path)
-            for path in sorted(output_dir.glob("checkpoint-*"))
-            if path.is_dir()
+            str(path) for path in sorted(output_dir.glob("checkpoint-*")) if path.is_dir()
         )
         return TrainingRunResult(
             output_dir=str(output_dir),

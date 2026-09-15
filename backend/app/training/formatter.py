@@ -143,9 +143,7 @@ def _audit_lineage(records: tuple[IncidentRecord, ...]) -> None:
                 f"synthetic record {record.incident_id} has an unavailable training parent"
             )
         if parent.split is not Split.TRAIN:
-            raise ValueError(
-                f"synthetic record {record.incident_id} descends from held-out parent"
-            )
+            raise ValueError(f"synthetic record {record.incident_id} descends from held-out parent")
         if parent.incident_family_id != record.incident_family_id:
             raise ValueError("synthetic child must retain its parent incident family")
 
@@ -169,9 +167,7 @@ def prepare_training_dataset(
     dataset_dir = root / "datasets/incident_diagnosis/processed" / dataset_version
     source_manifest_path = dataset_dir / "manifest.json"
     incident_path = dataset_dir / "incidents.jsonl"
-    source_manifest: dict[str, Any] = json.loads(
-        source_manifest_path.read_text(encoding="utf-8")
-    )
+    source_manifest: dict[str, Any] = json.loads(source_manifest_path.read_text(encoding="utf-8"))
     if source_manifest.get("dataset_version") != dataset_version:
         raise ValueError("dataset directory/version mismatch")
     records = _read_records(incident_path)
@@ -187,9 +183,7 @@ def prepare_training_dataset(
         if record.split in {Split.TRAIN, Split.VALIDATION}
     )
     train_examples = tuple(item for item in examples if item.source_split == "train")
-    validation_examples = tuple(
-        item for item in examples if item.source_split == "validation"
-    )
+    validation_examples = tuple(item for item in examples if item.source_split == "validation")
     if not train_examples or not validation_examples:
         raise ValueError("Phase 09 preparation requires non-empty train and validation splits")
 
@@ -216,9 +210,7 @@ def prepare_training_dataset(
         include_reasoning_target=include_reasoning,
         train_record_count=len(train_examples),
         validation_record_count=len(validation_examples),
-        train_family_ids=tuple(
-            sorted({item.incident_family_id for item in train_examples})
-        ),
+        train_family_ids=tuple(sorted({item.incident_family_id for item in train_examples})),
         validation_family_ids=tuple(
             sorted({item.incident_family_id for item in validation_examples})
         ),
