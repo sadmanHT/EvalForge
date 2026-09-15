@@ -93,9 +93,7 @@ class ConnectedPeftTrainingExecutor:
             "base_model_revision": bundle.lora.base_model_revision,
             "seed": bundle.training.seed,
             "git_commit": _required_text(payload, "git_commit"),
-            "hardware_runtime_descriptor": _required_text(
-                payload, "hardware_runtime_descriptor"
-            ),
+            "hardware_runtime_descriptor": _required_text(payload, "hardware_runtime_descriptor"),
             "resumed_from_checkpoint": str(resume) if resume is not None else None,
         }
         tracking = build_training_tracker_from_env().log_training(
