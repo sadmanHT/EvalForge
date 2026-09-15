@@ -92,7 +92,11 @@ def main() -> int:
         )
 
     print(json.dumps(manifest, sort_keys=True))
-    if identity is not None and args.training_evidence is not None and args.evidence_path is not None:
+    if (
+        identity is not None
+        and args.training_evidence is not None
+        and args.evidence_path is not None
+    ):
         evidence = write_supporting_evidence(
             args.evidence_path,
             evidence_version="phase9-adapter-export-evidence-v1",
