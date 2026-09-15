@@ -13,10 +13,10 @@ BACKEND = ROOT / "backend"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from app.training.config import load_training_config
-from app.training.formatter import PreparedDatasetManifest
-from app.training.runtime import PeftTrainingRuntime
-from app.training.tracking import build_training_tracker_from_env
+from app.training.config import load_training_config  # noqa: E402
+from app.training.formatter import PreparedDatasetManifest  # noqa: E402
+from app.training.runtime import PeftTrainingRuntime  # noqa: E402
+from app.training.tracking import build_training_tracker_from_env  # noqa: E402
 
 
 def _sha256(path: Path) -> str:
@@ -66,6 +66,13 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    wandb_configured = bool(os.environ.get("WANDB_PROJECT", "").strip())
+    if not wandb_configured and not args.allow_untracked:
+        raise RuntimeError(
+            "Phase 09 connected training requires WANDB_PROJECT; "
+            "use --allow-untracked only for non-evidence developer trials"
+        )
+
     bundle = load_training_config(ROOT)
     prepared_manifest = PreparedDatasetManifest.model_validate_json(
         (args.prepared_dir / "manifest.json").read_text(encoding="utf-8")
@@ -76,7 +83,7 @@ def main() -> int:
         validation_path=args.prepared_dir / "validation.jsonl",
         output_dir=args.output_dir,
         resume_from_checkpoint=args.resume_from_checkpoint,
-        report_to_wandb=bool(os.environ.get("WANDB_PROJECT", "").strip()),
+        report_to_wandb=False,
     )
     reproducibility = {
         "training_config_hash": bundle.config_hash(),
@@ -101,10 +108,7 @@ def main() -> int:
         result=result,
     )
     if not tracking.configured and not args.allow_untracked:
-        raise RuntimeError(
-            "Phase 09 connected training requires WANDB_PROJECT; "
-            "use --allow-untracked only for non-evidence developer trials"
-        )
+        raise RuntimeError("Phase 09 completion evidence requires a configured W&B tracker")
 
     evidence = {
         "evidence_version": "phase9-training-run-v1",
