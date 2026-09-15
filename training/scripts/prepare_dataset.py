@@ -11,8 +11,8 @@ BACKEND = ROOT / "backend"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from app.training.config import load_training_config
-from app.training.formatter import prepare_training_dataset
+from app.training.config import load_training_config  # noqa: E402
+from app.training.formatter import prepare_training_dataset  # noqa: E402
 
 
 def main() -> int:
