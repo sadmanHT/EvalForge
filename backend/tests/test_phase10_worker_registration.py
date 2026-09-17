@@ -10,7 +10,9 @@ def test_phase10_handler_is_registered_in_worker_dispatch(monkeypatch: Any) -> N
     def handler(payload: dict[str, Any]) -> dict[str, object]:
         return {"payload": payload}
 
-    factory: Callable[[], Callable[[dict[str, Any]], dict[str, object]]] = lambda: handler
+    def factory() -> Callable[[dict[str, Any]], dict[str, object]]:
+        return handler
+
     monkeypatch.setattr(worker_runner, "Phase6BaselineJobHandler", factory)
     monkeypatch.setattr(worker_runner, "Phase8RAGJobHandler", factory)
     monkeypatch.setattr(worker_runner, "Phase9TrainingJobHandler", factory)
