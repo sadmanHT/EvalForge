@@ -103,6 +103,8 @@ jobs:
             test "$phase09_status" -eq 0
             grep -q '^PHASE09_EXIT=PASS$' /tmp/phase09-exit.txt
           fi
+      - name: Record Phase 10 pre-evidence contract status
+        run: python scripts/check_phase10_contract.py | tee /tmp/phase10-contract.txt
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
@@ -189,6 +191,14 @@ jobs:
             training/requirements.gpu.txt
             docs/phase-09-runbook.md
             docs/phase-09-handoff.md
+      - name: Upload Phase 10 validation contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-validation-contract
+          path: |
+            /tmp/phase10-contract.txt
+            evidence/phase-10/
+            configs/phase10-finetuned.json
 
   clean-compose:
     runs-on: ubuntu-latest
@@ -205,7 +215,7 @@ jobs:
         run: |
           python -m pip install -r backend/requirements.full.lock
           python -m pip install --no-deps -e ./backend
-      - name: Fresh Compose build and Phase 09 cumulative smoke
+      - name: Fresh Compose build and Phase 10 cumulative smoke
         env:
           DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
         run: |
@@ -225,6 +235,7 @@ jobs:
           python scripts/index_phase8_rag_variants.py --output-dir /tmp/phase09-clean-environment/phase08-runtime-evidence | tee /tmp/phase09-clean-environment/phase08-index.log
           python scripts/check_phase8_exit.py | tee /tmp/phase09-clean-environment/phase08-exit.log
           python scripts/check_phase9_contract.py | tee /tmp/phase09-clean-environment/phase09-contract.log
+          python scripts/check_phase10_contract.py | tee /tmp/phase09-clean-environment/phase10-contract.log
           docker compose ps | tee /tmp/phase09-clean-environment/service-health.txt
       - name: Capture Compose logs
         if: always()
@@ -232,9 +243,9 @@ jobs:
       - name: Tear down cleanly
         if: always()
         run: docker compose down -v --remove-orphans
-      - name: Upload Phase 09 clean-environment evidence
+      - name: Upload Phase 10 clean-environment evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase09-clean-environment
+          name: phase10-clean-environment
           path: /tmp/phase09-clean-environment/
