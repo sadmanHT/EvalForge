@@ -1,0 +1,15 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "dataset_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "destination": "/kaggle/working/evalforge-phase9-connected/adapter-export",
+  "evidence_version": "phase9-adapter-export-evidence-v1",
+  "export_tree_sha256": "da223b934da3867d8dcae125a19f30e6b4a55a6cfbb27667b27cb6d179b3844c",
+  "exported_adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "hub_push_requested": false,
+  "manifest_path": "/kaggle/working/evalforge-phase9-connected/adapter-export/evalforge-adapter-manifest.json",
+  "status": "pass",
+  "training_config_hash": "b322d37e9f868b251fa14efb32c8412eab2ddaf3d5cd4adcf027c0f08d51411a",
+  "training_evidence_sha256": "b2f821a9cca2a54f3236d949a30ae480d5a7a511fe23335eca8be8ef7ee4873e"
+}

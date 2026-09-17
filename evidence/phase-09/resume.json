@@ -1,0 +1,17 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "dataset_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "evidence_version": "phase9-resume-v1",
+  "resume_from_checkpoint": "/kaggle/working/evalforge-phase9-connected/train/checkpoint-8",
+  "resumed_adapter_sha256": "d483a561bfa339eab42741141a4526ab4294c420adae82b84c0605e771fcc7ad",
+  "resumed_run_id": "phase9-qlora-validation-v1-resume",
+  "resumed_training_evidence_sha256": "d4924b198c46ce2938e0c5090c7c301125a3bab06c435a97e3e0f31984c1bfc9",
+  "resumed_wandb_artifact_reference": "phase9-qlora-validation-v1-resume-adapter",
+  "resumed_wandb_run_reference": "https://wandb.ai/sadman-hasan-t-islamic-university-of-technology/evalforge/runs/mcpfzpzb",
+  "source_run_id": "phase9-qlora-validation-v1",
+  "source_wandb_run_reference": "https://wandb.ai/sadman-hasan-t-islamic-university-of-technology/evalforge/runs/nkndr8xm",
+  "status": "pass",
+  "training_config_hash": "b322d37e9f868b251fa14efb32c8412eab2ddaf3d5cd4adcf027c0f08d51411a",
+  "training_evidence_sha256": "b2f821a9cca2a54f3236d949a30ae480d5a7a511fe23335eca8be8ef7ee4873e"
+}

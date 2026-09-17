@@ -1,0 +1,54 @@
+{
+  "adapter_dir": "/kaggle/working/evalforge-phase9-connected/resume/adapter",
+  "adapter_sha256": "d483a561bfa339eab42741141a4526ab4294c420adae82b84c0605e771fcc7ad",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "checkpoint_paths": [
+    "/kaggle/working/evalforge-phase9-connected/resume/checkpoint-10",
+    "/kaggle/working/evalforge-phase9-connected/resume/checkpoint-12"
+  ],
+  "dataset_content_checksum": "da9292d0e550cb141dbf1048e1a7c02f2fb4f6bd74b8642e781f06dd93acdbc5",
+  "dataset_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "evidence_version": "phase9-training-run-v1",
+  "git_commit": "d1150a3ade584c2bd8e150a909c992d0b1a5f75a",
+  "gpu_environment": {
+    "accelerate": "1.13.0",
+    "bitsandbytes": "0.50.2",
+    "cuda_available": true,
+    "cuda_version": "12.8",
+    "gpu_name": "Tesla T4",
+    "gpu_vram_bytes": 15636037632,
+    "peft": "0.18.0",
+    "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+    "python": "3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6",
+    "wandb": "0.28.1"
+  },
+  "gpu_requirements_sha256": "9600180ed3d22c3b8e1f7e66ea6dfb72c7c5d223a452c94787811424bb87e428",
+  "hardware_runtime_descriptor": "Kaggle; GPU=Tesla T4; VRAM=15636037632 bytes; visible_gpu_count=1; CUDA_VISIBLE_DEVICES=0; torch=2.10.0+cu128; CUDA runtime=12.8; Python=3.12.13; transformers=4.57.6; bitsandbytes=0.50.2; peft=0.18.0",
+  "lineage_sha256": "8c6479e036ce3f71b6bf79e0516d8b1085abeee1f253cd4e3825772f36aaf68f",
+  "prepared_train_sha256": "796d0339a12e0b952ac65c0d02a888733f52b335e29aae107eea746493356305",
+  "prepared_validation_sha256": "39e0cdd1c85d6ac9c54694bd45fccd1eb53d971406b17d2028cd4e899a49455c",
+  "resume_from_checkpoint": "/kaggle/working/evalforge-phase9-connected/train/checkpoint-8",
+  "run_id": "phase9-qlora-validation-v1-resume",
+  "seed": 20260908,
+  "selected_checkpoint": "/kaggle/working/evalforge-phase9-connected/resume/checkpoint-12",
+  "status": "completed",
+  "tracking": {
+    "artifact_reference": "phase9-qlora-validation-v1-resume-adapter",
+    "configured": true,
+    "provider": "wandb",
+    "run_reference": "https://wandb.ai/sadman-hasan-t-islamic-university-of-technology/evalforge/runs/mcpfzpzb"
+  },
+  "train_metrics": {
+    "epoch": 6.0,
+    "total_flos": 557203852541952.0,
+    "train_loss": 0.00011806112161139026,
+    "train_runtime": 30.1415,
+    "train_samples_per_second": 1.194,
+    "train_steps_per_second": 0.398
+  },
+  "training_config_hash": "b322d37e9f868b251fa14efb32c8412eab2ddaf3d5cd4adcf027c0f08d51411a"
+}
