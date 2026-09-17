@@ -4,7 +4,6 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -60,9 +59,13 @@ def _backend_adapter_identity(backend: object) -> tuple[str, str]:
     for _depth in range(3):
         adapter_id = getattr(current, "adapter_id", None)
         adapter_revision = getattr(current, "adapter_revision", None)
-        if isinstance(adapter_id, str) and isinstance(adapter_revision, str):
-            if adapter_id.strip() and adapter_revision.strip():
-                return adapter_id.strip(), adapter_revision.strip()
+        if (
+            isinstance(adapter_id, str)
+            and isinstance(adapter_revision, str)
+            and adapter_id.strip()
+            and adapter_revision.strip()
+        ):
+            return adapter_id.strip(), adapter_revision.strip()
         nested = getattr(current, "backend", None)
         if nested is None or nested is current:
             break
