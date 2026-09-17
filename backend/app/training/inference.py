@@ -29,12 +29,14 @@ class PeftTransformersBackend(TransformersBackend):
         *,
         adapter_id: str,
         adapter_revision: str,
+        use_adapter_revision_for_loading: bool = True,
     ) -> None:
         super().__init__(runtime_config)
         if not adapter_id.strip() or not adapter_revision.strip():
             raise ValueError("adapter ID and revision are required")
         self.adapter_id = adapter_id.strip()
         self.adapter_revision = adapter_revision.strip()
+        self.use_adapter_revision_for_loading = bool(use_adapter_revision_for_loading)
         self._adapter_loaded = False
 
     def load(self) -> None:
@@ -48,11 +50,13 @@ class PeftTransformersBackend(TransformersBackend):
         if self._model is None:
             raise AssertionError("base model failed to initialize before adapter load")
         try:
+            load_kwargs: dict[str, object] = {"is_trainable": False}
+            if self.use_adapter_revision_for_loading:
+                load_kwargs["revision"] = self.adapter_revision
             self._model = peft.PeftModel.from_pretrained(
                 self._model,
                 self.adapter_id,
-                revision=self.adapter_revision,
-                is_trainable=False,
+                **load_kwargs,
             )
             self._model.eval()
         except Exception as exc:

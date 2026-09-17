@@ -40,6 +40,14 @@ class ExperimentTracker(Protocol):
         summary: Mapping[str, object],
     ) -> TrackingEvidence: ...
 
+    def log_finetuned(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence: ...
+
 
 class DisabledTracker:
     def _disabled(self) -> TrackingEvidence:
@@ -56,6 +64,16 @@ class DisabledTracker:
         return self._disabled()
 
     def log_rag(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence:
+        del run_id, protocol_payload, summary
+        return self._disabled()
+
+    def log_finetuned(
         self,
         *,
         run_id: str,
@@ -153,6 +171,20 @@ class WandbTracker:
             protocol_payload=protocol_payload,
             summary=summary,
             job_type="phase8-rag",
+        )
+
+    def log_finetuned(
+        self,
+        *,
+        run_id: str,
+        protocol_payload: Mapping[str, object],
+        summary: Mapping[str, object],
+    ) -> TrackingEvidence:
+        return self._log_evaluation(
+            run_id=run_id,
+            protocol_payload=protocol_payload,
+            summary=summary,
+            job_type="phase10-finetuned",
         )
 
 

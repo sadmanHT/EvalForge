@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Sequence
 
 from app.inference.base_model import GenerationConfig, RuntimeConfig
 from app.training.evidence import load_training_evidence_identity, tree_sha256
@@ -79,11 +79,12 @@ def build_finetuned_pipeline(
         identity=identity,
         adapter_revision=adapter_revision,
     )
-    loader_revision = "local" if Path(adapter_locator).exists() else adapter_revision
+    is_local = Path(adapter_locator).exists()
     backend = PeftTransformersBackend(
         runtime_config,
         adapter_id=adapter_locator,
-        adapter_revision=loader_revision,
+        adapter_revision=adapter_revision,
+        use_adapter_revision_for_loading=not is_local,
     )
     return FineTunedAdapterPipeline(
         backend=backend,
