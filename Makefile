@@ -2,9 +2,9 @@ SHELL := /bin/bash
 PYTHON ?= python
 NPM ?= npm
 
-.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-phase8 test-phase9 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch phase3-primary-source-check phase3-research-admission-check phase3-research-build phase3-research-rebuild-check phase4-seed phase4-exit phase5-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit phase8-index phase8-exit phase9-contract phase9-exit
+.PHONY: format lint typecheck test test-integration test-e2e test-regression db-migrate smoke eval-smoke verify-all frontend-build secrets worker-smoke fresh-smoke test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-phase8 test-phase9 test-phase10 dataset-audit dataset-rebuild-check phase3-contract phase3-exit phase3-source-fetch phase3-primary-source-check phase3-research-admission-check phase3-research-build phase3-research-rebuild-check phase4-seed phase4-exit phase5-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit phase8-index phase8-exit phase9-contract phase9-exit phase10-contract
 
-PHASE_SCRIPTS := ../scripts/audit_dataset.py ../scripts/admit_phase3_research_records.py ../scripts/audit_phase7_leakage.py ../scripts/build_phase3_candidate.py ../scripts/build_phase3_research_dataset.py ../scripts/build_phase8_ablation_report.py ../scripts/build_phase8_comparison.py ../scripts/capture_phase6_gpu_host.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/check_phase3_research_reproducibility.py ../scripts/check_phase4_exit.py ../scripts/check_phase5_exit.py ../scripts/check_phase6_contract.py ../scripts/check_phase6_exit.py ../scripts/check_phase7_contract.py ../scripts/check_phase7_exit.py ../scripts/check_phase8_exit.py ../scripts/check_phase9_contract.py ../scripts/check_phase9_exit.py ../scripts/export_phase6_run_evidence.py ../scripts/fetch_phase3_sources.py ../scripts/freeze_phase6_protocol.py ../scripts/freeze_phase8_protocol.py ../scripts/index_kb.py ../scripts/index_phase8_rag_variants.py ../scripts/preserve_phase3_primary_sources.py ../scripts/run_phase5_smoke_evaluation.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py ../training/scripts/complete_phase9.py ../training/scripts/evaluate_checkpoint.py ../training/scripts/export_adapter.py ../training/scripts/prepare_dataset.py ../training/scripts/resume.py ../training/scripts/smoke_inference.py ../training/scripts/smoke_train.py ../training/scripts/train.py ../evals/runner.py ../evals/rag_runner.py ../evals/rag_ablation_runner.py
+PHASE_SCRIPTS := ../scripts/audit_dataset.py ../scripts/admit_phase3_research_records.py ../scripts/audit_phase7_leakage.py ../scripts/build_phase3_candidate.py ../scripts/build_phase3_research_dataset.py ../scripts/build_phase8_ablation_report.py ../scripts/build_phase8_comparison.py ../scripts/capture_phase6_gpu_host.py ../scripts/check_phase3_contract.py ../scripts/check_phase3_exit.py ../scripts/check_phase3_reproducibility.py ../scripts/check_phase3_research_reproducibility.py ../scripts/check_phase4_exit.py ../scripts/check_phase5_exit.py ../scripts/check_phase6_contract.py ../scripts/check_phase6_exit.py ../scripts/check_phase7_contract.py ../scripts/check_phase7_exit.py ../scripts/check_phase8_exit.py ../scripts/check_phase9_contract.py ../scripts/check_phase9_exit.py ../scripts/check_phase10_contract.py ../scripts/export_phase6_run_evidence.py ../scripts/fetch_phase3_sources.py ../scripts/freeze_phase6_protocol.py ../scripts/freeze_phase8_protocol.py ../scripts/index_kb.py ../scripts/index_phase8_rag_variants.py ../scripts/preserve_phase3_primary_sources.py ../scripts/run_phase5_smoke_evaluation.py ../scripts/sync_phase3_evidence.py ../training/dataset_prep.py ../training/scripts/complete_phase9.py ../training/scripts/evaluate_checkpoint.py ../training/scripts/export_adapter.py ../training/scripts/prepare_dataset.py ../training/scripts/resume.py ../training/scripts/smoke_inference.py ../training/scripts/smoke_train.py ../training/scripts/train.py ../evals/runner.py ../evals/rag_runner.py ../evals/rag_ablation_runner.py
 
 format:
 	cd backend && ruff check --fix app tests $(PHASE_SCRIPTS)
@@ -45,6 +45,9 @@ test-phase8:
 
 test-phase9:
 	cd backend && pytest tests/training tests/integration/test_phase9_training_worker.py
+
+test-phase10:
+	cd backend && pytest tests/inference/test_phase10_data_efficiency.py tests/inference/test_phase10_finetuned_model.py tests/inference/test_phase10_finetuned_protocol.py tests/integration/test_phase10_finetuned_runner.py
 
 test-integration:
 	cd backend && pytest tests/integration -m integration
@@ -132,8 +135,11 @@ phase9-contract:
 phase9-exit:
 	$(PYTHON) scripts/check_phase9_exit.py
 
+phase10-contract:
+	$(PYTHON) scripts/check_phase10_contract.py
+
 smoke:
-	cd backend && pytest tests/test_health.py tests/test_worker.py
+	cd backend && pytest tests/test_health.py tests/test_worker.py tests/test_phase10_worker_registration.py
 	cd frontend && $(NPM) test -- --run src/App.test.tsx
 
 eval-smoke:
@@ -149,7 +155,7 @@ secrets:
 worker-smoke:
 	$(PYTHON) scripts/worker_smoke.py
 
-verify-all: lint typecheck test test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-phase8 test-phase9 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check phase3-primary-source-check phase3-research-admission-check phase3-exit phase4-seed phase4-exit smoke eval-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit phase8-index phase8-exit phase9-contract frontend-build secrets
+verify-all: lint typecheck test test-phase3 test-phase4 test-phase5 test-phase6 test-phase7 test-phase8 test-phase9 test-phase10 test-integration test-e2e test-regression db-migrate dataset-audit dataset-rebuild-check phase3-primary-source-check phase3-research-admission-check phase3-exit phase4-seed phase4-exit smoke eval-smoke phase5-exit phase6-contract phase6-exit phase7-contract phase7-index phase7-leakage-audit phase7-exit phase8-index phase8-exit phase9-contract phase10-contract frontend-build secrets
 
 fresh-smoke:
 	docker compose down -v --remove-orphans
@@ -166,5 +172,6 @@ fresh-smoke:
 	$(PYTHON) scripts/index_phase8_rag_variants.py --output-dir /tmp/evalforge-phase8-fresh-smoke-evidence
 	$(PYTHON) scripts/check_phase8_exit.py
 	$(PYTHON) scripts/check_phase9_contract.py
+	$(PYTHON) scripts/check_phase10_contract.py
 	docker compose ps
 	docker compose down -v --remove-orphans
