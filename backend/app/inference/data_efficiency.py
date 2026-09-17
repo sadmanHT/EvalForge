@@ -46,13 +46,17 @@ def select_data_efficiency_subset(
     if not records:
         raise ValueError("data-efficiency selection requires training records")
     if any(record.split is not Split.TRAIN for record in records):
-        raise ValueError("data-efficiency subsets may contain only training-split records")
+        raise ValueError(
+            "data-efficiency subsets may contain only training-split records"
+        )
 
     by_family: dict[str, list[IncidentRecord]] = {}
     for record in records:
         by_family.setdefault(record.incident_family_id, []).append(record)
 
-    family_ids = tuple(sorted(by_family, key=lambda item: _family_order_key(item, seed)))
+    family_ids = tuple(
+        sorted(by_family, key=lambda item: _family_order_key(item, seed))
+    )
     selected_count = min(len(family_ids), max(1, math.ceil(fraction * len(family_ids))))
     selected_families = frozenset(family_ids[:selected_count])
     selected_records = sorted(
@@ -75,7 +79,9 @@ def select_data_efficiency_subset(
         selected_family_count=selected_count,
         selected_family_ids=tuple(sorted(selected_families)),
         selected_incident_ids=tuple(record.incident_id for record in selected_records),
-        root_cause_codes=tuple(sorted({record.root_cause_code for record in selected_records})),
+        root_cause_codes=tuple(
+            sorted({record.root_cause_code for record in selected_records})
+        ),
     )
 
 
@@ -101,7 +107,9 @@ def build_data_efficiency_matrix(
         for subset in ordered:
             current = set(subset.selected_family_ids)
             if not previous.issubset(current):
-                raise AssertionError(f"data-efficiency subsets are not nested for seed {seed}")
+                raise AssertionError(
+                    f"data-efficiency subsets are not nested for seed {seed}"
+                )
             previous = current
     return matrix
 
