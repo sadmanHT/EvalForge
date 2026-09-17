@@ -16,8 +16,9 @@ from app.inference.base_model import IncidentInput, InferenceError
 from app.inference.finetuned_protocol import Phase10Protocol, build_finetuned_experiment_config
 from app.inference.protocol import load_taxonomy
 from app.inference.runner import _cost_record_count, _persist_prediction_costs, _stable_id
-from app.models import Experiment, Incident, Run
+from app.models import AdapterVersion, Experiment, Incident, Run
 from app.repositories import PersistenceRepository
+from app.training.evidence import load_training_evidence_identity
 from app.training.inference import FineTunedAdapterPipeline
 
 
@@ -91,6 +92,72 @@ def _validate_pipeline_contract(
     if adapter_revision != protocol.candidate_adapter_sha256:
         raise ValueError("fine-tuned backend adapter revision is not the frozen content hash")
     return adapter_id, adapter_revision
+
+
+def _ensure_phase9_adapter_version(
+    session: Session,
+    *,
+    root: Path,
+    protocol: Phase10Protocol,
+    repo: PersistenceRepository,
+) -> AdapterVersion:
+    evidence_path = root / "evidence/phase-09/training-run.json"
+    identity = load_training_evidence_identity(evidence_path)
+    if identity.wandb_artifact_reference != protocol.candidate_adapter_artifact_reference:
+        raise ValueError("Phase 10 adapter ID disagrees with Phase 09 evidence")
+    if identity.adapter_sha256 != protocol.candidate_adapter_sha256:
+        raise ValueError("Phase 10 adapter revision disagrees with Phase 09 evidence")
+    if identity.run_id != protocol.source_training_run_id:
+        raise ValueError("Phase 10 adapter source run disagrees with Phase 09 evidence")
+    if identity.training_config_hash != protocol.source_training_config_hash:
+        raise ValueError("Phase 10 adapter training config disagrees with Phase 09 evidence")
+
+    model = repo.ensure_model_version(protocol.base_model_id, protocol.base_model_revision)
+    adapter = session.scalar(
+        select(AdapterVersion).where(
+            AdapterVersion.adapter_id == protocol.candidate_adapter_artifact_reference,
+            AdapterVersion.revision == protocol.candidate_adapter_sha256,
+        )
+    )
+    if adapter is not None:
+        if adapter.model_version_id != model.model_version_id:
+            raise ValueError("registered Phase 10 adapter belongs to a different base model")
+        metadata = adapter.metadata_json
+        expected = {
+            "adapter_sha256": protocol.candidate_adapter_sha256,
+            "training_config_hash": protocol.source_training_config_hash,
+            "source_training_run_id": protocol.source_training_run_id,
+            "scientific_adapter": True,
+        }
+        if any(metadata.get(key) != value for key, value in expected.items()):
+            raise ValueError("registered Phase 10 adapter metadata disagrees with frozen evidence")
+        return adapter
+
+    adapter = AdapterVersion(
+        adapter_version_id=_stable_id(
+            "adapter",
+            protocol.candidate_adapter_artifact_reference,
+            protocol.candidate_adapter_sha256,
+        ),
+        model_version_id=model.model_version_id,
+        adapter_id=protocol.candidate_adapter_artifact_reference,
+        revision=protocol.candidate_adapter_sha256,
+        metadata_json={
+            "phase": 9,
+            "scientific_adapter": True,
+            "adapter_sha256": identity.adapter_sha256,
+            "training_config_hash": identity.training_config_hash,
+            "source_training_run_id": identity.run_id,
+            "dataset_version": identity.dataset_version,
+            "dataset_manifest_checksum": identity.dataset_manifest_checksum,
+            "wandb_run_reference": identity.wandb_run_reference,
+            "wandb_artifact_reference": identity.wandb_artifact_reference,
+            "source_training_evidence_sha256": protocol.source_training_evidence_sha256,
+        },
+    )
+    session.add(adapter)
+    session.flush()
+    return adapter
 
 
 def _error_prediction(
@@ -238,6 +305,7 @@ def run_finetuned_experiment(
     canonical_config_hash = experiment_config_hash(config)
     scientific_hash = protocol.scientific_config_hash()
     repo = PersistenceRepository(session)
+    _ensure_phase9_adapter_version(session, root=root, protocol=protocol, repo=repo)
     requested_experiment_id = experiment_id or _stable_id(
         "experiment",
         protocol.protocol_version,
