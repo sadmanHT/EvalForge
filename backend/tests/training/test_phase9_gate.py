@@ -13,14 +13,13 @@ from app.training.phase9_gate import Phase9Stage, evaluate_phase9_repository_sta
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def test_repository_state_stops_before_external_training_without_fabrication() -> None:
+def test_repository_state_accepts_preserved_external_training_evidence() -> None:
     status = evaluate_phase9_repository_state(ROOT)
-    assert status.stage is Phase9Stage.PRE_EXTERNAL_TRAINING
-    assert status.complete is False
-    assert status.adapter_sha256 is None
-    assert status.wandb_run_reference is None
-    assert status.blocker is not None
-    assert "GPU/W&B" in status.blocker
+    assert status.stage is Phase9Stage.COMPLETE
+    assert status.complete is True
+    assert status.adapter_sha256 is not None
+    assert status.wandb_run_reference is not None
+    assert status.blocker is None
     assert status.training_config_hash == load_training_config(ROOT).config_hash()
 
 
