@@ -70,14 +70,18 @@ class Phase10Protocol(BaseModel):
     source_training_config_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     candidate_adapter_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     candidate_adapter_artifact_reference: str = Field(min_length=1)
-    candidate_selection_rule: Literal["phase09_validation_eval_loss_selected_checkpoint"]
+    candidate_selection_rule: Literal[
+        "phase09_validation_eval_loss_selected_checkpoint"
+    ]
     data_efficiency: DataEfficiencyProtocol
     locked_test_authorized: bool = False
 
     @model_validator(mode="after")
     def validate_state(self) -> Phase10Protocol:
         if self.locked_test_authorized and self.state is not Phase10State.FROZEN:
-            raise ValueError("Phase 10 locked test authorization requires a frozen protocol")
+            raise ValueError(
+                "Phase 10 locked test authorization requires a frozen protocol"
+            )
         if self.runtime_config.model_id != self.base_model_id:
             raise ValueError("runtime model ID must match the frozen base model")
         if self.runtime_config.revision != self.base_model_revision:
@@ -96,7 +100,9 @@ class Phase10Protocol(BaseModel):
                     "validation-selected, frozen, and explicitly authorized"
                 )
             return "test"
-        raise ValueError("Phase 10 fine-tuned runner supports only validation or test splits")
+        raise ValueError(
+            "Phase 10 fine-tuned runner supports only validation or test splits"
+        )
 
     def scientific_payload(self) -> dict[str, object]:
         return {
@@ -120,7 +126,9 @@ class Phase10Protocol(BaseModel):
             "source_training_evidence_sha256": self.source_training_evidence_sha256,
             "source_training_config_hash": self.source_training_config_hash,
             "candidate_adapter_sha256": self.candidate_adapter_sha256,
-            "candidate_adapter_artifact_reference": self.candidate_adapter_artifact_reference,
+            "candidate_adapter_artifact_reference": (
+                self.candidate_adapter_artifact_reference
+            ),
             "candidate_selection_rule": self.candidate_selection_rule,
             "data_efficiency": self.data_efficiency.model_dump(mode="json"),
         }
@@ -164,19 +172,26 @@ def load_phase10_protocol(
     if protocol.runtime_config != baseline.runtime_config:
         raise ValueError("Phase 10 changed the frozen baseline runtime configuration")
     if protocol.generation_config != baseline.generation_config:
-        raise ValueError("Phase 10 changed the frozen baseline generation configuration")
+        raise ValueError(
+            "Phase 10 changed the frozen baseline generation configuration"
+        )
 
     evidence_path = root / PHASE9_TRAINING_EVIDENCE_PATH
     identity = load_training_evidence_identity(evidence_path)
     if sha256_file(evidence_path) != protocol.source_training_evidence_sha256:
         raise ValueError("Phase 10 source training evidence checksum is stale")
     if identity.run_id != protocol.source_training_run_id:
-        raise ValueError("Phase 10 source training run ID disagrees with Phase 09 evidence")
+        raise ValueError(
+            "Phase 10 source training run ID disagrees with Phase 09 evidence"
+        )
     if identity.training_config_hash != protocol.source_training_config_hash:
         raise ValueError("Phase 10 source training config hash disagrees with Phase 09")
     if identity.adapter_sha256 != protocol.candidate_adapter_sha256:
         raise ValueError("Phase 10 candidate adapter hash disagrees with Phase 09")
-    if identity.wandb_artifact_reference != protocol.candidate_adapter_artifact_reference:
+    if (
+        identity.wandb_artifact_reference
+        != protocol.candidate_adapter_artifact_reference
+    ):
         raise ValueError("Phase 10 candidate adapter artifact disagrees with Phase 09")
     if identity.dataset_version != protocol.dataset_version:
         raise ValueError("Phase 10 dataset version disagrees with Phase 09")
