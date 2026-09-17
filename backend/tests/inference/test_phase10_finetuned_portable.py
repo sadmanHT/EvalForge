@@ -33,10 +33,7 @@ class FixturePortableBackend:
     ) -> BackendOutput:
         del prompt, generation_config
         label = allowed_labels[0]
-        scores = {
-            candidate: (-0.1 if candidate == label else -4.0)
-            for candidate in allowed_labels
-        }
+        scores = {candidate: (-0.1 if candidate == label else -4.0) for candidate in allowed_labels}
         return BackendOutput(
             raw_text=f'{{"root_cause_code":"{label}","reasoning":"fixture"}}',
             label_log_likelihoods=scores,

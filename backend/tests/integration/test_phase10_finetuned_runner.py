@@ -149,9 +149,7 @@ def test_validation_runner_persists_finetuned_identity_and_recomputes_metrics(
         adapter = session.get(AdapterVersion, experiment.adapter_version_id)
         predictions = load_canonical_predictions(session, run_id=summary.run_id)
         snapshot = reload_evaluation(session, run_id=summary.run_id)
-        costs = session.scalars(
-            select(CostRecord).where(CostRecord.run_id == summary.run_id)
-        ).all()
+        costs = session.scalars(select(CostRecord).where(CostRecord.run_id == summary.run_id)).all()
     assert experiment.pipeline_type == "FINETUNED"
     assert experiment.kb_version is None
     assert adapter is not None
