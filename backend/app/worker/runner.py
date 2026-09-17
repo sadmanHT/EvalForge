@@ -7,6 +7,7 @@ from typing import Any
 from redis import Redis
 
 from app.config import Settings
+from app.inference.finetuned_orchestration import Phase10FineTunedJobHandler
 from app.inference.orchestration import Phase6BaselineJobHandler
 from app.inference.rag_orchestration import Phase8RAGJobHandler
 from app.training.orchestration import Phase9TrainingJobHandler
@@ -21,14 +22,19 @@ def _stop(signum: int, frame: FrameType | None) -> None:
     _running = False
 
 
-def main() -> None:
-    settings = Settings.from_env()
-    client: Any = Redis.from_url(settings.redis_url, decode_responses=True)
-    task_handlers: dict[str, TaskHandler] = {
+def build_task_handlers() -> dict[str, TaskHandler]:
+    return {
         "phase6_baseline": Phase6BaselineJobHandler(),
         "phase8_rag": Phase8RAGJobHandler(),
         "phase9_training": Phase9TrainingJobHandler(),
+        "phase10_finetuned": Phase10FineTunedJobHandler(),
     }
+
+
+def main() -> None:
+    settings = Settings.from_env()
+    client: Any = Redis.from_url(settings.redis_url, decode_responses=True)
+    task_handlers = build_task_handlers()
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
     while _running:
