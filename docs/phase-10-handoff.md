@@ -16,7 +16,11 @@ The primary fine-tuned protocol is now frozen. `configs/phase10-finetuned.json` 
 validation evidence, Phase 09 source-training evidence, candidate adapter checksum,
 and unchanged scientific configuration through `evidence/phase-10/protocol-freeze.json`.
 
-The Phase 10 locked test has **not** been executed yet.
+The frozen evidence linkage was repaired in
+`c59910e00f5e4fd0a722d2796da416c977753ddd` to match the preserved validation file bytes.
+GitHub CI run #532 (`35256501761`) passed both `verify-all` and `clean-compose` on that exact
+head. The Phase 10 fine-tuned locked test is therefore authorized, but it has **not** been
+executed yet.
 
 ## Frozen candidate
 
@@ -37,7 +41,7 @@ The Phase 10 locked test has **not** been executed yet.
 The connected validation run is `phase10-finetuned-validation-v1`.
 
 - evidence file SHA-256:
-  `03f46efef54cc34d4473833befe7084896dcab3917b616d07404bdf7ff5360c9`
+  `3015ddf10b41b82be97619611d69aabd4679de6719eb3e437c461a2b20bc5385`
 - evaluator result hash:
   `0af782cb9ec0dbd5b70733185423be558509182c3650da3b3d60e8b40796acea`
 - exact accuracy: `5/6` (`0.8333333333333334`)
@@ -50,9 +54,13 @@ secondary analysis only.
 
 ## Next scientific action
 
-First require the **freeze commit itself** to pass both cumulative and clean-environment CI.
-Only after those gates are green, run exactly one connected `--split test` execution with
-`evals/finetuned_portable_runner.py` on the same frozen adapter and scientific configuration.
+Run exactly one connected `--split test` execution with `evals/finetuned_portable_runner.py` on
+the same frozen adapter and scientific configuration. The run must be pinned to a green frozen
+source head at or after `c59910e00f5e4fd0a722d2796da416c977753ddd`, use exactly one visible
+CUDA GPU, verify the adapter tree SHA-256 before inference, and preserve the raw test evidence.
+
+Use run ID `phase10-finetuned-test-v1`. Treat creation of the test evidence file as the one-time
+consumption marker: a rerun must refuse to execute if that evidence already exists.
 
 The locked test is evaluation-only. Do not use its result to retrain, switch checkpoints, change
 the prompt, change generation settings, alter confidence scoring, or select a data-efficiency
