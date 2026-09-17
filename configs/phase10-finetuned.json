@@ -32,7 +32,7 @@
     "temperature": 0.0
   },
   "label_taxonomy_version": "1.0.0",
-  "locked_test_authorized": false,
+  "locked_test_authorized": true,
   "output_schema_version": "root-cause-prediction-v1",
   "prompt_version": "zero-shot-baseline-v1",
   "protocol_version": "phase10-finetuned-evaluation-v1",
@@ -49,7 +49,7 @@
   "source_training_config_hash": "b322d37e9f868b251fa14efb32c8412eab2ddaf3d5cd4adcf027c0f08d51411a",
   "source_training_evidence_sha256": "b2f821a9cca2a54f3236d949a30ae480d5a7a511fe23335eca8be8ef7ee4873e",
   "source_training_run_id": "phase9-qlora-validation-v1",
-  "state": "validation",
+  "state": "frozen",
   "study_id": "evalforge-incident-diagnosis-primary-v1",
   "test_split_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d"
 }

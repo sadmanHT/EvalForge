@@ -1,0 +1,18 @@
+{
+  "candidate_adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "candidate_selection_rule": "phase09_validation_eval_loss_selected_checkpoint",
+  "freeze_record_version": "phase10-finetuned-protocol-freeze-v1",
+  "frozen_at": "2026-09-17T16:44:34.409670+00:00",
+  "locked_test_authorized": true,
+  "protocol_version": "phase10-finetuned-evaluation-v1",
+  "scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "source_training_evidence_sha256": "b2f821a9cca2a54f3236d949a30ae480d5a7a511fe23335eca8be8ef7ee4873e",
+  "source_training_run_id": "phase9-qlora-validation-v1",
+  "validation_evidence": {
+    "file_sha256": "03f46efef54cc34d4473833befe7084896dcab3917b616d07404bdf7ff5360c9",
+    "path": "evidence/phase-10/validation-run.json",
+    "result_hash": "0af782cb9ec0dbd5b70733185423be558509182c3650da3b3d60e8b40796acea",
+    "run_id": "phase10-finetuned-validation-v1",
+    "source_commit": "2547e3cfb54875468351d1e3810c88df8a6a6c69"
+  }
+}

@@ -14,7 +14,7 @@ from app.db import build_engine, sqlalchemy_database_url
 from app.evaluation.contracts import ParseStatus
 from app.evaluation.persistence import load_canonical_predictions, reload_evaluation
 from app.inference.base_model import BackendOutput, GenerationConfig, InferenceError, RuntimeConfig
-from app.inference.finetuned_protocol import load_phase10_protocol
+from app.inference.finetuned_protocol import Phase10State, load_phase10_protocol
 from app.inference.finetuned_runner import run_finetuned_experiment
 from app.inference.protocol import load_taxonomy
 from app.models import AdapterVersion, CostRecord, Experiment, Incident
@@ -149,7 +149,9 @@ def test_validation_runner_persists_finetuned_identity_and_recomputes_metrics(
         adapter = session.get(AdapterVersion, experiment.adapter_version_id)
         predictions = load_canonical_predictions(session, run_id=summary.run_id)
         snapshot = reload_evaluation(session, run_id=summary.run_id)
-        costs = session.scalars(select(CostRecord).where(CostRecord.run_id == summary.run_id)).all()
+        costs = session.scalars(
+            select(CostRecord).where(CostRecord.run_id == summary.run_id)
+        ).all()
     assert experiment.pipeline_type == "FINETUNED"
     assert experiment.kb_version is None
     assert adapter is not None
@@ -174,26 +176,8 @@ def test_validation_runner_persists_finetuned_identity_and_recomputes_metrics(
     assert sum(backend.calls_by_prompt.values()) == first_call_count
 
 
-def test_runner_refuses_locked_test_before_phase10_freeze(engine: Engine) -> None:
+def test_locked_test_is_authorized_after_freeze_without_executing_it() -> None:
     protocol = load_phase10_protocol(ROOT)
-    labels, _categories = load_taxonomy(ROOT)
-    pipeline = FineTunedAdapterPipeline(
-        backend=FixtureFineTunedBackend(labels, fail_incident_marker="marker-not-present"),
-        allowed_labels=labels,
-        prompt_version=protocol.prompt_version,
-        generation_config=protocol.generation_config,
-    )
-    with (
-        Session(engine) as session,
-        pytest.raises(ValueError, match="locked test"),
-    ):
-        run_finetuned_experiment(
-            session,
-            root=ROOT,
-            protocol=protocol,
-            pipeline=pipeline,
-            split="test",
-            git_commit="phase10-integration",
-            hardware_runtime_descriptor="phase10-ci-fixture-no-real-model",
-            cost_rate_snapshot_version="phase10-ci-fixture-rates-v1",
-        )
+    assert protocol.state is Phase10State.FROZEN
+    assert protocol.locked_test_authorized is True
+    assert protocol.assert_split_allowed("test") == "test"

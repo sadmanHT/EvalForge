@@ -1,16 +1,24 @@
 # Phase 10 evidence
 
-This directory is intentionally pre-evidence until the connected Phase 10 validation,
-data-efficiency, locked-test, and Hugging Face release protocol has actually run.
+This directory contains the preserved Phase 10 scientific evidence as the phase progresses.
 
-Expected evidence at completion includes:
+Current evidence:
 
-- primary adapter freeze record linked to Phase 09 training evidence;
-- fine-tuned validation and locked-test run evidence with exact benchmark IDs;
+- `validation-run.json` — connected single-GPU validation run for the frozen Phase 09 adapter,
+  exported before any locked-test authorization;
+- `protocol-freeze.json` — immutable linkage from that validation evidence and the Phase 09
+  training identity to the frozen Phase 10 protocol.
+
+The locked test has not been executed yet. Test evidence must only be produced after the freeze
+commit passes cumulative and clean-environment CI.
+
+Evidence still required for Phase 10 completion includes:
+
+- one authorized fine-tuned locked-test run with exact benchmark IDs;
 - data-efficiency matrix results and subset-lineage manifests;
 - paired zero-shot baseline vs fine-tuned report;
-- Hugging Face repository/revision and model card;
+- Hugging Face repository/revision and truthful model card;
 - clean download/load/inference smoke evidence.
 
-No placeholder result, fabricated Hugging Face revision, or CPU-only smoke may satisfy the
-Phase 10 hard exit.
+No placeholder result, fabricated Hugging Face revision, CPU-only smoke, or locked-test-driven
+retuning may satisfy the Phase 10 hard exit.

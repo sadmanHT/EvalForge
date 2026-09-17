@@ -2,13 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from app.data.io import read_jsonl
 from app.data.schemas import IncidentRecord
 from app.inference.base_model import BackendOutput, GenerationConfig, RuntimeConfig
 from app.inference.finetuned_portable import evaluate_finetuned_records
-from app.inference.finetuned_protocol import load_phase10_protocol
+from app.inference.finetuned_protocol import Phase10State, load_phase10_protocol
 from app.inference.protocol import load_taxonomy
 from app.training.inference import FineTunedAdapterPipeline
 
@@ -35,7 +33,10 @@ class FixturePortableBackend:
     ) -> BackendOutput:
         del prompt, generation_config
         label = allowed_labels[0]
-        scores = {candidate: (-0.1 if candidate == label else -4.0) for candidate in allowed_labels}
+        scores = {
+            candidate: (-0.1 if candidate == label else -4.0)
+            for candidate in allowed_labels
+        }
         return BackendOutput(
             raw_text=f'{{"root_cause_code":"{label}","reasoning":"fixture"}}',
             label_log_likelihoods=scores,
@@ -93,14 +94,8 @@ def test_portable_validation_uses_canonical_phase10_evaluator() -> None:
     )
 
 
-def test_portable_runner_cannot_consume_locked_test_before_freeze() -> None:
+def test_portable_test_split_is_authorized_after_freeze_without_executing_it() -> None:
     protocol = load_phase10_protocol(ROOT)
-    assert protocol.locked_test_authorized is False
-    with pytest.raises(ValueError, match="locked test"):
-        evaluate_finetuned_records(
-            root=ROOT,
-            protocol=protocol,
-            pipeline=_pipeline(),
-            records=_records(),
-            split="test",
-        )
+    assert protocol.state is Phase10State.FROZEN
+    assert protocol.locked_test_authorized is True
+    assert protocol.assert_split_allowed("test") == "test"

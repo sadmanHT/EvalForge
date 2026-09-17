@@ -15,6 +15,8 @@ from app.training.evidence import load_training_evidence_identity, sha256_file
 
 PHASE10_PROTOCOL_PATH = Path("configs/phase10-finetuned.json")
 PHASE9_TRAINING_EVIDENCE_PATH = Path("evidence/phase-09/training-run.json")
+PHASE10_VALIDATION_EVIDENCE_PATH = Path("evidence/phase-10/validation-run.json")
+PHASE10_FREEZE_RECORD_PATH = Path("evidence/phase-10/protocol-freeze.json")
 
 
 class Phase10State(StrEnum):
@@ -76,8 +78,10 @@ class Phase10Protocol(BaseModel):
 
     @model_validator(mode="after")
     def validate_state(self) -> Phase10Protocol:
-        if self.locked_test_authorized and self.state is not Phase10State.FROZEN:
-            raise ValueError("Phase 10 locked test authorization requires a frozen protocol")
+        if self.state is Phase10State.VALIDATION and self.locked_test_authorized:
+            raise ValueError("Phase 10 validation protocol cannot authorize the locked test")
+        if self.state is Phase10State.FROZEN and not self.locked_test_authorized:
+            raise ValueError("frozen Phase 10 protocol must authorize exactly one locked test")
         if self.runtime_config.model_id != self.base_model_id:
             raise ValueError("runtime model ID must match the frozen base model")
         if self.runtime_config.revision != self.base_model_revision:
@@ -120,7 +124,7 @@ class Phase10Protocol(BaseModel):
             "source_training_evidence_sha256": self.source_training_evidence_sha256,
             "source_training_config_hash": self.source_training_config_hash,
             "candidate_adapter_sha256": self.candidate_adapter_sha256,
-            "candidate_adapter_artifact_reference": (self.candidate_adapter_artifact_reference),
+            "candidate_adapter_artifact_reference": self.candidate_adapter_artifact_reference,
             "candidate_selection_rule": self.candidate_selection_rule,
             "data_efficiency": self.data_efficiency.model_dump(mode="json"),
         }
@@ -134,6 +138,95 @@ class Phase10Protocol(BaseModel):
             allow_nan=False,
         ).encode()
         return hashlib.sha256(encoded).hexdigest()
+
+
+def _load_json_object(path: Path) -> dict[str, object]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Phase 10 JSON artifact must contain an object: {path}")
+    return {str(key): value for key, value in payload.items()}
+
+
+def _validate_frozen_protocol_evidence(root: Path, protocol: Phase10Protocol) -> None:
+    validation_path = root / PHASE10_VALIDATION_EVIDENCE_PATH
+    freeze_path = root / PHASE10_FREEZE_RECORD_PATH
+    if not validation_path.is_file():
+        raise ValueError("frozen Phase 10 protocol is missing connected validation evidence")
+    if not freeze_path.is_file():
+        raise ValueError("frozen Phase 10 protocol is missing protocol-freeze evidence")
+
+    validation = _load_json_object(validation_path)
+    freeze = _load_json_object(freeze_path)
+
+    validation_expected = {
+        "evidence_version": "phase10-finetuned-portable-run-v1",
+        "status": "completed",
+        "run_id": "phase10-finetuned-validation-v1",
+        "split": "validation",
+        "protocol_version": protocol.protocol_version,
+        "protocol_state": Phase10State.VALIDATION.value,
+        "locked_test_authorized": False,
+        "scientific_config_hash": protocol.scientific_config_hash(),
+        "dataset_version": protocol.dataset_version,
+        "dataset_manifest_checksum": protocol.test_split_manifest_checksum,
+        "base_model_id": protocol.base_model_id,
+        "base_model_revision": protocol.base_model_revision,
+        "adapter_sha256": protocol.candidate_adapter_sha256,
+        "source_training_run_id": protocol.source_training_run_id,
+        "source_training_evidence_sha256": protocol.source_training_evidence_sha256,
+        "source_training_config_hash": protocol.source_training_config_hash,
+        "candidate_selection_rule": protocol.candidate_selection_rule,
+        "evaluator_version": protocol.evaluator_version,
+        "output_schema_version": protocol.output_schema_version,
+        "prompt_version": protocol.prompt_version,
+        "generation_config": protocol.generation_config.model_dump(mode="json"),
+        "execution_mode": "portable_connected_gpu_no_database",
+        "persistence_stack_used": False,
+    }
+    for key, expected in validation_expected.items():
+        if validation.get(key) != expected:
+            raise ValueError(f"Phase 10 validation evidence mismatch: {key}")
+
+    if validation.get("prediction_count") != 6:
+        raise ValueError("Phase 10 validation evidence must cover all six validation incidents")
+    gpu_environment = validation.get("gpu_environment")
+    if not isinstance(gpu_environment, dict):
+        raise ValueError("Phase 10 validation evidence is missing GPU environment")
+    if gpu_environment.get("cuda_available") is not True:
+        raise ValueError("Phase 10 validation evidence is not CUDA-backed")
+    if gpu_environment.get("visible_gpu_count") != 1:
+        raise ValueError("Phase 10 validation evidence did not use exactly one visible GPU")
+
+    validation_evidence = freeze.get("validation_evidence")
+    if not isinstance(validation_evidence, dict):
+        raise ValueError("Phase 10 freeze record is missing validation_evidence")
+    freeze_expected = {
+        "freeze_record_version": "phase10-finetuned-protocol-freeze-v1",
+        "protocol_version": protocol.protocol_version,
+        "scientific_config_hash": protocol.scientific_config_hash(),
+        "candidate_adapter_sha256": protocol.candidate_adapter_sha256,
+        "candidate_selection_rule": protocol.candidate_selection_rule,
+        "source_training_run_id": protocol.source_training_run_id,
+        "source_training_evidence_sha256": protocol.source_training_evidence_sha256,
+        "locked_test_authorized": True,
+    }
+    for key, expected in freeze_expected.items():
+        if freeze.get(key) != expected:
+            raise ValueError(f"Phase 10 protocol-freeze record mismatch: {key}")
+
+    expected_validation_link = {
+        "path": str(PHASE10_VALIDATION_EVIDENCE_PATH),
+        "file_sha256": sha256_file(validation_path),
+        "run_id": validation["run_id"],
+        "result_hash": validation["result_hash"],
+        "source_commit": validation["git_commit"],
+    }
+    if validation_evidence != expected_validation_link:
+        raise ValueError("Phase 10 protocol-freeze validation linkage is stale")
+
+    frozen_at = freeze.get("frozen_at")
+    if not isinstance(frozen_at, str) or not frozen_at.strip():
+        raise ValueError("Phase 10 protocol-freeze record is missing frozen_at")
 
 
 def load_phase10_protocol(root: Path, path: Path = PHASE10_PROTOCOL_PATH) -> Phase10Protocol:
@@ -184,6 +277,9 @@ def load_phase10_protocol(root: Path, path: Path = PHASE10_PROTOCOL_PATH) -> Pha
         raise ValueError("Phase 10 base model ID disagrees with Phase 09")
     if identity.base_model_revision != protocol.base_model_revision:
         raise ValueError("Phase 10 base model revision disagrees with Phase 09")
+
+    if protocol.state is Phase10State.FROZEN:
+        _validate_frozen_protocol_evidence(root, protocol)
     return protocol
 
 

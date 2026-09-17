@@ -2,14 +2,21 @@
 
 ## Current state
 
-Phase 10 is in pre-connected-validation state. The repository has a frozen scientific protocol,
-Phase 09 adapter identity checks, fine-tuned persistence integration tests, worker orchestration,
-a database-free connected-GPU evaluation path, and cumulative CI coverage. No genuine Phase 10
-validation evidence has been committed yet, the protocol remains `state=validation`, and
-`locked_test_authorized=false`.
+Connected Phase 10 validation has been completed on the exact green source commit
+`2547e3cfb54875468351d1e3810c88df8a6a6c69` with the frozen Phase 09 adapter.
+The preserved validation evidence is `evidence/phase-10/validation-run.json`; it records
+six validation incidents, the canonical Phase 5 evaluator, one visible Tesla T4 GPU,
+and no locked-test authorization at evaluation time.
 
-The locked test has not been consumed by Phase 10 and must remain untouched until a separate
-validation-evidence freeze commit authorizes it.
+That evidence was committed in `4861ea86fd31c046d2bd9b76177659a0739b79f6`, and GitHub CI run
+#528 passed both the cumulative `verify-all` gate and the clean-Compose gate.
+
+The primary fine-tuned protocol is now frozen. `configs/phase10-finetuned.json` is
+`state=frozen` with `locked_test_authorized=true`. The freeze is bound to the exact
+validation evidence, Phase 09 source-training evidence, candidate adapter checksum,
+and unchanged scientific configuration through `evidence/phase-10/protocol-freeze.json`.
+
+The Phase 10 locked test has **not** been executed yet.
 
 ## Frozen candidate
 
@@ -22,45 +29,35 @@ validation-evidence freeze commit authorizes it.
 - Dataset: `evalforge-incident-diagnosis-v0.1.0`
 - Prompt: `zero-shot-baseline-v1`
 - Evaluator: `phase5-evaluator-v1`
+- Phase 10 scientific config SHA-256:
+  `6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d`
 
-`configs/phase10-finetuned.json` cross-checks these fields against the committed Phase 09 training
-evidence every time the protocol is loaded.
+## Validation evidence
 
-## Implemented repository path
+The connected validation run is `phase10-finetuned-validation-v1`.
 
-Phase 10 currently provides:
+- evidence file SHA-256:
+  `03f46efef54cc34d4473833befe7084896dcab3917b616d07404bdf7ff5360c9`
+- evaluator result hash:
+  `0af782cb9ec0dbd5b70733185423be558509182c3650da3b3d60e8b40796acea`
+- exact accuracy: `5/6` (`0.8333333333333334`)
+- parse failure rate: `1/6` (`0.16666666666666666`)
+- locked test usage: none
 
-- `app.inference.finetuned_protocol` for frozen identity and locked-test authorization;
-- `app.inference.finetuned_model` for content-addressed adapter loading;
-- `app.inference.finetuned_runner` for canonical persisted FINETUNED experiments;
-- `app.inference.finetuned_orchestration` and worker task `phase10_finetuned`;
-- `app.inference.finetuned_portable` for the same evaluator/retry path without PostgreSQL;
-- `evals/finetuned_portable_runner.py` for connected single-GPU evidence generation;
-- deterministic train-family data-efficiency subset construction;
-- Phase 10 focused unit/integration tests and cumulative CI/clean-Compose contract gates.
-
-The portable connected path is intentionally explicit about not using the persistence stack. It
-preserves raw canonical predictions and the common evaluator payload so they can be validated or
-replayed after the GPU run without re-running the model.
+These validation outcomes do not select a replacement checkpoint or adapter. The candidate was
+predeclared from the Phase 09 validation-selected checkpoint, and the data-efficiency study remains
+secondary analysis only.
 
 ## Next scientific action
 
-Run the exact current green source commit on a single visible CUDA GPU. Download the preserved
-Phase 09 W&B adapter artifact, verify the local adapter tree SHA-256, and execute only the
-`validation` split with `evals/finetuned_portable_runner.py`.
+First require the **freeze commit itself** to pass both cumulative and clean-environment CI.
+Only after those gates are green, run exactly one connected `--split test` execution with
+`evals/finetuned_portable_runner.py` on the same frozen adapter and scientific configuration.
 
-Preserve the resulting JSON outside the repository first. Verify its source commit, protocol hash,
-adapter hash, prediction coverage, evaluator result hash, GPU environment, and split before
-committing anything under `evidence/phase-10/`.
+The locked test is evaluation-only. Do not use its result to retrain, switch checkpoints, change
+the prompt, change generation settings, alter confidence scoring, or select a data-efficiency
+condition.
 
-Do not change `state` or `locked_test_authorized` yet. Do not run `--split test` yet.
-
-## After validation evidence
-
-Once connected validation evidence is valid and committed, the next source commit should freeze
-the primary protocol and explicitly authorize the locked test. That freeze must be green in both
-cumulative and clean-environment CI before the one-time fine-tuned locked-test execution.
-
-Data-efficiency experiments remain train/validation-only secondary analysis and cannot select a
-replacement primary adapter. Hugging Face publication is owned by Phase 10 and happens only after
-the locked-test evidence and paired comparison are preserved.
+After the one-time locked test, preserve the raw test evidence before building the paired
+zero-shot-baseline vs fine-tuned report. Hugging Face publication and clean-download smoke remain
+later Phase 10 steps.
