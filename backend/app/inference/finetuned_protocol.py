@@ -222,7 +222,10 @@ def _validate_frozen_protocol_evidence(root: Path, protocol: Phase10Protocol) ->
         "source_commit": validation["git_commit"],
     }
     if validation_evidence != expected_validation_link:
-        raise ValueError("Phase 10 protocol-freeze validation linkage is stale")
+        raise ValueError(
+            "Phase 10 protocol-freeze validation linkage is stale: "
+            f"expected={expected_validation_link!r} recorded={validation_evidence!r}"
+        )
 
     frozen_at = freeze.get("frozen_at")
     if not isinstance(frozen_at, str) or not frozen_at.strip():
