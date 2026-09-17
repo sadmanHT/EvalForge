@@ -17,7 +17,7 @@ from app.inference.base_model import BackendOutput, GenerationConfig, InferenceE
 from app.inference.finetuned_protocol import load_phase10_protocol
 from app.inference.finetuned_runner import run_finetuned_experiment
 from app.inference.protocol import load_taxonomy
-from app.models import CostRecord, Experiment, Incident
+from app.models import AdapterVersion, CostRecord, Experiment, Incident
 from app.services.dataset_import import import_phase3_dataset
 from app.training.inference import FineTunedAdapterPipeline
 
@@ -144,13 +144,19 @@ def test_validation_runner_persists_finetuned_identity_and_recomputes_metrics(
 
     with Session(engine) as session:
         experiment = session.get(Experiment, summary.experiment_id)
+        assert experiment is not None
+        assert experiment.adapter_version_id is not None
+        adapter = session.get(AdapterVersion, experiment.adapter_version_id)
         predictions = load_canonical_predictions(session, run_id=summary.run_id)
         snapshot = reload_evaluation(session, run_id=summary.run_id)
         costs = session.scalars(select(CostRecord).where(CostRecord.run_id == summary.run_id)).all()
-    assert experiment is not None
     assert experiment.pipeline_type == "FINETUNED"
-    assert experiment.adapter_revision == protocol.candidate_adapter_sha256
-    assert experiment.knowledge_base_version is None
+    assert experiment.kb_version is None
+    assert adapter is not None
+    assert adapter.adapter_id == protocol.candidate_adapter_artifact_reference
+    assert adapter.revision == protocol.candidate_adapter_sha256
+    assert adapter.metadata_json["scientific_adapter"] is True
+    assert adapter.metadata_json["source_training_run_id"] == protocol.source_training_run_id
     assert len(predictions) == 6
     assert len({prediction.incident_id for prediction in predictions}) == 6
     invalid_json_count = sum(
