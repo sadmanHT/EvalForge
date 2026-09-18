@@ -26,7 +26,9 @@ from app.training.evidence import tree_sha256
 from app.training.formatter import TrainingExample, format_incident
 from app.training.inference import FineTunedAdapterPipeline, PeftTransformersBackend
 
-EFFICIENCY_PREPARED_MANIFEST_VERSION = "phase10-efficiency-prepared-v1"
+EFFICIENCY_PREPARED_MANIFEST_VERSION: Literal["phase10-efficiency-prepared-v1"] = (
+    "phase10-efficiency-prepared-v1"
+)
 EFFICIENCY_CONDITION_EVIDENCE_VERSION = "phase10-data-efficiency-condition-v1"
 EFFICIENCY_AGGREGATE_VERSION = "phase10-data-efficiency-aggregate-v1"
 EFFICIENCY_NUMERIC_RECOVERY_POLICY = "fp16_grad_scaler_recover_transient_nonfinite_grad_norm_v1"
