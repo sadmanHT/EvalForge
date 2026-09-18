@@ -50,11 +50,22 @@ class DisabledTrainingTracker:
 
 
 class WandbTrainingTracker:
-    def __init__(self, *, project: str, entity: str | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        project: str,
+        entity: str | None = None,
+        job_type: str = "phase9-finetune",
+        artifact_type: str = "phase9-peft-adapter",
+    ) -> None:
         if not project.strip():
             raise ValueError("W&B project must be non-empty")
+        if not job_type.strip() or not artifact_type.strip():
+            raise ValueError("W&B job/artifact types must be non-empty")
         self.project = project.strip()
         self.entity = entity.strip() if entity and entity.strip() else None
+        self.job_type = job_type.strip()
+        self.artifact_type = artifact_type.strip()
 
     def log_training(
         self,
@@ -75,7 +86,7 @@ class WandbTrainingTracker:
             project=self.project,
             entity=self.entity,
             name=run_id,
-            job_type="phase9-finetune",
+            job_type=self.job_type,
             config=config,
             reinit=True,
         )
@@ -102,7 +113,7 @@ class WandbTrainingTracker:
             )
             artifact = wandb.Artifact(
                 name=f"{run_id}-adapter",
-                type="phase9-peft-adapter",
+                type=self.artifact_type,
                 metadata={
                     **reproducibility_metadata,
                     "adapter_sha256": result.adapter_sha256,
@@ -128,11 +139,17 @@ class WandbTrainingTracker:
             run.finish()
 
 
-def build_training_tracker_from_env() -> TrainingTracker:
+def build_training_tracker_from_env(
+    *,
+    job_type: str = "phase9-finetune",
+    artifact_type: str = "phase9-peft-adapter",
+) -> TrainingTracker:
     project = os.environ.get("WANDB_PROJECT", "").strip()
     if not project:
         return DisabledTrainingTracker()
     return WandbTrainingTracker(
         project=project,
         entity=os.environ.get("WANDB_ENTITY"),
+        job_type=job_type,
+        artifact_type=artifact_type,
     )

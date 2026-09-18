@@ -93,9 +93,16 @@ def main() -> int:
     )
     bundle = build_efficiency_training_bundle(ROOT, seed=args.seed)
     base_bundle = build_efficiency_training_bundle(ROOT, seed=20260908)
+    if base_bundle.config_hash() != protocol.source_training_config_hash:
+        raise RuntimeError(
+            "Phase 10 efficiency base hyperparameters disagree with Phase 09 evidence"
+        )
     gpu_environment = _gpu_environment()
 
-    tracker = build_training_tracker_from_env()
+    tracker = build_training_tracker_from_env(
+        job_type="phase10-data-efficiency",
+        artifact_type="phase10-efficiency-peft-adapter",
+    )
     started = time.perf_counter()
     result = PeftTrainingRuntime(bundle).train(
         train_path=prepared_dir / "train.jsonl",
