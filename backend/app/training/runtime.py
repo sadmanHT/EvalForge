@@ -19,6 +19,35 @@ class TrainingOOMError(TrainingRuntimeError):
     pass
 
 
+def _classify_nonfinite_training_signals(
+    logs: dict[str, object] | None,
+) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Return (fatal, recoverable) non-finite Trainer log keys.
+
+    Non-finite loss/eval_loss is always fatal. A transient non-finite grad_norm
+    can occur under fp16 GradScaler before the scaler backs off and skips the
+    unsafe optimizer step, so it is recorded but not treated as a failed run.
+    """
+
+    if logs is None:
+        return (), ()
+    fatal: list[str] = []
+    recoverable: list[str] = []
+    for key in ("loss", "eval_loss", "grad_norm"):
+        if key not in logs:
+            continue
+        value = logs[key]
+        if isinstance(value, bool) or not isinstance(value, int | float):
+            continue
+        if math.isfinite(float(value)):
+            continue
+        if key == "grad_norm":
+            recoverable.append(key)
+        else:
+            fatal.append(key)
+    return tuple(fatal), tuple(recoverable)
+
+
 @dataclass(frozen=True)
 class TrainingRunResult:
     output_dir: str
@@ -28,6 +57,7 @@ class TrainingRunResult:
     train_metrics: dict[str, float]
     log_history: tuple[dict[str, object], ...]
     checkpoint_paths: tuple[str, ...]
+    nonfinite_gradient_norm_steps: tuple[int, ...] = ()
 
 
 def _oom_like(exc: BaseException) -> bool:
@@ -237,6 +267,8 @@ class PeftTrainingRuntime:
                     "labels": torch.tensor(padded_labels, dtype=torch.long),
                 }
 
+        nonfinite_gradient_norm_steps: list[int] = []
+
         def finite_loss_on_log(
             _self: object,
             _args: Any,
@@ -245,12 +277,16 @@ class PeftTrainingRuntime:
             logs: dict[str, object] | None = None,
             **_kwargs: object,
         ) -> None:
-            for key in ("loss", "eval_loss", "grad_norm"):
-                if logs is None or key not in logs:
-                    continue
+            fatal, recoverable = _classify_nonfinite_training_signals(logs)
+            if "grad_norm" in recoverable:
+                step = getattr(_state, "global_step", None)
+                if isinstance(step, int) and step >= 0:
+                    nonfinite_gradient_norm_steps.append(step)
+            if fatal:
+                key = fatal[0]
+                assert logs is not None
                 value = logs[key]
-                if isinstance(value, int | float) and not math.isfinite(float(value)):
-                    raise TrainingRuntimeError(f"non-finite training signal: {key}={value}")
+                raise TrainingRuntimeError(f"non-finite training signal: {key}={value}")
 
         finite_loss_callback = type(
             "FiniteLossCallback",
@@ -344,4 +380,7 @@ class PeftTrainingRuntime:
             train_metrics=train_metrics,
             log_history=log_history,
             checkpoint_paths=checkpoints,
+            nonfinite_gradient_norm_steps=tuple(
+                sorted(set(nonfinite_gradient_norm_steps))
+            ),
         )

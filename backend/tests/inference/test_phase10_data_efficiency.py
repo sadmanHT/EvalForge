@@ -10,11 +10,13 @@ from app.inference.data_efficiency import (
     select_data_efficiency_subset,
 )
 from app.inference.efficiency_study import (
+    EFFICIENCY_NUMERIC_RECOVERY_POLICY,
     build_efficiency_training_bundle,
     efficiency_condition_id,
     prepare_efficiency_condition,
 )
 from app.inference.finetuned_protocol import load_phase10_protocol
+from app.training.runtime import _classify_nonfinite_training_signals
 
 
 def _record(index: int, split: Split = Split.TRAIN) -> IncidentRecord:
@@ -109,3 +111,20 @@ def test_efficiency_condition_id_is_stable() -> None:
     assert efficiency_condition_id(0.10, 20260908) == "phase10-efficiency-f0100-s20260908"
     assert efficiency_condition_id(0.25, 20260909) == "phase10-efficiency-f0250-s20260909"
     assert efficiency_condition_id(1.00, 20260910) == "phase10-efficiency-f1000-s20260910"
+
+
+def test_fp16_numeric_policy_records_grad_norm_overflow_but_keeps_loss_fail_closed() -> None:
+    fatal, recoverable = _classify_nonfinite_training_signals(
+        {"loss": 0.25, "grad_norm": float("nan")}
+    )
+    assert fatal == ()
+    assert recoverable == ("grad_norm",)
+    assert EFFICIENCY_NUMERIC_RECOVERY_POLICY == (
+        "fp16_grad_scaler_recover_transient_nonfinite_grad_norm_v1"
+    )
+
+    fatal, recoverable = _classify_nonfinite_training_signals(
+        {"loss": float("inf"), "grad_norm": float("nan")}
+    )
+    assert fatal == ("loss",)
+    assert recoverable == ("grad_norm",)

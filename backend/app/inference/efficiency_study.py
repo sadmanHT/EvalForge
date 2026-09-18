@@ -29,6 +29,9 @@ from app.training.inference import FineTunedAdapterPipeline, PeftTransformersBac
 EFFICIENCY_PREPARED_MANIFEST_VERSION = "phase10-efficiency-prepared-v1"
 EFFICIENCY_CONDITION_EVIDENCE_VERSION = "phase10-data-efficiency-condition-v1"
 EFFICIENCY_AGGREGATE_VERSION = "phase10-data-efficiency-aggregate-v1"
+EFFICIENCY_NUMERIC_RECOVERY_POLICY = (
+    "fp16_grad_scaler_recover_transient_nonfinite_grad_norm_v1"
+)
 
 
 class EfficiencyPreparedManifest(BaseModel):
@@ -402,6 +405,20 @@ def validate_efficiency_condition_evidence(
     if seed not in protocol.data_efficiency.seeds:
         raise ValueError("efficiency evidence seed is outside the declared matrix")
 
+    if payload.get("training_numeric_recovery_policy") != EFFICIENCY_NUMERIC_RECOVERY_POLICY:
+        raise ValueError("efficiency evidence has an unexpected numeric recovery policy")
+    recovery_steps = payload.get("nonfinite_gradient_norm_steps")
+    recovery_count = payload.get("nonfinite_gradient_norm_count")
+    if not isinstance(recovery_steps, list) or any(
+        isinstance(step, bool) or not isinstance(step, int) or step < 0
+        for step in recovery_steps
+    ):
+        raise ValueError("efficiency evidence has invalid non-finite grad-norm steps")
+    if recovery_count != len(recovery_steps):
+        raise ValueError("efficiency evidence has a stale non-finite grad-norm count")
+    if len(set(recovery_steps)) != len(recovery_steps):
+        raise ValueError("efficiency evidence repeats non-finite grad-norm steps")
+
     validation = payload.get("validation_evaluation")
     if not isinstance(validation, Mapping) or validation.get("split") != "validation":
         raise ValueError("efficiency evidence must evaluate validation only")
@@ -474,6 +491,9 @@ def aggregate_efficiency_conditions(
                 ),
                 "training_direct_cost_usd": aggregate_efficiency_metric(
                     [float(member["training_direct_cost_usd"]) for member in members]
+                ),
+                "nonfinite_gradient_norm_count": aggregate_efficiency_metric(
+                    [float(member["nonfinite_gradient_norm_count"]) for member in members]
                 ),
             }
         )

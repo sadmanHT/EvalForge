@@ -94,3 +94,19 @@ not a basis for retuning or a broad claim of superiority.
    clean-Compose CI, and require an exact-head green run before marking Phase 10 complete.
 
 No later Phase 10 work may reinterpret the locked test as a tuning set.
+
+
+## Data-efficiency connected-run note — 2026-09-18
+
+The first connected data-efficiency attempt on source `b733caf957befa2a5e54d516f88b15430db82530`
+did not complete any matrix condition. The 10% / seed 20260908 condition reached its first
+training log and the runtime aborted on `grad_norm=nan` before condition evidence, W&B artifact
+publication, or validation evaluation was produced. No locked-test inference occurred.
+
+The source-only follow-up keeps the predeclared model, data subsets, learning rate, optimizer,
+epochs, gradient accumulation, quantization, prompt, evaluator, and seed matrix unchanged. It
+corrects the runtime numeric guard so non-finite `loss` or `eval_loss` remains fatal, while a
+transient non-finite fp16 gradient norm is recorded and left to the standard GradScaler overflow
+recovery/step-skip mechanism. Every completed efficiency condition must record the recovery policy,
+the exact affected global steps, and a count in its evidence. This is an infrastructure/runtime
+semantics correction, not result-driven hyperparameter tuning.

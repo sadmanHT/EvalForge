@@ -18,6 +18,7 @@ if str(BACKEND) not in sys.path:
 
 from app.inference.efficiency_study import (  # noqa: E402
     EFFICIENCY_CONDITION_EVIDENCE_VERSION,
+    EFFICIENCY_NUMERIC_RECOVERY_POLICY,
     build_efficiency_training_bundle,
     efficiency_condition_id,
     evaluate_efficiency_validation,
@@ -130,6 +131,9 @@ def main() -> int:
         "hardware_runtime_descriptor": args.hardware_runtime_descriptor,
         "gpu_environment": gpu_environment,
         "training_wall_seconds": training_wall_seconds,
+        "training_numeric_recovery_policy": EFFICIENCY_NUMERIC_RECOVERY_POLICY,
+        "nonfinite_gradient_norm_steps": list(result.nonfinite_gradient_norm_steps),
+        "nonfinite_gradient_norm_count": len(result.nonfinite_gradient_norm_steps),
         "primary_adapter_selection_use": False,
         "test_split_used": False,
     }
@@ -202,9 +206,15 @@ def main() -> int:
         "checkpoint_paths": list(result.checkpoint_paths),
         "train_metrics": result.train_metrics,
         "training_wall_seconds": training_wall_seconds,
+        "training_numeric_recovery_policy": EFFICIENCY_NUMERIC_RECOVERY_POLICY,
+        "nonfinite_gradient_norm_steps": list(result.nonfinite_gradient_norm_steps),
+        "nonfinite_gradient_norm_count": len(result.nonfinite_gradient_norm_steps),
         "cost_rate_snapshot_version": args.cost_rate_snapshot_version,
         "gpu_hour_usd": args.gpu_hour_usd,
         "training_direct_cost_usd": training_direct_cost_usd,
+        "training_numeric_recovery_policy": EFFICIENCY_NUMERIC_RECOVERY_POLICY,
+        "nonfinite_gradient_norm_steps": list(result.nonfinite_gradient_norm_steps),
+        "nonfinite_gradient_norm_count": len(result.nonfinite_gradient_norm_steps),
         "tracking": tracking.as_dict(),
         "gpu_environment": gpu_environment,
         "validation_evaluation": validation,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -96,7 +97,12 @@ class WandbTrainingTracker:
                 metrics = {
                     f"training/{key}": float(value)
                     for key, value in entry.items()
-                    if key != "step" and isinstance(value, int | float)
+                    if (
+                        key != "step"
+                        and not isinstance(value, bool)
+                        and isinstance(value, int | float)
+                        and math.isfinite(float(value))
+                    )
                 }
                 if metrics:
                     if isinstance(step, int | float):
