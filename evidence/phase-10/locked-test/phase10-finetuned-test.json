@@ -1,0 +1,653 @@
+{
+  "adapter_id": "phase9-qlora-validation-v1-adapter",
+  "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "candidate_selection_rule": "phase09_validation_eval_loss_selected_checkpoint",
+  "cost_rate_snapshot_version": "kaggle-free-quota-no-direct-usd-per-gpu-hour",
+  "dataset_manifest_checksum": "4a6767f0859eb93a2a9e7e8a8ea3caecb56b8a666c9ba9da97fee8e054c10c7d",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "evaluation": {
+    "evaluator_version": "phase5-evaluator-v1",
+    "failure_taxonomy_version": "phase5-failure-taxonomy-v1",
+    "failures": [
+      {
+        "annotation": {
+          "failure_code": "OTHER_UNCLASSIFIED",
+          "metadata": {},
+          "notes": "parse failure: INVALID_JSON",
+          "source": "rule"
+        },
+        "incident_id": "incident-420f3a36538bb8156dd897d8"
+      }
+    ],
+    "metrics": [
+      {
+        "metadata": {
+          "normalization": "0.5 * multiclass squared probability error"
+        },
+        "name": "calibration.normalized_multiclass_brier",
+        "value": 0.00605209464093294
+      },
+      {
+        "metadata": {
+          "upfront_cost_included": true,
+          "upfront_cost_usd": 0.0
+        },
+        "name": "cost.amortized_mean_usd",
+        "value": 0.0
+      },
+      {
+        "metadata": {
+          "upfront_cost_included": false
+        },
+        "name": "cost.marginal_mean_usd",
+        "value": 0.0
+      },
+      {
+        "metadata": {
+          "quantile": "R7"
+        },
+        "name": "latency.p50_ms",
+        "value": 13132.569028999966
+      },
+      {
+        "metadata": {
+          "quantile": "R7"
+        },
+        "name": "latency.p95_ms",
+        "value": 16231.942929250037
+      },
+      {
+        "metadata": {
+          "grader": "deterministic_root_cause_v1",
+          "role": "primary"
+        },
+        "name": "primary.exact_accuracy",
+        "value": 0.8333333333333334
+      },
+      {
+        "metadata": {
+          "role": "diagnostic"
+        },
+        "name": "quality.parse_failure_rate",
+        "value": 0.16666666666666666
+      },
+      {
+        "metadata": {
+          "role": "supporting",
+          "taxonomy": "label_category"
+        },
+        "name": "supporting.hierarchical_accuracy",
+        "value": 0.8333333333333334
+      },
+      {
+        "metadata": {
+          "k": 3,
+          "role": "supporting"
+        },
+        "name": "supporting.top3_accuracy",
+        "value": 0.8333333333333334
+      }
+    ],
+    "omitted_metrics": {
+      "calibration.ece": "ECE requires confidence for every prediction",
+      "retrieval.context_precision": "retrieval metrics require reference relevant_chunk_ids",
+      "retrieval.context_recall": "retrieval metrics require reference relevant_chunk_ids"
+    },
+    "prediction_count": 6,
+    "reliability": []
+  },
+  "evaluator_version": "phase5-evaluator-v1",
+  "evidence_version": "phase10-finetuned-portable-run-v1",
+  "execution_mode": "portable_connected_gpu_no_database",
+  "generation_config": {
+    "do_sample": false,
+    "max_new_tokens": 128,
+    "temperature": 0.0
+  },
+  "git_commit": "c59910e00f5e4fd0a722d2796da416c977753ddd",
+  "gpu_environment": {
+    "accelerate": "1.13.0",
+    "bitsandbytes": "0.50.2",
+    "cuda_available": true,
+    "cuda_version": "12.8",
+    "gpu_name": "Tesla T4",
+    "gpu_vram_bytes": 15636037632,
+    "peft": "0.18.0",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6",
+    "visible_gpu_count": 1
+  },
+  "gpu_hour_usd": 0.0,
+  "hardware_runtime_descriptor": "Kaggle; GPU=Tesla T4; VRAM=15636037632 bytes; visible_gpu_count=1; CUDA_VISIBLE_DEVICES=0; torch=2.10.0+cu128; CUDA runtime=12.8; Python=3.12.13; transformers=4.57.6; bitsandbytes=0.50.2; peft=0.18.0",
+  "inference_failure_count": 0,
+  "locked_test_authorized": true,
+  "max_attempts": 2,
+  "metric_values": {
+    "calibration.normalized_multiclass_brier": 0.00605209464093294,
+    "cost.amortized_mean_usd": 0.0,
+    "cost.marginal_mean_usd": 0.0,
+    "latency.p50_ms": 13132.569028999966,
+    "latency.p95_ms": 16231.942929250037,
+    "primary.exact_accuracy": 0.8333333333333334,
+    "quality.parse_failure_rate": 0.16666666666666666,
+    "supporting.hierarchical_accuracy": 0.8333333333333334,
+    "supporting.top3_accuracy": 0.8333333333333334
+  },
+  "output_schema_version": "root-cause-prediction-v1",
+  "persistence_stack_used": false,
+  "prediction_count": 6,
+  "predictions": [
+    {
+      "confidence_probability": 0.8835825350207853,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-30e9f61351e2191bb9f56e2b",
+      "input_tokens": 235,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.006617234736134147,
+        "database_connection_leak": 0.0916466195207611,
+        "disk_exhaustion": 0.010766861038644654,
+        "memory_leak": 0.007248616961828958,
+        "n_plus_one_query": 0.8835825350207853,
+        "no_fault": 0.00013813272184504414
+      },
+      "latency_ms": 13555.015647999993,
+      "output_tokens": 90,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -14.616446495056152,
+          "database_connection_leak": -11.988183975219727,
+          "disk_exhaustion": -14.129651069641113,
+          "memory_leak": -14.525313377380371,
+          "n_plus_one_query": -9.722139358520508,
+          "no_fault": -18.48566436767578
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "n_plus_one_query",
+      "ranked_labels": [
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.8835825350207853,
+          "score": -9.722139358520508
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0916466195207611,
+          "score": -11.988183975219727
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.010766861038644654,
+          "score": -14.129651069641113
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.007248616961828958,
+          "score": -14.525313377380371
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.006617234736134147,
+          "score": -14.616446495056152
+        },
+        {
+          "label": "no_fault",
+          "probability": 0.00013813272184504414,
+          "score": -18.48566436767578
+        }
+      ],
+      "raw_model_output": "{\"reasoning\":\"The backend engineer describes a production appointment endpoint that fetched patient details one-by-one for each appointment, explicitly calls the pattern a typical N+1 query problem, records 6,000+ database calls and about four seconds of latency for one doctor, and reports recovery after batching the patient lookup into one database call.\",\"root_cause_code\":\"n_plus_one_query\"}",
+      "reasoning": "The backend engineer describes a production appointment endpoint that fetched patient details one-by-one for each appointment, explicitly calls the pattern a typical N+1 query problem, records 6,000+ database calls and about four seconds of latency for one doctor, and reports recovery after batching the patient lookup into one database call.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 325
+    },
+    {
+      "confidence_probability": 0.9932644951436558,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-3d1ad2d09d88df9038f46fd6",
+      "input_tokens": 190,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.0019450047764964222,
+        "database_connection_leak": 0.0018675161702228513,
+        "disk_exhaustion": 0.9932644951436558,
+        "memory_leak": 0.0024045173637186343,
+        "n_plus_one_query": 0.0005006364176877212,
+        "no_fault": 1.7830128218675363e-05
+      },
+      "latency_ms": 7140.967892000049,
+      "output_tokens": 45,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -13.888972282409668,
+          "database_connection_leak": -13.929627418518066,
+          "disk_exhaustion": -7.653239727020264,
+          "memory_leak": -13.676887512207031,
+          "n_plus_one_query": -15.246111869812012,
+          "no_fault": -18.58110237121582
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "disk_exhaustion",
+      "ranked_labels": [
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.9932644951436558,
+          "score": -7.653239727020264
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.0024045173637186343,
+          "score": -13.676887512207031
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.0019450047764964222,
+          "score": -13.888972282409668
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0018675161702228513,
+          "score": -13.929627418518066
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.0005006364176877212,
+          "score": -15.246111869812012
+        },
+        {
+          "label": "no_fault",
+          "probability": 1.7830128218675363e-05,
+          "score": -18.58110237121582
+        }
+      ],
+      "raw_model_output": "{\"reasoning\":\"A background-job log grew without bound until it filled the filesystem, causing critical writes to fail and the service to stop.\",\"root_cause_code\":\"disk_exhaustion\"}",
+      "reasoning": "A background-job log grew without bound until it filled the filesystem, causing critical writes to fail and the service to stop.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 235
+    },
+    {
+      "confidence_probability": null,
+      "confidence_source": null,
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-420f3a36538bb8156dd897d8",
+      "input_tokens": 271,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.01908618965096065,
+        "database_connection_leak": 0.911128426245655,
+        "disk_exhaustion": 0.06580658046357517,
+        "memory_leak": 0.002554052067592242,
+        "n_plus_one_query": 0.001396495942826824,
+        "no_fault": 2.8255629389468643e-05
+      },
+      "latency_ms": 17124.252023000052,
+      "output_tokens": 128,
+      "parse_error": "Unterminated string starting at: line 1 column 565 (char 564)",
+      "parse_status": "INVALID_JSON",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -13.429316520690918,
+          "database_connection_leak": -9.563597679138184,
+          "disk_exhaustion": -12.191561698913574,
+          "memory_leak": -15.440600395202637,
+          "n_plus_one_query": -16.044315338134766,
+          "no_fault": -19.944744110107422
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": null,
+      "ranked_labels": [],
+      "raw_model_output": "{\"reasoning\":\"CoderDen reported a roughly 45-minute full platform outage in which API requests returned 503 errors. One of two explicitly identified root-cause mechanisms was an unclosed database query in a high-traffic endpoint. A missing rows.Close/defer path prevented PostgreSQL connections from being returned, causing connection leakage under load. Aggressive background scheduling compounded the exhaustion, so the candidate is scoped specifically to the documented connection-leak mechanism rather than claiming a single-cause incident.\",\"root_cause_code\":\"database_connection_",
+      "reasoning": null,
+      "retrieved_chunk_ids": [],
+      "total_tokens": 399
+    },
+    {
+      "confidence_probability": 0.9465586450225416,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-60279df16b41c4d15c192340",
+      "input_tokens": 200,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.04176117611150463,
+        "database_connection_leak": 0.0004533218955308169,
+        "disk_exhaustion": 0.00426821968605463,
+        "memory_leak": 0.004748967690299048,
+        "n_plus_one_query": 0.002209669594069217,
+        "no_fault": 0.9465586450225416
+      },
+      "latency_ms": 8439.441659000067,
+      "output_tokens": 55,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -13.239108085632324,
+          "database_connection_leak": -17.76222801208496,
+          "disk_exhaustion": -15.519878387451172,
+          "memory_leak": -15.413147926330566,
+          "n_plus_one_query": -16.178232192993164,
+          "no_fault": -10.118242263793945
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "no_fault",
+      "ranked_labels": [
+        {
+          "label": "no_fault",
+          "probability": 0.9465586450225416,
+          "score": -10.118242263793945
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.04176117611150463,
+          "score": -13.239108085632324
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.004748967690299048,
+          "score": -15.413147926330566
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.00426821968605463,
+          "score": -15.519878387451172
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.002209669594069217,
+          "score": -16.178232192993164
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.0004533218955308169,
+          "score": -17.76222801208496
+        }
+      ],
+      "raw_model_output": "{\"reasoning\":\"An operationally visible suspected ingestion issue was investigated and the final supported-service finding was healthy: no service degradation and no supported CrowdStrike alerts missed.\",\"root_cause_code\":\"no_fault\"}",
+      "reasoning": "An operationally visible suspected ingestion issue was investigated and the final supported-service finding was healthy: no service degradation and no supported CrowdStrike alerts missed.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 255
+    },
+    {
+      "confidence_probability": 0.9219449558374249,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-b963227766cc3182f05c4268",
+      "input_tokens": 233,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.9219449558374249,
+        "database_connection_leak": 0.01230219760353778,
+        "disk_exhaustion": 0.03518974352793531,
+        "memory_leak": 0.02918128017971963,
+        "n_plus_one_query": 0.001155735722950545,
+        "no_fault": 0.0002260871716157717
+      },
+      "latency_ms": 12882.906724000008,
+      "output_tokens": 94,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -8.747251510620117,
+          "database_connection_leak": -13.063959121704102,
+          "disk_exhaustion": -12.012982368469238,
+          "memory_leak": -12.200209617614746,
+          "n_plus_one_query": -15.428999900817871,
+          "no_fault": -17.060571670532227
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "broken_payment_configuration",
+      "ranked_labels": [
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.9219449558374249,
+          "score": -8.747251510620117
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.03518974352793531,
+          "score": -12.012982368469238
+        },
+        {
+          "label": "memory_leak",
+          "probability": 0.02918128017971963,
+          "score": -12.200209617614746
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.012302197560353778,
+          "score": -13.063959121704102
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.001155735722950545,
+          "score": -15.428999900817871
+        },
+        {
+          "label": "no_fault",
+          "probability": 0.0002260871716157717,
+          "score": -17.060571670532227
+        }
+      ],
+      "raw_model_output": "{\"reasoning\":\"AltaPay reported that 3-D Secure authentication in its Shopify embedded application stopped functioning correctly. Affected customers could not finalize credit-card payments at checkout. AltaPay traced the incident to a firewall configuration change. A mitigation restored payment processing, after which the team continued investigating the origin of the firewall change.\",\"root_cause_code\":\"broken_payment_configuration\"}",
+      "reasoning": "AltaPay reported that 3-D Secure authentication in its Shopify embedded application stopped functioning correctly. Affected customers could not finalize credit-card payments at checkout. AltaPay traced the incident to a firewall configuration change. A mitigation restored payment processing, after which the team continued investigating the origin of the firewall change.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 327
+    },
+    {
+      "confidence_probability": 0.86851543154618444,
+      "confidence_source": "normalized_label_sequence_log_likelihood",
+      "cost_usd": 0.0,
+      "evidence_citations": [],
+      "incident_id": "incident-eb9423a1a3137474bb9e1200",
+      "input_tokens": 242,
+      "label_probabilities": {
+        "broken_payment_configuration": 0.04580935700880639,
+        "database_connection_leak": 0.009802601586654174,
+        "disk_exhaustion": 0.07299888054338477,
+        "memory_leak": 0.8685154315461844,
+        "n_plus_one_query": 0.0028293105848342724,
+        "no_fault": 4.4418730135748445e-05
+      },
+      "latency_ms": 13382.231333999925,
+      "output_tokens": 99,
+      "parse_error": null,
+      "parse_status": "OK",
+      "pipeline_metadata": {
+        "generation_config": {
+          "do_sample": false,
+          "max_new_tokens": 128,
+          "temperature": 0.0
+        },
+        "label_log_likelihoods": {
+          "broken_payment_configuration": -11.092000007629395,
+          "database_connection_leak": -12.633840560913086,
+          "disk_exhaustion": -10.626044273376465,
+          "memory_leak": -8.149703025817871,
+          "n_plus_one_query": -13.876455307006836,
+          "no_fault": -18.030582427978516
+        },
+        "output_schema_version": "root-cause-prediction-v1",
+        "pipeline_type": "FINETUNED",
+        "prompt_version": "zero-shot-baseline-v1",
+        "runtime": {
+          "adapter_id": "/kaggle/working/evalforge-phase10-phase9-artifact/adapter",
+          "adapter_revision": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+          "bnb_4bit_use_double_quant": true,
+          "cost_method": "active_inference_wall_time_x_gpu_hour_rate",
+          "device": "cuda:0",
+          "dtype": "float16",
+          "gpu_hour_usd": 0.0,
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+          "model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+          "quantization": "bitsandbytes_4bit_nf4",
+          "seed": 20260908
+        }
+      },
+      "predicted_root_cause_code": "memory_leak",
+      "ranked_labels": [
+        {
+          "label": "memory_leak",
+          "probability": 0.8685154315461844,
+          "score": -8.149703025817871
+        },
+        {
+          "label": "disk_exhaustion",
+          "probability": 0.07299888054338477,
+          "score": -10.626044273376465
+        },
+        {
+          "label": "broken_payment_configuration",
+          "probability": 0.04580935700880639,
+          "score": -11.092000007629395
+        },
+        {
+          "label": "database_connection_leak",
+          "probability": 0.009802601586654174,
+          "score": -12.633840560913086
+        },
+        {
+          "label": "n_plus_one_query",
+          "probability": 0.0028293105848342724,
+          "score": -13.876455307006836
+        },
+        {
+          "label": "no_fault",
+          "probability": 4.4418730135748445e-05,
+          "score": -18.030582427978516
+        }
+      ],
+      "raw_model_output": "{\"reasoning\":\"DNSimple reported a production outage in its San Jose region that made its redirector service unreachable. Its hosting provider identified a slow memory leak in a network switch, triggered by packets from monitoring checks becoming stuck. The leak eventually exhausted the switch memory and prevented it from processing incoming packets. The hosting provider planned a network-switch software upgrade specifically to prevent recurrence of the memory leak.\",\"root_cause_code\":\"memory_leak\"}",
+      "reasoning": "DNSimple reported a production outage in its San Jose region that made its redirector service unreachable. Its hosting provider identified a slow memory leak in a network switch, triggered by packets from monitoring checks becoming stuck. The leak eventually exhausted the switch memory and prevented it from processing incoming packets. The hosting provider planned a network-switch software upgrade specifically to prevent recurrence of the memory leak.",
+      "retrieved_chunk_ids": [],
+      "total_tokens": 341
+    }
+  ],
+  "prompt_version": "zero-shot-baseline-v1",
+  "protocol_state": "frozen",
+  "protocol_version": "phase10-finetuned-evaluation-v1",
+  "result_hash": "cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c",
+  "run_id": "phase10-finetuned-test-v1",
+  "scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "source_training_config_hash": "b322d37e9f868b251fa14efb32c8412eab2ddaf3d5cd4adcf027c0f08d51411a",
+  "source_training_evidence_sha256": "b2f821a9cca2a54f3236d949a30ae480d5a7a511fe23335eca8be8ef7ee4873e",
+  "source_training_run_id": "phase9-qlora-validation-v1",
+  "split": "test",
+  "status": "completed",
+  "upfront_cost_usd": 0.0
+}

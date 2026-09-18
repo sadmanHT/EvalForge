@@ -1,0 +1,27 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "build_id": "phase10-kaggle-locked-test-v1-20260917-a",
+  "completion_version": "phase10-locked-test-completion-v1",
+  "evidence_path": "phase10-finetuned-test.json",
+  "evidence_sha256": "9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852",
+  "inference_failure_count": 0,
+  "locked_test_consumed": true,
+  "metric_values": {
+    "calibration.normalized_multiclass_brier": 0.00605209464093294,
+    "cost.amortized_mean_usd": 0.0,
+    "cost.marginal_mean_usd": 0.0,
+    "latency.p50_ms": 13132.569028999966,
+    "latency.p95_ms": 16231.942929250037,
+    "primary.exact_accuracy": 0.8333333333333334,
+    "quality.parse_failure_rate": 0.16666666666666666,
+    "supporting.hierarchical_accuracy": 0.8333333333333334,
+    "supporting.top3_accuracy": 0.8333333333333334
+  },
+  "prediction_count": 6,
+  "result_hash": "cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c",
+  "run_id": "phase10-finetuned-test-v1",
+  "scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "selection_or_retuning_after_test": false,
+  "source_commit": "c59910e00f5e4fd0a722d2796da416c977753ddd",
+  "status": "pass"
+}

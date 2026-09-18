@@ -1,0 +1,10 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "build_id": "phase10-kaggle-locked-test-v1-20260917-a",
+  "marker_version": "phase10-locked-test-start-v1",
+  "purpose": "one-time Phase 10 fine-tuned locked-test execution",
+  "run_id": "phase10-finetuned-test-v1",
+  "scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "source_commit": "c59910e00f5e4fd0a722d2796da416c977753ddd",
+  "started_at_utc": "2026-09-18T03:13:22.868775+00:00"
+}

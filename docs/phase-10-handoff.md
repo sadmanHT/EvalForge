@@ -2,25 +2,20 @@
 
 ## Current state
 
-Connected Phase 10 validation has been completed on the exact green source commit
-`2547e3cfb54875468351d1e3810c88df8a6a6c69` with the frozen Phase 09 adapter.
-The preserved validation evidence is `evidence/phase-10/validation-run.json`; it records
-six validation incidents, the canonical Phase 5 evaluator, one visible Tesla T4 GPU,
-and no locked-test authorization at evaluation time.
+Connected Phase 10 validation was completed on source commit
+`2547e3cfb54875468351d1e3810c88df8a6a6c69` with the frozen Phase 09 adapter and preserved as
+`evidence/phase-10/validation-run.json`. The primary fine-tuned protocol was then frozen and bound
+to that validation evidence and the Phase 09 training identity.
 
-That evidence was committed in `4861ea86fd31c046d2bd9b76177659a0739b79f6`, and GitHub CI run
-#528 passed both the cumulative `verify-all` gate and the clean-Compose gate.
+The frozen scientific source head
+`c59910e00f5e4fd0a722d2796da416c977753ddd` passed GitHub CI run #532
+(`35256501761`) with both cumulative `verify-all` and clean-Compose success before the locked
+test. The authorized Phase 10 fine-tuned locked test has now been **consumed exactly once**. Its
+raw package is preserved under `evidence/phase-10/locked-test/`.
 
-The primary fine-tuned protocol is now frozen. `configs/phase10-finetuned.json` is
-`state=frozen` with `locked_test_authorized=true`. The freeze is bound to the exact
-validation evidence, Phase 09 source-training evidence, candidate adapter checksum,
-and unchanged scientific configuration through `evidence/phase-10/protocol-freeze.json`.
-
-The frozen evidence linkage was repaired in
-`c59910e00f5e4fd0a722d2796da416c977753ddd` to match the preserved validation file bytes.
-GitHub CI run #532 (`35256501761`) passed both `verify-all` and `clean-compose` on that exact
-head. The Phase 10 fine-tuned locked test is therefore authorized, but it has **not** been
-executed yet.
+Do not run the Phase 10 fine-tuned locked test again. Its result may not be used to retrain,
+switch checkpoints, change prompts or generation settings, alter confidence scoring, or select a
+data-efficiency condition.
 
 ## Frozen candidate
 
@@ -44,28 +39,51 @@ The connected validation run is `phase10-finetuned-validation-v1`.
   `3015ddf10b41b82be97619611d69aabd4679de6719eb3e437c461a2b20bc5385`
 - evaluator result hash:
   `0af782cb9ec0dbd5b70733185423be558509182c3650da3b3d60e8b40796acea`
-- exact accuracy: `5/6` (`0.8333333333333334`)
-- parse failure rate: `1/6` (`0.16666666666666666`)
-- locked test usage: none
+- exact accuracy: 5/6 (`0.8333333333333334`)
+- parse failure rate: 1/6 (`0.16666666666666666`)
+- locked-test usage at validation time: none
 
-These validation outcomes do not select a replacement checkpoint or adapter. The candidate was
-predeclared from the Phase 09 validation-selected checkpoint, and the data-efficiency study remains
-secondary analysis only.
+The validation result did not select a replacement checkpoint or adapter. The candidate remained
+the Phase 09 validation-selected checkpoint.
 
-## Next scientific action
+## One-time locked-test evidence
 
-Run exactly one connected `--split test` execution with `evals/finetuned_portable_runner.py` on
-the same frozen adapter and scientific configuration. The run must be pinned to a green frozen
-source head at or after `c59910e00f5e4fd0a722d2796da416c977753ddd`, use exactly one visible
-CUDA GPU, verify the adapter tree SHA-256 before inference, and preserve the raw test evidence.
+The connected test run is `phase10-finetuned-test-v1`.
 
-Use run ID `phase10-finetuned-test-v1`. Treat creation of the test evidence file as the one-time
-consumption marker: a rerun must refuse to execute if that evidence already exists.
+- scientific source commit:
+  `c59910e00f5e4fd0a722d2796da416c977753ddd`
+- evidence package ZIP SHA-256:
+  `f3a5481841d84846946f602aea90749d797408b6632ce4b9895d014eeaa8380b`
+- raw test evidence SHA-256:
+  `9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852`
+- evaluator result hash:
+  `cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c`
+- exact accuracy: 5/6 (`0.8333333333333334`)
+- parse failure rate: 1/6 (`0.16666666666666666`)
+- inference failure count: 0
+- locked-test consumed: yes
+- selection or retuning after test: false
 
-The locked test is evaluation-only. Do not use its result to retrain, switch checkpoints, change
-the prompt, change generation settings, alter confidence scoring, or select a data-efficiency
-condition.
+Five predictions parsed successfully and matched ground truth. The only primary-metric miss was
+`incident-420f3a36538bb8156dd897d8` (database connection leak): the model's output was truncated at
+128 generated tokens, leaving an unterminated JSON string, so the canonical parser returned
+`INVALID_JSON` and no root-cause code. This is preserved as a test observation only.
 
-After the one-time locked test, preserve the raw test evidence before building the paired
-zero-shot-baseline vs fine-tuned report. Hugging Face publication and clean-download smoke remain
-later Phase 10 steps.
+The repository's Phase 06 zero-shot locked-test evidence uses the same six incident IDs and records
+6/6 exact accuracy. Build the paired report directly from those already preserved predictions and
+the Phase 10 raw test predictions; do not rerun either model arm for the comparison.
+
+## Remaining Phase 10 work
+
+1. Build and preserve the paired zero-shot vs fine-tuned report using the identical six benchmark
+   IDs and the repository's canonical paired-statistics utilities.
+2. Execute the predeclared data-efficiency matrix (10%, 25%, 50%, 100%; seeds 20260908,
+   20260909, 20260910) as secondary analysis only. Because the primary adapter and locked-test
+   outcome are already frozen, efficiency runs must not alter the primary candidate or scientific
+   protocol.
+3. Publish the exact adapter and a truthful model card to Hugging Face, capture the immutable Hub
+   revision, then download that revision into an empty environment and run load/inference smoke.
+4. Add the machine-checkable Phase 10 hard-exit gate, wire it into cumulative verification and
+   clean-Compose CI, and require an exact-head green run before marking Phase 10 complete.
+
+No later Phase 10 work may reinterpret the locked test as a tuning set.
