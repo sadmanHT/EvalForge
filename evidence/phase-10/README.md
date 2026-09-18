@@ -40,9 +40,11 @@ single primary-metric miss. The test result is a frozen observation and must not
 retraining, checkpoint switching, prompt/generation changes, confidence changes, or efficiency
 condition selection.
 
+The paired zero-shot baseline vs fine-tuned report is now preserved as
+`baseline-finetuned-comparison.json` and is reproducibly derived from the sealed predictions.
+
 Evidence still required for Phase 10 completion includes:
 
-- paired zero-shot baseline vs fine-tuned report on the identical six locked-test incident IDs;
 - the predeclared data-efficiency matrix and subset-lineage evidence, used only as secondary
   descriptive analysis and never to replace the already frozen primary adapter;
 - Hugging Face repository/revision plus truthful model card;

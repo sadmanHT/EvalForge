@@ -73,17 +73,24 @@ The repository's Phase 06 zero-shot locked-test evidence uses the same six incid
 6/6 exact accuracy. Build the paired report directly from those already preserved predictions and
 the Phase 10 raw test predictions; do not rerun either model arm for the comparison.
 
+## Paired zero-shot vs fine-tuned comparison
+
+The paired report is preserved as `evidence/phase-10/baseline-finetuned-comparison.json`.
+It is rebuilt directly from the sealed Phase 06 zero-shot and Phase 10 fine-tuned predictions.
+On the six locked-test incidents, zero-shot is 6/6 and fine-tuned is 5/6, for a fine-tuned-minus-
+zero-shot difference of -1/6. The 95% paired bootstrap interval is [-0.5, 0.0] and the exact
+two-sided McNemar p-value is 1.0. With only six cases, this is descriptive benchmark evidence,
+not a basis for retuning or a broad claim of superiority.
+
 ## Remaining Phase 10 work
 
-1. Build and preserve the paired zero-shot vs fine-tuned report using the identical six benchmark
-   IDs and the repository's canonical paired-statistics utilities.
-2. Execute the predeclared data-efficiency matrix (10%, 25%, 50%, 100%; seeds 20260908,
+1. Execute the predeclared data-efficiency matrix (10%, 25%, 50%, 100%; seeds 20260908,
    20260909, 20260910) as secondary analysis only. Because the primary adapter and locked-test
    outcome are already frozen, efficiency runs must not alter the primary candidate or scientific
    protocol.
-3. Publish the exact adapter and a truthful model card to Hugging Face, capture the immutable Hub
+2. Publish the exact adapter and a truthful model card to Hugging Face, capture the immutable Hub
    revision, then download that revision into an empty environment and run load/inference smoke.
-4. Add the machine-checkable Phase 10 hard-exit gate, wire it into cumulative verification and
+3. Add the machine-checkable Phase 10 hard-exit gate, wire it into cumulative verification and
    clean-Compose CI, and require an exact-head green run before marking Phase 10 complete.
 
 No later Phase 10 work may reinterpret the locked test as a tuning set.

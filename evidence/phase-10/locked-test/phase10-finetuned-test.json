@@ -470,7 +470,7 @@
       "input_tokens": 233,
       "label_probabilities": {
         "broken_payment_configuration": 0.9219449558374249,
-        "database_connection_leak": 0.01230219760353778,
+        "database_connection_leak": 0.012302197560353778,
         "disk_exhaustion": 0.03518974352793531,
         "memory_leak": 0.02918128017971963,
         "n_plus_one_query": 0.001155735722950545,
@@ -550,7 +550,7 @@
       "total_tokens": 327
     },
     {
-      "confidence_probability": 0.86851543154618444,
+      "confidence_probability": 0.8685154315461844,
       "confidence_source": "normalized_label_sequence_log_likelihood",
       "cost_usd": 0.0,
       "evidence_citations": [],
