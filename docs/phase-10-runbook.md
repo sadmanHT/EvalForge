@@ -139,6 +139,35 @@ execution.
 The locked test is evaluation-only. It must not select the adapter, checkpoint, hyperparameters,
 prompt, confidence method, generation settings, or data-efficiency condition.
 
+## Hugging Face release and immutable clean smoke
+
+Publish **only** the exact frozen primary adapter. The release command refuses a local adapter whose
+tree hash differs from the Phase 09/10 candidate and builds the model card from sealed repository
+evidence:
+
+```bash
+python training/scripts/push_to_hub.py \
+  --adapter-dir /absolute/path/to/adapter \
+  --repo-id '<owner/model-name>' \
+  --git-commit "$(git rev-parse HEAD)" \
+  --evidence-output /tmp/phase10-hf-release.json
+```
+
+Record the immutable 40-hex Hub commit returned by that command. Verify that exact revision from
+an empty directory on one CUDA GPU, using a validation incident only:
+
+```bash
+python training/scripts/verify_hub_release.py \
+  --repo-id '<owner/model-name>' \
+  --revision '<40-hex-hub-commit>' \
+  --git-commit "$(git rev-parse HEAD)" \
+  --work-dir /tmp/phase10-hf-clean \
+  --evidence-output /tmp/phase10-hf-smoke.json
+```
+
+The clean smoke must reproduce the adapter tree SHA-256 and emit
+`LOCKED_TEST_SPLIT_USED=false`.
+
 ## External evidence sequence
 
 1. Run repository contract and focused Phase 10 tests.
