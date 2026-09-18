@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from app.inference.efficiency_study import aggregate_efficiency_conditions
 from app.inference.finetuned_comparison import (

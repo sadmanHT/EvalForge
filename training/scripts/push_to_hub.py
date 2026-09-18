@@ -14,12 +14,12 @@ BACKEND = ROOT / "backend"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
+from app.inference.finetuned_protocol import load_phase10_protocol  # noqa: E402
 from app.training.evidence import tree_sha256  # noqa: E402
 from app.training.hub_release import (  # noqa: E402
     build_phase10_model_card,
     build_release_evidence,
 )
-from app.inference.finetuned_protocol import load_phase10_protocol  # noqa: E402
 
 
 def _git_output(*args: str) -> str:

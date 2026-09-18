@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
@@ -102,6 +101,8 @@ def build_phase10_model_card(*, root: Path, repo_id: str) -> str:
         finetuned_section, Mapping
     ):
         raise ValueError("paired Phase 10 comparison sections are malformed")
+    baseline_accuracy = float(baseline_section["exact_accuracy"])
+    baseline_parse_failure = float(baseline_section["parse_failure_rate"])
 
     return f"""---
 license: {license_name}
@@ -152,7 +153,7 @@ The benchmark contains six validation incidents and six locked-test incidents.
 | --- | ---: | ---: |
 | Fine-tuned validation | {validation_accuracy:.6f} | {validation_parse_failure:.6f} |
 | Fine-tuned locked test | {test_accuracy:.6f} | {test_parse_failure:.6f} |
-| Zero-shot locked test | {float(baseline_section["exact_accuracy"]):.6f} | {float(baseline_section["parse_failure_rate"]):.6f} |
+| Zero-shot locked test | {baseline_accuracy:.6f} | {baseline_parse_failure:.6f} |
 
 On the six paired locked-test incidents, fine-tuned minus zero-shot exact accuracy was
 `{float(paired["finetuned_minus_baseline"]):.6f}`. The 95% paired bootstrap interval was
