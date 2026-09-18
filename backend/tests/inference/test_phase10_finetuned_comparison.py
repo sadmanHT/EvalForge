@@ -74,9 +74,7 @@ def test_paired_baseline_finetuned_comparison_is_reproducible() -> None:
         for row in comparison["paired_rows"]
         if row["baseline_correct"] != row["finetuned_correct"]
     ]
-    assert [row["incident_id"] for row in discordant] == [
-        "incident-420f3a36538bb8156dd897d8"
-    ]
+    assert [row["incident_id"] for row in discordant] == ["incident-420f3a36538bb8156dd897d8"]
     assert discordant[0]["finetuned_parse_status"] == "INVALID_JSON"
 
     validate_paired_baseline_finetuned_comparison(

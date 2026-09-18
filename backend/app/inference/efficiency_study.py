@@ -29,9 +29,7 @@ from app.training.inference import FineTunedAdapterPipeline, PeftTransformersBac
 EFFICIENCY_PREPARED_MANIFEST_VERSION = "phase10-efficiency-prepared-v1"
 EFFICIENCY_CONDITION_EVIDENCE_VERSION = "phase10-data-efficiency-condition-v1"
 EFFICIENCY_AGGREGATE_VERSION = "phase10-data-efficiency-aggregate-v1"
-EFFICIENCY_NUMERIC_RECOVERY_POLICY = (
-    "fp16_grad_scaler_recover_transient_nonfinite_grad_norm_v1"
-)
+EFFICIENCY_NUMERIC_RECOVERY_POLICY = "fp16_grad_scaler_recover_transient_nonfinite_grad_norm_v1"
 
 
 class EfficiencyPreparedManifest(BaseModel):
@@ -91,9 +89,7 @@ def _write_examples(path: Path, examples: Sequence[TrainingExample]) -> str:
 
 
 def _dataset_paths(root: Path, protocol: Phase10Protocol) -> tuple[Path, Path]:
-    dataset_dir = (
-        root / "datasets/incident_diagnosis/processed" / protocol.dataset_version
-    )
+    dataset_dir = root / "datasets/incident_diagnosis/processed" / protocol.dataset_version
     return dataset_dir / "manifest.json", dataset_dir / "incidents.jsonl"
 
 
@@ -121,9 +117,7 @@ def prepare_efficiency_condition(
 
     records = read_jsonl(incident_path, IncidentRecord)
     train_records = tuple(record for record in records if record.split is Split.TRAIN)
-    validation_records = tuple(
-        record for record in records if record.split is Split.VALIDATION
-    )
+    validation_records = tuple(record for record in records if record.split is Split.VALIDATION)
     if not train_records or not validation_records:
         raise ValueError("data-efficiency study requires non-empty train and validation splits")
 
@@ -133,9 +127,7 @@ def prepare_efficiency_condition(
         seed=seed,
     )
     selected_ids = set(subset.selected_incident_ids)
-    selected_train = tuple(
-        record for record in train_records if record.incident_id in selected_ids
-    )
+    selected_train = tuple(record for record in train_records if record.incident_id in selected_ids)
     if len(selected_train) != len(selected_ids):
         raise ValueError("selected data-efficiency incident IDs are incomplete")
 
@@ -145,9 +137,7 @@ def prepare_efficiency_condition(
             continue
         parent = selected_by_id.get(record.parent_incident_id or "")
         if parent is None:
-            raise ValueError(
-                "selected synthetic record is missing its train-family parent"
-            )
+            raise ValueError("selected synthetic record is missing its train-family parent")
         if parent.incident_family_id != record.incident_family_id:
             raise ValueError("selected synthetic lineage crosses incident families")
 
@@ -171,9 +161,7 @@ def prepare_efficiency_condition(
 
     output_dir.mkdir(parents=True, exist_ok=True)
     train_sha256 = _write_examples(output_dir / "train.jsonl", train_examples)
-    validation_sha256 = _write_examples(
-        output_dir / "validation.jsonl", validation_examples
-    )
+    validation_sha256 = _write_examples(output_dir / "validation.jsonl", validation_examples)
     lineage_payload = {
         "fraction": fraction,
         "seed": seed,
@@ -192,9 +180,7 @@ def prepare_efficiency_condition(
             for record in sorted(selected_train, key=lambda item: item.incident_id)
         ],
     }
-    lineage_sha256 = hashlib.sha256(
-        _canonical_json(lineage_payload).encode()
-    ).hexdigest()
+    lineage_sha256 = hashlib.sha256(_canonical_json(lineage_payload).encode()).hexdigest()
 
     prepared = EfficiencyPreparedManifest(
         dataset_version=protocol.dataset_version,
@@ -369,8 +355,7 @@ def evaluate_efficiency_validation(
         "metric_values": result.metric_map(),
         "evaluation": result.canonical_payload(),
         "predictions": [
-            prediction.model_dump(mode="json", exclude_none=False)
-            for prediction in predictions
+            prediction.model_dump(mode="json", exclude_none=False) for prediction in predictions
         ],
     }
 
@@ -410,8 +395,7 @@ def validate_efficiency_condition_evidence(
     recovery_steps = payload.get("nonfinite_gradient_norm_steps")
     recovery_count = payload.get("nonfinite_gradient_norm_count")
     if not isinstance(recovery_steps, list) or any(
-        isinstance(step, bool) or not isinstance(step, int) or step < 0
-        for step in recovery_steps
+        isinstance(step, bool) or not isinstance(step, int) or step < 0 for step in recovery_steps
     ):
         raise ValueError("efficiency evidence has invalid non-finite grad-norm steps")
     if recovery_count != len(recovery_steps):
@@ -460,10 +444,7 @@ def aggregate_efficiency_conditions(
     )
     fractions: list[dict[str, object]] = []
     for fraction in protocol.data_efficiency.fractions:
-        members = [
-            by_key[(fraction, seed)]
-            for seed in protocol.data_efficiency.seeds
-        ]
+        members = [by_key[(fraction, seed)] for seed in protocol.data_efficiency.seeds]
         metrics: dict[str, object] = {}
         for name in metric_names:
             values: list[float] = []
@@ -482,9 +463,7 @@ def aggregate_efficiency_conditions(
             {
                 "fraction": fraction,
                 "seeds": list(protocol.data_efficiency.seeds),
-                "condition_ids": [
-                    str(member["condition_id"]) for member in members
-                ],
+                "condition_ids": [str(member["condition_id"]) for member in members],
                 "metrics": metrics,
                 "training_wall_seconds": aggregate_efficiency_metric(
                     [float(member["training_wall_seconds"]) for member in members]

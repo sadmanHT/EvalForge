@@ -137,13 +137,9 @@ def _validate_efficiency(
 
     paths = sorted(conditions_dir.glob("*.json"))
     payloads = [_load(path) for path in paths]
-    expected_count = len(protocol.data_efficiency.fractions) * len(
-        protocol.data_efficiency.seeds
-    )
+    expected_count = len(protocol.data_efficiency.fractions) * len(protocol.data_efficiency.seeds)
     if len(payloads) != expected_count:
-        raise ValueError(
-            f"Phase 10 data-efficiency requires {expected_count} condition files"
-        )
+        raise ValueError(f"Phase 10 data-efficiency requires {expected_count} condition files")
     for path, payload in zip(paths, payloads, strict=True):
         if payload.get("locked_test_evidence_sha256") != locked_sha256:
             raise ValueError(f"{path.name} is not linked to the sealed locked test")
@@ -181,11 +177,7 @@ def _validate_efficiency(
     recorded = stored.get("conditions")
     if not isinstance(recorded, list) or len(recorded) != expected_count:
         raise ValueError("data-efficiency aggregate condition index is incomplete")
-    index = {
-        str(item.get("condition_id")): item
-        for item in recorded
-        if isinstance(item, Mapping)
-    }
+    index = {str(item.get("condition_id")): item for item in recorded if isinstance(item, Mapping)}
     for path, payload in zip(paths, payloads, strict=True):
         condition_id = _required_text(payload, "condition_id")
         item = index.get(condition_id)

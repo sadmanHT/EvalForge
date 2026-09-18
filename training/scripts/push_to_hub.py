@@ -44,9 +44,10 @@ def main() -> int:
         raise RuntimeError("--git-commit must exactly match HEAD")
     if _git_output("status", "--porcelain", "--untracked-files=no"):
         raise RuntimeError("Hugging Face release requires a clean tracked worktree")
-    token = os.environ.get("HF_TOKEN", "").strip() or os.environ.get(
-        "HUGGING_FACE_HUB_TOKEN", ""
-    ).strip()
+    token = (
+        os.environ.get("HF_TOKEN", "").strip()
+        or os.environ.get("HUGGING_FACE_HUB_TOKEN", "").strip()
+    )
     if not token:
         raise RuntimeError("HF_TOKEN is required for the Phase 10 Hugging Face release")
     if args.evidence_output.exists():

@@ -150,11 +150,7 @@ def main() -> int:
         reproducibility_metadata=reproducibility,
         result=result,
     )
-    if (
-        not tracking.configured
-        or not tracking.run_reference
-        or not tracking.artifact_reference
-    ):
+    if not tracking.configured or not tracking.run_reference or not tracking.artifact_reference:
         raise RuntimeError("Phase 10 efficiency evidence requires durable W&B references")
 
     del tracker
@@ -224,19 +220,25 @@ def main() -> int:
         json.dumps(evidence, indent=2, sort_keys=True, allow_nan=False) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps({
-        "condition_id": condition_id,
-        "fraction": args.fraction,
-        "seed": args.seed,
-        "adapter_sha256": result.adapter_sha256,
-        "validation_result_hash": validation["result_hash"],
-        "validation_metrics": validation["metric_values"],
-        "training_wall_seconds": training_wall_seconds,
-        "training_direct_cost_usd": training_direct_cost_usd,
-        "tracking": tracking.as_dict(),
-        "evidence_path": str(evidence_path),
-        "test_split_used": False,
-    }, indent=2, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "condition_id": condition_id,
+                "fraction": args.fraction,
+                "seed": args.seed,
+                "adapter_sha256": result.adapter_sha256,
+                "validation_result_hash": validation["result_hash"],
+                "validation_metrics": validation["metric_values"],
+                "training_wall_seconds": training_wall_seconds,
+                "training_direct_cost_usd": training_direct_cost_usd,
+                "tracking": tracking.as_dict(),
+                "evidence_path": str(evidence_path),
+                "test_split_used": False,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 

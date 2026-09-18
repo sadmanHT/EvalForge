@@ -380,7 +380,5 @@ class PeftTrainingRuntime:
             train_metrics=train_metrics,
             log_history=log_history,
             checkpoint_paths=checkpoints,
-            nonfinite_gradient_norm_steps=tuple(
-                sorted(set(nonfinite_gradient_norm_steps))
-            ),
+            nonfinite_gradient_norm_steps=tuple(sorted(set(nonfinite_gradient_norm_steps))),
         )

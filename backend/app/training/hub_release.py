@@ -97,9 +97,7 @@ def build_phase10_model_card(*, root: Path, repo_id: str) -> str:
     validation_parse_failure = _metric(validation, "quality.parse_failure_rate")
     baseline_section = comparison["baseline"]
     finetuned_section = comparison["finetuned"]
-    if not isinstance(baseline_section, Mapping) or not isinstance(
-        finetuned_section, Mapping
-    ):
+    if not isinstance(baseline_section, Mapping) or not isinstance(finetuned_section, Mapping):
         raise ValueError("paired Phase 10 comparison sections are malformed")
     baseline_accuracy = float(baseline_section["exact_accuracy"])
     baseline_parse_failure = float(baseline_section["parse_failure_rate"])

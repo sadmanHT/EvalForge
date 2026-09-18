@@ -74,9 +74,11 @@ def main() -> int:
     if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
         raise RuntimeError("Hub smoke requires exactly one visible CUDA GPU")
 
-    token = os.environ.get("HF_TOKEN", "").strip() or os.environ.get(
-        "HUGGING_FACE_HUB_TOKEN", ""
-    ).strip() or None
+    token = (
+        os.environ.get("HF_TOKEN", "").strip()
+        or os.environ.get("HUGGING_FACE_HUB_TOKEN", "").strip()
+        or None
+    )
     api = HfApi(token=token)
     info = api.model_info(args.repo_id, revision=revision, token=token)
     if getattr(info, "sha", None) != revision:
@@ -122,8 +124,7 @@ def main() -> int:
     matches = [
         record
         for record in records
-        if record.split is Split.VALIDATION
-        and record.incident_id == SMOKE_VALIDATION_INCIDENT_ID
+        if record.split is Split.VALIDATION and record.incident_id == SMOKE_VALIDATION_INCIDENT_ID
     ]
     if len(matches) != 1:
         raise RuntimeError("frozen Hub smoke validation incident is unavailable")
