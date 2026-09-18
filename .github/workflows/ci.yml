@@ -103,8 +103,456 @@ jobs:
             test "$phase09_status" -eq 0
             grep -q '^PHASE09_EXIT=PASS$' /tmp/phase09-exit.txt
           fi
-      - name: Record Phase 10 pre-evidence contract status
+      - name: Record Phase 10 contract status
         run: python scripts/check_phase10_contract.py | tee /tmp/phase10-contract.txt
+      - name: Record Phase 10 hard-exit state
+        shell: bash
+        run: |
+          set +e
+          python scripts/check_phase10_exit.py | tee /tmp/phase10-exit.txt
+          phase10_status=${PIPESTATUS[0]}
+          set -e
+          if grep -q '^PHASE10_STAGE=external_evidence_pending      - name: Upload dependency locks
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-dependency-locks
+          path: |
+            backend/requirements.full.lock
+            frontend/package-lock.json
+      - name: Upload Phase 03 dataset evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase03-dataset-evidence
+          path: |
+            evidence/phase-03/
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
+            docs/data-card.md
+            docs/phase-03-handoff.md
+      - name: Upload Phase 04 persistence evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase04-persistence-evidence
+          path: |
+            /tmp/phase04-exit.txt
+            evidence/phase-04/
+            docs/phase-04-handoff.md
+            docs/architecture.md
+            backend/migrations/versions/0002_phase04_persistence.py
+      - name: Upload Phase 05 evaluation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-evaluation-evidence
+          path: |
+            /tmp/phase05-exit.txt
+            evidence/phase-05/
+            docs/evaluation-methodology.md
+            backend/tests/fixtures/phase5/golden_metrics.json
+      - name: Upload Phase 06 baseline evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase06-baseline-evidence
+          path: |
+            /tmp/phase06-exit.txt
+            evidence/phase-06/
+            docs/phase-06-runbook.md
+            docs/phase-06-handoff.md
+            configs/phase6-baseline.json
+            configs/phase6-gpu-host.json
+      - name: Upload Phase 07 retrieval evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase07-retrieval-evidence
+          path: |
+            /tmp/phase07-contract.txt
+            /tmp/phase07-index.txt
+            /tmp/phase07-leakage-audit.txt
+            /tmp/phase07-exit.txt
+            /tmp/phase07-runtime-evidence/
+            evidence/phase-07/
+            configs/phase7-kb.json
+            knowledge_base/phase7/
+            backend/migrations/versions/0003_phase07_retrieval.py
+      - name: Upload Phase 08 RAG evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase08-rag-evidence
+          path: |
+            /tmp/phase08-index.txt
+            /tmp/phase08-exit.txt
+            /tmp/phase08-runtime-evidence/
+            evidence/phase-08/
+            configs/phase8-rag.json
+            configs/phase8-rag-ablations.json
+            docs/phase-08-runbook.md
+            docs/phase-08-handoff.md
+      - name: Upload Phase 09 training-system contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase09-training-system-contract
+          path: |
+            /tmp/phase09-contract.txt
+            /tmp/phase09-exit.txt
+            evidence/phase-09/
+            training/configs/lora_config.yaml
+            training/configs/training_args.yaml
+            training/requirements.gpu.txt
+            docs/phase-09-runbook.md
+            docs/phase-09-handoff.md
+      - name: Upload Phase 10 validation contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-validation-contract
+          path: |
+            /tmp/phase10-contract.txt
+            /tmp/phase10-exit.txt
+            evidence/phase-10/
+            configs/phase10-finetuned.json
+
+  clean-compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: verify-all
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Install locked smoke client dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+      - name: Fresh Compose build and Phase 10 cumulative smoke
+        env:
+          DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
+        run: |
+          mkdir -p /tmp/phase09-clean-environment
+          docker compose down -v --remove-orphans
+          docker compose build --no-cache
+          docker compose up -d
+          python scripts/compose_health.py | tee /tmp/phase09-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase09-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase09-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase09-clean-environment/phase05-exit.log
+          python scripts/check_phase6_exit.py | tee /tmp/phase09-clean-environment/phase06-exit.log
+          python scripts/check_phase7_contract.py | tee /tmp/phase09-clean-environment/phase07-contract.log
+          python scripts/index_kb.py | tee /tmp/phase09-clean-environment/phase07-index.log
+          python scripts/audit_phase7_leakage.py --output-dir /tmp/phase09-clean-environment/runtime-evidence | tee /tmp/phase09-clean-environment/phase07-leakage-audit.log
+          python scripts/check_phase7_exit.py | tee /tmp/phase09-clean-environment/phase07-exit.log
+          python scripts/index_phase8_rag_variants.py --output-dir /tmp/phase09-clean-environment/phase08-runtime-evidence | tee /tmp/phase09-clean-environment/phase08-index.log
+          python scripts/check_phase8_exit.py | tee /tmp/phase09-clean-environment/phase08-exit.log
+          python scripts/check_phase9_contract.py | tee /tmp/phase09-clean-environment/phase09-contract.log
+          python scripts/check_phase10_contract.py | tee /tmp/phase09-clean-environment/phase10-contract.log
+          docker compose ps | tee /tmp/phase09-clean-environment/service-health.txt
+      - name: Capture Compose logs
+        if: always()
+        run: docker compose logs --no-color > /tmp/phase09-clean-environment/compose.log || true
+      - name: Tear down cleanly
+        if: always()
+        run: docker compose down -v --remove-orphans
+      - name: Upload Phase 10 clean-environment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-clean-environment
+          path: /tmp/phase09-clean-environment/
+ /tmp/phase10-exit.txt; then
+            test "$phase10_status" -eq 1
+            grep -q '^PHASE10_EXIT=FAIL ' /tmp/phase10-exit.txt
+          else
+            test "$phase10_status" -eq 0
+            grep -q '^PHASE10_STAGE=complete      - name: Upload dependency locks
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-dependency-locks
+          path: |
+            backend/requirements.full.lock
+            frontend/package-lock.json
+      - name: Upload Phase 03 dataset evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase03-dataset-evidence
+          path: |
+            evidence/phase-03/
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
+            docs/data-card.md
+            docs/phase-03-handoff.md
+      - name: Upload Phase 04 persistence evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase04-persistence-evidence
+          path: |
+            /tmp/phase04-exit.txt
+            evidence/phase-04/
+            docs/phase-04-handoff.md
+            docs/architecture.md
+            backend/migrations/versions/0002_phase04_persistence.py
+      - name: Upload Phase 05 evaluation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-evaluation-evidence
+          path: |
+            /tmp/phase05-exit.txt
+            evidence/phase-05/
+            docs/evaluation-methodology.md
+            backend/tests/fixtures/phase5/golden_metrics.json
+      - name: Upload Phase 06 baseline evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase06-baseline-evidence
+          path: |
+            /tmp/phase06-exit.txt
+            evidence/phase-06/
+            docs/phase-06-runbook.md
+            docs/phase-06-handoff.md
+            configs/phase6-baseline.json
+            configs/phase6-gpu-host.json
+      - name: Upload Phase 07 retrieval evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase07-retrieval-evidence
+          path: |
+            /tmp/phase07-contract.txt
+            /tmp/phase07-index.txt
+            /tmp/phase07-leakage-audit.txt
+            /tmp/phase07-exit.txt
+            /tmp/phase07-runtime-evidence/
+            evidence/phase-07/
+            configs/phase7-kb.json
+            knowledge_base/phase7/
+            backend/migrations/versions/0003_phase07_retrieval.py
+      - name: Upload Phase 08 RAG evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase08-rag-evidence
+          path: |
+            /tmp/phase08-index.txt
+            /tmp/phase08-exit.txt
+            /tmp/phase08-runtime-evidence/
+            evidence/phase-08/
+            configs/phase8-rag.json
+            configs/phase8-rag-ablations.json
+            docs/phase-08-runbook.md
+            docs/phase-08-handoff.md
+      - name: Upload Phase 09 training-system contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase09-training-system-contract
+          path: |
+            /tmp/phase09-contract.txt
+            /tmp/phase09-exit.txt
+            evidence/phase-09/
+            training/configs/lora_config.yaml
+            training/configs/training_args.yaml
+            training/requirements.gpu.txt
+            docs/phase-09-runbook.md
+            docs/phase-09-handoff.md
+      - name: Upload Phase 10 validation contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-validation-contract
+          path: |
+            /tmp/phase10-contract.txt
+            evidence/phase-10/
+            configs/phase10-finetuned.json
+
+  clean-compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: verify-all
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Install locked smoke client dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+      - name: Fresh Compose build and Phase 10 cumulative smoke
+        env:
+          DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
+        run: |
+          mkdir -p /tmp/phase09-clean-environment
+          docker compose down -v --remove-orphans
+          docker compose build --no-cache
+          docker compose up -d
+          python scripts/compose_health.py | tee /tmp/phase09-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase09-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase09-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase09-clean-environment/phase05-exit.log
+          python scripts/check_phase6_exit.py | tee /tmp/phase09-clean-environment/phase06-exit.log
+          python scripts/check_phase7_contract.py | tee /tmp/phase09-clean-environment/phase07-contract.log
+          python scripts/index_kb.py | tee /tmp/phase09-clean-environment/phase07-index.log
+          python scripts/audit_phase7_leakage.py --output-dir /tmp/phase09-clean-environment/runtime-evidence | tee /tmp/phase09-clean-environment/phase07-leakage-audit.log
+          python scripts/check_phase7_exit.py | tee /tmp/phase09-clean-environment/phase07-exit.log
+          python scripts/index_phase8_rag_variants.py --output-dir /tmp/phase09-clean-environment/phase08-runtime-evidence | tee /tmp/phase09-clean-environment/phase08-index.log
+          python scripts/check_phase8_exit.py | tee /tmp/phase09-clean-environment/phase08-exit.log
+          python scripts/check_phase9_contract.py | tee /tmp/phase09-clean-environment/phase09-contract.log
+          python scripts/check_phase10_contract.py | tee /tmp/phase09-clean-environment/phase10-contract.log
+          docker compose ps | tee /tmp/phase09-clean-environment/service-health.txt
+      - name: Capture Compose logs
+        if: always()
+        run: docker compose logs --no-color > /tmp/phase09-clean-environment/compose.log || true
+      - name: Tear down cleanly
+        if: always()
+        run: docker compose down -v --remove-orphans
+      - name: Upload Phase 10 clean-environment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-clean-environment
+          path: /tmp/phase09-clean-environment/
+ /tmp/phase10-exit.txt
+            grep -q '^PHASE10_EXIT=PASS      - name: Upload dependency locks
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-dependency-locks
+          path: |
+            backend/requirements.full.lock
+            frontend/package-lock.json
+      - name: Upload Phase 03 dataset evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase03-dataset-evidence
+          path: |
+            evidence/phase-03/
+            datasets/incident_diagnosis/processed/evalforge-incident-diagnosis-v0.1.0-candidate/
+            docs/data-card.md
+            docs/phase-03-handoff.md
+      - name: Upload Phase 04 persistence evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase04-persistence-evidence
+          path: |
+            /tmp/phase04-exit.txt
+            evidence/phase-04/
+            docs/phase-04-handoff.md
+            docs/architecture.md
+            backend/migrations/versions/0002_phase04_persistence.py
+      - name: Upload Phase 05 evaluation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase05-evaluation-evidence
+          path: |
+            /tmp/phase05-exit.txt
+            evidence/phase-05/
+            docs/evaluation-methodology.md
+            backend/tests/fixtures/phase5/golden_metrics.json
+      - name: Upload Phase 06 baseline evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase06-baseline-evidence
+          path: |
+            /tmp/phase06-exit.txt
+            evidence/phase-06/
+            docs/phase-06-runbook.md
+            docs/phase-06-handoff.md
+            configs/phase6-baseline.json
+            configs/phase6-gpu-host.json
+      - name: Upload Phase 07 retrieval evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase07-retrieval-evidence
+          path: |
+            /tmp/phase07-contract.txt
+            /tmp/phase07-index.txt
+            /tmp/phase07-leakage-audit.txt
+            /tmp/phase07-exit.txt
+            /tmp/phase07-runtime-evidence/
+            evidence/phase-07/
+            configs/phase7-kb.json
+            knowledge_base/phase7/
+            backend/migrations/versions/0003_phase07_retrieval.py
+      - name: Upload Phase 08 RAG evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase08-rag-evidence
+          path: |
+            /tmp/phase08-index.txt
+            /tmp/phase08-exit.txt
+            /tmp/phase08-runtime-evidence/
+            evidence/phase-08/
+            configs/phase8-rag.json
+            configs/phase8-rag-ablations.json
+            docs/phase-08-runbook.md
+            docs/phase-08-handoff.md
+      - name: Upload Phase 09 training-system contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase09-training-system-contract
+          path: |
+            /tmp/phase09-contract.txt
+            /tmp/phase09-exit.txt
+            evidence/phase-09/
+            training/configs/lora_config.yaml
+            training/configs/training_args.yaml
+            training/requirements.gpu.txt
+            docs/phase-09-runbook.md
+            docs/phase-09-handoff.md
+      - name: Upload Phase 10 validation contract evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-validation-contract
+          path: |
+            /tmp/phase10-contract.txt
+            evidence/phase-10/
+            configs/phase10-finetuned.json
+
+  clean-compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: verify-all
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.full.lock
+      - name: Install locked smoke client dependencies
+        run: |
+          python -m pip install -r backend/requirements.full.lock
+          python -m pip install --no-deps -e ./backend
+      - name: Fresh Compose build and Phase 10 cumulative smoke
+        env:
+          DATABASE_URL: postgresql://evalforge:evalforge@localhost:5432/evalforge
+        run: |
+          mkdir -p /tmp/phase09-clean-environment
+          docker compose down -v --remove-orphans
+          docker compose build --no-cache
+          docker compose up -d
+          python scripts/compose_health.py | tee /tmp/phase09-clean-environment/fresh-start-smoke.log
+          python scripts/check_phase4_exit.py | tee /tmp/phase09-clean-environment/phase04-exit.log
+          python scripts/run_phase5_smoke_evaluation.py | tee /tmp/phase09-clean-environment/phase05-smoke.log
+          python scripts/check_phase5_exit.py | tee /tmp/phase09-clean-environment/phase05-exit.log
+          python scripts/check_phase6_exit.py | tee /tmp/phase09-clean-environment/phase06-exit.log
+          python scripts/check_phase7_contract.py | tee /tmp/phase09-clean-environment/phase07-contract.log
+          python scripts/index_kb.py | tee /tmp/phase09-clean-environment/phase07-index.log
+          python scripts/audit_phase7_leakage.py --output-dir /tmp/phase09-clean-environment/runtime-evidence | tee /tmp/phase09-clean-environment/phase07-leakage-audit.log
+          python scripts/check_phase7_exit.py | tee /tmp/phase09-clean-environment/phase07-exit.log
+          python scripts/index_phase8_rag_variants.py --output-dir /tmp/phase09-clean-environment/phase08-runtime-evidence | tee /tmp/phase09-clean-environment/phase08-index.log
+          python scripts/check_phase8_exit.py | tee /tmp/phase09-clean-environment/phase08-exit.log
+          python scripts/check_phase9_contract.py | tee /tmp/phase09-clean-environment/phase09-contract.log
+          python scripts/check_phase10_contract.py | tee /tmp/phase09-clean-environment/phase10-contract.log
+          docker compose ps | tee /tmp/phase09-clean-environment/service-health.txt
+      - name: Capture Compose logs
+        if: always()
+        run: docker compose logs --no-color > /tmp/phase09-clean-environment/compose.log || true
+      - name: Tear down cleanly
+        if: always()
+        run: docker compose down -v --remove-orphans
+      - name: Upload Phase 10 clean-environment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase10-clean-environment
+          path: /tmp/phase09-clean-environment/
+ /tmp/phase10-exit.txt
+          fi
       - name: Upload dependency locks
         uses: actions/upload-artifact@v4
         with:
