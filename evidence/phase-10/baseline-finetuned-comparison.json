@@ -1,0 +1,114 @@
+{
+  "comparison_version": "phase10-baseline-finetuned-comparison-v1",
+  "split": "test",
+  "dataset_version": "evalforge-incident-diagnosis-v0.1.0",
+  "incident_ids": [
+    "incident-30e9f61351e2191bb9f56e2b",
+    "incident-3d1ad2d09d88df9038f46fd6",
+    "incident-420f3a36538bb8156dd897d8",
+    "incident-60279df16b41c4d15c192340",
+    "incident-b963227766cc3182f05c4268",
+    "incident-eb9423a1a3137474bb9e1200"
+  ],
+  "baseline": {
+    "run_id": "phase6-zero-shot-test-kaggle-v1",
+    "evidence_sha256": "76ee0677d3b3eebc51169fbbe21f323e6c6b23cb3dffabcffbc2f8a0685dd3c8",
+    "result_hash": "d1155d47acf1918538583bb54ba40f78030a2001b9c9b084d7ad3212ee21b15e",
+    "exact_accuracy": 1,
+    "parse_failure_rate": 0,
+    "normalized_multiclass_brier": 0.015977908490571832,
+    "latency_p50_ms": 6110.058298500007,
+    "latency_p95_ms": 7539.785869499894,
+    "marginal_mean_cost_usd": 0
+  },
+  "finetuned": {
+    "run_id": "phase10-finetuned-test-v1",
+    "evidence_file_sha256": "9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852",
+    "result_hash": "cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c",
+    "source_commit": "c59910e00f5e4fd0a722d2796da416c977753ddd",
+    "scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+    "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+    "exact_accuracy": 0.8333333333333334,
+    "parse_failure_rate": 0.16666666666666666,
+    "normalized_multiclass_brier": 0.00605209464093294,
+    "latency_p50_ms": 13132.569028999966,
+    "latency_p95_ms": 16231.942929250037,
+    "marginal_mean_cost_usd": 0
+  },
+  "paired_accuracy": {
+    "finetuned_minus_baseline": -0.16666666666666666,
+    "bootstrap_ci_lower": -0.5,
+    "bootstrap_ci_upper": 0,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260908,
+    "mcnemar_baseline_only_correct": 1,
+    "mcnemar_finetuned_only_correct": 0,
+    "mcnemar_discordant_pairs": 1,
+    "mcnemar_p_value": 1
+  },
+  "paired_rows": [
+    {
+      "incident_id": "incident-30e9f61351e2191bb9f56e2b",
+      "ground_truth": "n_plus_one_query",
+      "baseline_prediction": "n_plus_one_query",
+      "finetuned_prediction": "n_plus_one_query",
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "OK",
+      "baseline_correct": true,
+      "finetuned_correct": true
+    },
+    {
+      "incident_id": "incident-3d1ad2d09d88df9038f46fd6",
+      "ground_truth": "disk_exhaustion",
+      "baseline_prediction": "disk_exhaustion",
+      "finetuned_prediction": "disk_exhaustion",
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "OK",
+      "baseline_correct": true,
+      "finetuned_correct": true
+    },
+    {
+      "incident_id": "incident-420f3a36538bb8156dd897d8",
+      "ground_truth": "database_connection_leak",
+      "baseline_prediction": "database_connection_leak",
+      "finetuned_prediction": null,
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "INVALID_JSON",
+      "baseline_correct": true,
+      "finetuned_correct": false
+    },
+    {
+      "incident_id": "incident-60279df16b41c4d15c192340",
+      "ground_truth": "no_fault",
+      "baseline_prediction": "no_fault",
+      "finetuned_prediction": "no_fault",
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "OK",
+      "baseline_correct": true,
+      "finetuned_correct": true
+    },
+    {
+      "incident_id": "incident-b963227766cc3182f05c4268",
+      "ground_truth": "broken_payment_configuration",
+      "baseline_prediction": "broken_payment_configuration",
+      "finetuned_prediction": "broken_payment_configuration",
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "OK",
+      "baseline_correct": true,
+      "finetuned_correct": true
+    },
+    {
+      "incident_id": "incident-eb9423a1a3137474bb9e1200",
+      "ground_truth": "memory_leak",
+      "baseline_prediction": "memory_leak",
+      "finetuned_prediction": "memory_leak",
+      "baseline_parse_status": "OK",
+      "finetuned_parse_status": "OK",
+      "baseline_correct": true,
+      "finetuned_correct": true
+    }
+  ],
+  "interpretation_note": "Descriptive paired result on six locked test incidents only; the test outcome is not permitted to drive model or protocol selection.",
+  "comparison_sha256": "01409f6e1a04a970f451ed580b8b0f01e72b4fa09b51ae52071e562aa05e4105"
+}
