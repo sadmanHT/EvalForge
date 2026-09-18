@@ -65,3 +65,49 @@ def test_statistical_aggregation_reports_population_variation() -> None:
     assert aggregate["mean"] == pytest.approx(2 / 3)
     assert aggregate["variance"] == pytest.approx(1 / 18)
     assert aggregate["stddev"] == pytest.approx((1 / 18) ** 0.5)
+
+
+from pathlib import Path
+
+from app.inference.efficiency_study import (
+    build_efficiency_training_bundle,
+    efficiency_condition_id,
+    prepare_efficiency_condition,
+)
+from app.inference.finetuned_protocol import load_phase10_protocol
+
+ROOT = Path(__file__).resolve().parents[3]
+
+
+def test_repository_efficiency_preparation_uses_train_only_and_full_validation(
+    tmp_path: Path,
+) -> None:
+    protocol = load_phase10_protocol(ROOT)
+    prepared = prepare_efficiency_condition(
+        root=ROOT,
+        output_dir=tmp_path / "condition",
+        protocol=protocol,
+        fraction=0.25,
+        seed=20260908,
+    )
+    assert prepared.train_record_count == 2
+    assert len(prepared.selected_family_ids) == 2
+    assert prepared.validation_record_count == 6
+    assert prepared.primary_adapter_selection_use is False
+    assert prepared.locked_test_split_used is False
+    assert set(prepared.selected_family_ids) <= set(prepared.population_train_family_ids)
+
+
+def test_efficiency_training_seed_is_the_only_seed_override() -> None:
+    base = build_efficiency_training_bundle(ROOT, seed=20260908)
+    alternate = build_efficiency_training_bundle(ROOT, seed=20260909)
+    assert base.lora.model_copy(update={"seed": 20260909}) == alternate.lora
+    assert base.training.model_copy(update={"seed": 20260909}) == alternate.training
+    assert base.lora.base_model_id == alternate.lora.base_model_id
+    assert base.lora.base_model_revision == alternate.lora.base_model_revision
+
+
+def test_efficiency_condition_id_is_stable() -> None:
+    assert efficiency_condition_id(0.10, 20260908) == "phase10-efficiency-f0100-s20260908"
+    assert efficiency_condition_id(0.25, 20260909) == "phase10-efficiency-f0250-s20260909"
+    assert efficiency_condition_id(1.00, 20260910) == "phase10-efficiency-f1000-s20260910"

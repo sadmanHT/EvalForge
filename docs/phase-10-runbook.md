@@ -93,6 +93,40 @@ invent stratification that the data cannot support. Validation and test families
 into training. Data-efficiency runs are secondary analysis and must not replace or select the
 primary Phase 09 adapter.
 
+## Connected data-efficiency study
+
+The efficiency matrix is secondary descriptive analysis only and cannot replace the frozen primary
+adapter. Run exactly the declared 12 conditions: fractions 10%, 25%, 50%, and 100% crossed with
+seeds 20260908, 20260909, and 20260910. Every condition selects complete train families only,
+keeps the full validation split fixed, changes the training/subset seed as the intended repeated
+factor, and never reads the locked test for training or validation.
+
+On a connected single-GPU host, run one condition with:
+
+```bash
+python training/scripts/run_phase10_efficiency_condition.py \
+  --fraction 0.25 \
+  --seed 20260908 \
+  --work-dir /tmp/phase10-efficiency \
+  --git-commit "$(git rev-parse HEAD)" \
+  --hardware-runtime-descriptor '<GPU / CUDA / runtime description>' \
+  --cost-rate-snapshot-version '<rate snapshot ID>' \
+  --gpu-hour-usd '<hourly GPU rate>'
+```
+
+Each condition preserves its family/incident lineage, training config hash, adapter hash, W&B
+references, training wall time/cost, and common-harness validation predictions/metrics. After all
+12 conditions complete, aggregate them without model selection:
+
+```bash
+python training/scripts/aggregate_phase10_efficiency.py \
+  --conditions-root /tmp/phase10-efficiency \
+  --output /tmp/phase10-data-efficiency.json
+```
+
+The aggregate must report `TEST_SPLIT_USED=false` and
+`PRIMARY_ADAPTER_SELECTION_USE=false`.
+
 ## Freeze before the locked test
 
 After connected validation evidence has been inspected and preserved, freeze the primary
