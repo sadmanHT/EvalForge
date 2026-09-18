@@ -13,7 +13,7 @@ format:
 
 lint:
 	cd backend && ruff check app tests $(PHASE_SCRIPTS)
-	cd backend && ruff format --check app tests $(PHASE_SCRIPTS)
+	cd backend && ruff format --diff app tests $(PHASE_SCRIPTS); false
 	cd frontend && $(NPM) run format:check
 	cd frontend && $(NPM) run lint
 
