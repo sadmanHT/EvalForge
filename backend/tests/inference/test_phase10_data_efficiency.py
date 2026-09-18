@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
@@ -8,6 +9,12 @@ from app.inference.data_efficiency import (
     build_data_efficiency_matrix,
     select_data_efficiency_subset,
 )
+from app.inference.efficiency_study import (
+    build_efficiency_training_bundle,
+    efficiency_condition_id,
+    prepare_efficiency_condition,
+)
+from app.inference.finetuned_protocol import load_phase10_protocol
 
 
 def _record(index: int, split: Split = Split.TRAIN) -> IncidentRecord:
@@ -66,15 +73,6 @@ def test_statistical_aggregation_reports_population_variation() -> None:
     assert aggregate["variance"] == pytest.approx(1 / 18)
     assert aggregate["stddev"] == pytest.approx((1 / 18) ** 0.5)
 
-
-from pathlib import Path
-
-from app.inference.efficiency_study import (
-    build_efficiency_training_bundle,
-    efficiency_condition_id,
-    prepare_efficiency_condition,
-)
-from app.inference.finetuned_protocol import load_phase10_protocol
 
 ROOT = Path(__file__).resolve().parents[3]
 
