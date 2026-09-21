@@ -63,6 +63,11 @@ jobs:
           python -m pip freeze --exclude-editable | sort > /tmp/backend.freeze
           diff -u backend/requirements.full.lock /tmp/backend.freeze
           test -f frontend/package-lock.json
+      - name: Show Phase 10 formatter diff
+        run: |
+          cd backend
+          ruff format --diff app/inference/phase10_gate.py || true
+
       - name: Cumulative gate
         run: make verify-all
       - name: Record Phase 03 hard-exit status
