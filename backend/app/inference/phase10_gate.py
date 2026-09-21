@@ -121,6 +121,216 @@ def _validate_comparison(
     return _required_text(comparison, "comparison_sha256")
 
 
+def _required_sha256(payload: Mapping[str, Any], key: str) -> str:
+    value = _required_text(payload, key).lower()
+    if len(value) != 64 or any(char not in "0123456789abcdef" for char in value):
+        raise ValueError(f"Phase 10 evidence requires 64-hex {key}")
+    return value
+
+
+def _parse_sha256sums(path: Path) -> dict[str, str]:
+    declared: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        digest, separator, filename = line.partition("  ")
+        if separator:
+            declared[filename] = digest
+    return declared
+
+
+def _validate_compact_efficiency(
+    root: Path,
+    *,
+    locked_sha256: str,
+    aggregate_path: Path,
+    evidence_dir: Path,
+) -> int:
+    """Validate the sealed connected-run package without exploding every raw JSON into git.
+
+    The full Kaggle ZIP is content-addressed by package-validation.json.  The repository
+    preserves its aggregate, original SHA256SUMS roster, per-condition W&B identities and
+    independent package-validation manifest.  Raw condition files remain recoverable from the
+    sealed ZIP / W&B artifacts and their exact SHA-256 values are checked here.
+    """
+
+    protocol = load_phase10_protocol(root)
+    validation_path = evidence_dir / "package-validation.json"
+    sums_path = evidence_dir / "SHA256SUMS"
+    if not validation_path.is_file() or not sums_path.is_file():
+        raise FileNotFoundError("compact Phase 10 data-efficiency package evidence is incomplete")
+
+    aggregate = _load(aggregate_path)
+    validation = _load(validation_path)
+    expected_count = len(protocol.data_efficiency.fractions) * len(protocol.data_efficiency.seeds)
+
+    if validation.get("evidence_version") != EFFICIENCY_PACKAGE_VALIDATION_VERSION:
+        raise ValueError("unexpected data-efficiency package-validation version")
+    if validation.get("status") != "completed":
+        raise ValueError("data-efficiency package validation is not completed")
+    if _required_sha256(validation, "package_sha256") != EFFICIENCY_PACKAGE_SHA256:
+        raise ValueError("data-efficiency package SHA-256 changed")
+    if _required_sha256(validation, "aggregate_sha256") != EFFICIENCY_SOURCE_AGGREGATE_SHA256:
+        raise ValueError("data-efficiency source aggregate SHA-256 changed")
+    if sha256_file(aggregate_path) != EFFICIENCY_PRESERVED_AGGREGATE_SHA256:
+        raise ValueError("preserved data-efficiency aggregate changed")
+    if sha256_file(sums_path) != _required_sha256(validation, "sha256sums_sha256"):
+        raise ValueError("preserved data-efficiency SHA256SUMS changed")
+    if validation.get("phase10_scientific_config_hash") != protocol.scientific_config_hash():
+        raise ValueError("data-efficiency package changed the Phase 10 scientific identity")
+    if validation.get("source_git_commit") != "193969c73b0bb278222f8ef902f05639981f1a82":
+        raise ValueError("data-efficiency package source commit changed")
+    if validation.get("locked_test_evidence_sha256") != locked_sha256:
+        raise ValueError("data-efficiency package is not linked to the sealed locked test")
+    if validation.get("comparison_sha256") != (
+        "01409f6e1a04a970f451ed580b8b0f01e72b4fa09b51ae52071e562aa05e4105"
+    ):
+        raise ValueError("data-efficiency package comparison linkage changed")
+    for key in (
+        "secure_archive_paths_verified",
+        "sha256sums_verified",
+        "canonical_validation_result_hashes_verified",
+        "validation_prediction_ids_verified",
+    ):
+        if validation.get(key) is not True:
+            raise ValueError(f"data-efficiency package validation did not verify {key}")
+    if validation.get("test_ids_touched") != 0 or validation.get("locked_test_usage") != "none":
+        raise ValueError("data-efficiency package touched the locked test")
+    if validation.get("test_split_used") is not False:
+        raise ValueError("data-efficiency package used the test split")
+    if validation.get("primary_adapter_selection_use") is not False:
+        raise ValueError("data-efficiency package changed primary adapter selection")
+
+    if aggregate.get("evidence_version") != "phase10-data-efficiency-aggregate-v1":
+        raise ValueError("unexpected data-efficiency aggregate version")
+    if aggregate.get("status") != "completed":
+        raise ValueError("data-efficiency aggregate is not completed")
+    if aggregate.get("dataset_version") != protocol.dataset_version:
+        raise ValueError("data-efficiency aggregate dataset changed")
+    if aggregate.get("phase10_scientific_config_hash") != protocol.scientific_config_hash():
+        raise ValueError("data-efficiency aggregate scientific identity changed")
+    if aggregate.get("study_role") != "secondary_descriptive_no_primary_selection":
+        raise ValueError("data-efficiency aggregate study role changed")
+    if aggregate.get("test_split_used") is not False:
+        raise ValueError("data-efficiency aggregate used the test split")
+    if aggregate.get("primary_adapter_selection_use") is not False:
+        raise ValueError("data-efficiency aggregate changed primary adapter selection")
+    if aggregate.get("condition_count") != expected_count:
+        raise ValueError(f"data-efficiency aggregate requires {expected_count} conditions")
+    if validation.get("condition_count") != expected_count:
+        raise ValueError(f"data-efficiency package validation requires {expected_count} conditions")
+
+    aggregate_conditions = aggregate.get("conditions")
+    validated_conditions = validation.get("conditions")
+    if not isinstance(aggregate_conditions, list) or not isinstance(validated_conditions, list):
+        raise ValueError("data-efficiency condition indexes are malformed")
+    if len(aggregate_conditions) != expected_count or len(validated_conditions) != expected_count:
+        raise ValueError("data-efficiency condition indexes are incomplete")
+
+    expected_pairs = {
+        (float(fraction), int(seed))
+        for fraction in protocol.data_efficiency.fractions
+        for seed in protocol.data_efficiency.seeds
+    }
+    aggregate_index = {
+        str(item.get("condition_id")): item
+        for item in aggregate_conditions
+        if isinstance(item, Mapping)
+    }
+    validation_index = {
+        str(item.get("condition_id")): item
+        for item in validated_conditions
+        if isinstance(item, Mapping)
+    }
+    if len(aggregate_index) != expected_count or set(aggregate_index) != set(validation_index):
+        raise ValueError("data-efficiency condition IDs are incomplete or duplicated")
+
+    declared = _parse_sha256sums(sums_path)
+    if declared.get("evidence/phase-10/data-efficiency/aggregate.json") != (
+        EFFICIENCY_SOURCE_AGGREGATE_SHA256
+    ):
+        raise ValueError("source SHA256SUMS aggregate checksum changed")
+
+    observed_pairs: set[tuple[float, int]] = set()
+    for condition_id, item in validation_index.items():
+        fraction = item.get("fraction")
+        seed = item.get("seed")
+        if isinstance(fraction, bool) or not isinstance(fraction, int | float):
+            raise ValueError(f"{condition_id} has invalid fraction")
+        if isinstance(seed, bool) or not isinstance(seed, int):
+            raise ValueError(f"{condition_id} has invalid seed")
+        observed_pairs.add((float(fraction), seed))
+        if item.get("base_phase09_training_config_hash") != protocol.source_training_config_hash:
+            raise ValueError(f"{condition_id} changed Phase 09 training hyperparameters")
+        if item.get("locked_test_evidence_sha256") != locked_sha256:
+            raise ValueError(f"{condition_id} is not linked to the sealed locked test")
+        if item.get("test_split_used") is not False:
+            raise ValueError(f"{condition_id} used the test split")
+        if item.get("primary_adapter_selection_use") is not False:
+            raise ValueError(f"{condition_id} changed primary adapter selection")
+        if item.get("visible_gpu_count") != 1:
+            raise ValueError(f"{condition_id} did not use exactly one visible GPU")
+        evidence_sha = _required_sha256(item, "evidence_sha256")
+        _required_sha256(item, "adapter_sha256")
+        _required_sha256(item, "validation_result_hash")
+        _required_text(item, "run_reference")
+        _required_text(item, "artifact_reference")
+
+        condition_filename = (
+            f"evidence/phase-10/data-efficiency/conditions/{condition_id}.json"
+        )
+        if declared.get(condition_filename) != evidence_sha:
+            raise ValueError(f"{condition_id} checksum is not sealed by source SHA256SUMS")
+
+        aggregate_item = aggregate_index[condition_id]
+        for key in (
+            "fraction",
+            "seed",
+            "evidence_sha256",
+            "adapter_sha256",
+            "validation_result_hash",
+        ):
+            if aggregate_item.get(key) != item.get(key):
+                raise ValueError(f"{condition_id} aggregate index disagrees on {key}")
+        tracking = aggregate_item.get("tracking")
+        if not isinstance(tracking, Mapping) or tracking.get("configured") is not True:
+            raise ValueError(f"{condition_id} aggregate tracking is not configured")
+        if tracking.get("provider") != "wandb":
+            raise ValueError(f"{condition_id} aggregate tracking provider is not W&B")
+        if tracking.get("run_reference") != item.get("run_reference"):
+            raise ValueError(f"{condition_id} W&B run reference changed")
+        if tracking.get("artifact_reference") != item.get("artifact_reference"):
+            raise ValueError(f"{condition_id} W&B artifact reference changed")
+
+    if observed_pairs != expected_pairs:
+        raise ValueError("data-efficiency fraction/seed matrix is incomplete")
+
+    fraction_rows = aggregate.get("fractions")
+    if not isinstance(fraction_rows, list) or len(fraction_rows) != len(protocol.data_efficiency.fractions):
+        raise ValueError("data-efficiency fraction aggregates are incomplete")
+    by_fraction = {
+        float(row.get("fraction")): row
+        for row in fraction_rows
+        if isinstance(row, Mapping) and isinstance(row.get("fraction"), int | float)
+    }
+    if set(by_fraction) != {float(value) for value in protocol.data_efficiency.fractions}:
+        raise ValueError("data-efficiency fraction aggregates changed")
+    for fraction in protocol.data_efficiency.fractions:
+        row = by_fraction[float(fraction)]
+        if row.get("seeds") != list(protocol.data_efficiency.seeds):
+            raise ValueError(f"fraction {fraction} seed index changed")
+        condition_ids = row.get("condition_ids")
+        if not isinstance(condition_ids, list) or len(condition_ids) != len(protocol.data_efficiency.seeds):
+            raise ValueError(f"fraction {fraction} condition index is incomplete")
+        metrics = row.get("metrics")
+        if not isinstance(metrics, Mapping):
+            raise ValueError(f"fraction {fraction} metrics are missing")
+        for metric_name in ("primary.exact_accuracy", "quality.parse_failure_rate"):
+            metric = metrics.get(metric_name)
+            if not isinstance(metric, Mapping) or metric.get("count") != len(protocol.data_efficiency.seeds):
+                raise ValueError(f"fraction {fraction} metric {metric_name} is incomplete")
+
+    return expected_count
+
+
 def _validate_efficiency(
     root: Path,
     *,
@@ -133,7 +343,12 @@ def _validate_efficiency(
     if not aggregate_path.is_file():
         raise FileNotFoundError("Phase 10 data-efficiency aggregate evidence is missing")
     if not conditions_dir.is_dir():
-        raise FileNotFoundError("Phase 10 data-efficiency condition evidence is missing")
+        return _validate_compact_efficiency(
+            root,
+            locked_sha256=locked_sha256,
+            aggregate_path=aggregate_path,
+            evidence_dir=evidence_dir,
+        )
 
     paths = sorted(conditions_dir.glob("*.json"))
     payloads = [_load(path) for path in paths]
