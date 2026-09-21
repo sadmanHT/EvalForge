@@ -1,55 +1,72 @@
 # Phase 10 evidence
 
-This directory contains the preserved Phase 10 scientific evidence as the phase progresses.
+Phase 10 scientific evidence is now preserved for the frozen FINETUNED arm. The one-time locked
+test remains consumed and must never be rerun or treated as a tuning set.
 
-Current evidence:
+## Frozen primary identity
 
-- `validation-run.json` — connected single-GPU validation run for the frozen Phase 09 adapter,
-  exported before any locked-test authorization;
-- `protocol-freeze.json` — immutable linkage from that validation evidence and the Phase 09
-  training identity to the frozen Phase 10 protocol;
-- `locked-test/phase10-finetuned-test.json` — raw one-time connected fine-tuned locked-test
-  evidence;
-- `locked-test/LOCKED_TEST_STARTED.json` — start marker written before the one-time test
-  inference process;
-- `locked-test/completion-summary.json`, `README.txt`, and `SHA256SUMS` — the exact supporting
-  files from the Kaggle evidence package.
+- base model: `mistralai/Mistral-7B-Instruct-v0.3`
+- base revision: `e8737b84b4470b28db3a0be719b362b1bd39a14d`
+- primary adapter SHA-256:
+  `e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065`
+- Phase 10 scientific config SHA-256:
+  `6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d`
 
-The frozen scientific source head
-`c59910e00f5e4fd0a722d2796da416c977753ddd` passed GitHub CI run #532
-(`35256501761`) with both cumulative `verify-all` and clean-Compose success before test
-consumption. The authorized fine-tuned locked test then ran once with run ID
-`phase10-finetuned-test-v1`, one visible Tesla T4 GPU, the frozen adapter
-`e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065`, and scientific config
-`6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d`.
+## One-time locked test
 
-Locked-test package integrity:
+The authorized connected test run `phase10-finetuned-test-v1` was consumed exactly once. Raw
+and supporting evidence remains under `locked-test/`.
 
-- uploaded ZIP SHA-256:
-  `f3a5481841d84846946f602aea90749d797408b6632ce4b9895d014eeaa8380b`;
 - raw test evidence SHA-256:
-  `9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852`;
+  `9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852`
 - evaluator result hash:
-  `cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c`.
+  `cc221f1223d65fd416fdce12bd0c6a2041dd97b1fb92b105eaf56f33d4abe71c`
+- exact accuracy: 5/6
+- parse failures: 1/6
+- selection or retuning after test: false
 
-The locked test produced 6 predictions with zero inference-process failures. Exact root-cause
-accuracy was 5/6 (`0.8333333333333334`). One case,
-`incident-420f3a36538bb8156dd897d8`, reached the 128-token output limit with unterminated JSON and
-therefore had `parse_status=INVALID_JSON`; this accounts for the 1/6 parse-failure rate and the
-single primary-metric miss. The test result is a frozen observation and must not trigger
-retraining, checkpoint switching, prompt/generation changes, confidence changes, or efficiency
-condition selection.
+The paired report `baseline-finetuned-comparison.json` uses the already-preserved Phase 06
+zero-shot predictions on the identical six IDs. Zero-shot is 6/6 and fine-tuned is 5/6; the
+fine-tuned-minus-zero-shot exact-accuracy difference is -1/6, paired-bootstrap 95% interval
+[-0.5, 0.0], exact two-sided McNemar p=1.0. These six-case results are descriptive only.
 
-The paired zero-shot baseline vs fine-tuned report is now preserved as
-`baseline-finetuned-comparison.json` and is reproducibly derived from the sealed predictions.
+## Data-efficiency study
 
-Evidence still required for Phase 10 completion includes:
+The predeclared 10%, 25%, 50%, and 100% train-family fractions were completed for seeds 20260908,
+20260909, and 20260910: 12 connected single-GPU conditions total. The study is secondary
+descriptive analysis and has `primary_adapter_selection_use=false` and `test_split_used=false`.
+No locked-test ID was used by an efficiency condition.
 
-- the predeclared data-efficiency matrix and subset-lineage evidence, used only as secondary
-  descriptive analysis and never to replace the already frozen primary adapter;
-- Hugging Face repository/revision plus truthful model card;
-- clean download/load/inference smoke evidence for that immutable Hub revision;
-- a Phase 10 hard-exit gate followed by cumulative `make verify-all` and clean-Compose success.
+The uploaded connected-run package is sealed by SHA-256
+`c1616b7fffc58e78f107de91725e706c4af410632e105513add4d700fb149139`.
+Its original aggregate member SHA-256 is
+`7ae6c09672e3e12992908032379dd30b431c3d2aac90b39a9d2f2ca7c463b30e`.
+For repository review, `data-efficiency/aggregate.json` preserves the same JSON payload in a
+canonicalized serialization; `data-efficiency/SHA256SUMS` preserves the original package's raw
+condition/log checksum roster; and `data-efficiency/package-validation.json` preserves the
+independent package audit plus all 12 condition/W&B identities. The hard-exit gate accepts this
+sealed compact representation while retaining support for fully exploded condition files.
 
-The Phase 10 locked test is consumed. It must not be rerun based on its score, parse failure, or
-any later comparison.
+Mean validation exact accuracy across the three seeds was 0.5000 at 10%, 0.6111 at 25%, 0.7222
+at 50%, and 0.8333 at 100%. With three seeds and six validation incidents, this is reported as a
+small-sample descriptive efficiency curve, not a general scaling claim.
+
+## Hugging Face release
+
+The exact frozen adapter was published publicly and then clean-downloaded at immutable revision:
+
+- repository: `sadmanht/evalforge-mistral-7b-incident-diagnosis-qlora`
+- revision: `0a11104c26ed6edc2fce612a341123b9ff4e9001`
+- release evidence SHA-256:
+  `03a209910f21363797530f279817186f6fb2f94b6ed1704661eeaf192911dca0`
+- clean-smoke evidence SHA-256:
+  `3602bcafe4de301c459e6de93605309a5fb4f531b68f989eaba0e42c366f357b`
+- model-card SHA-256:
+  `125387a30f765cffac6487e51fc54d8f7cbe68b72ba6be8974856cda52cef20c`
+
+The clean smoke used the validation split only, one visible Tesla T4, the FINETUNED pipeline,
+no retrieval, and reproduced the exact frozen adapter SHA. No post-test retuning occurred.
+
+With these artifacts present, the repository-level Phase 10 evidence gate is expected to resolve
+to `complete`. Phase 10 is not operationally closed until the exact evidence-bearing Git head also
+passes cumulative `verify-all`, the Phase 10 hard-exit check, and clean-Compose CI.
