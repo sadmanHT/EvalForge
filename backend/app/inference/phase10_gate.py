@@ -23,6 +23,16 @@ from app.training.hub_release import (
 )
 
 
+EFFICIENCY_PACKAGE_VALIDATION_VERSION = "phase10-data-efficiency-package-validation-v1"
+EFFICIENCY_PACKAGE_SHA256 = "c1616b7fffc58e78f107de91725e706c4af410632e105513add4d700fb149139"
+EFFICIENCY_SOURCE_AGGREGATE_SHA256 = (
+    "7ae6c09672e3e12992908032379dd30b431c3d2aac90b39a9d2f2ca7c463b30e"
+)
+EFFICIENCY_PRESERVED_AGGREGATE_SHA256 = (
+    "ea3159ed0a962c50295d44bfabf40eae92014dc878f263b7d755d4a6ee66a261"
+)
+
+
 class Phase10Stage(StrEnum):
     LOCKED_TEST_PENDING = "locked_test_pending"
     EXTERNAL_EVIDENCE_PENDING = "external_evidence_pending"
