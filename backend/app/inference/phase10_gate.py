@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 from __future__ import annotations
 
 import json
@@ -314,7 +315,10 @@ def _validate_compact_efficiency(
         raise ValueError("data-efficiency fraction/seed matrix is incomplete")
 
     fraction_rows = aggregate.get("fractions")
-    if not isinstance(fraction_rows, list) or len(fraction_rows) != len(protocol.data_efficiency.fractions):
+    if (
+        not isinstance(fraction_rows, list)
+        or len(fraction_rows) != len(protocol.data_efficiency.fractions)
+    ):
         raise ValueError("data-efficiency fraction aggregates are incomplete")
     by_fraction = {
         float(row.get("fraction")): row
@@ -328,14 +332,20 @@ def _validate_compact_efficiency(
         if row.get("seeds") != list(protocol.data_efficiency.seeds):
             raise ValueError(f"fraction {fraction} seed index changed")
         condition_ids = row.get("condition_ids")
-        if not isinstance(condition_ids, list) or len(condition_ids) != len(protocol.data_efficiency.seeds):
+        if (
+            not isinstance(condition_ids, list)
+            or len(condition_ids) != len(protocol.data_efficiency.seeds)
+        ):
             raise ValueError(f"fraction {fraction} condition index is incomplete")
         metrics = row.get("metrics")
         if not isinstance(metrics, Mapping):
             raise ValueError(f"fraction {fraction} metrics are missing")
         for metric_name in ("primary.exact_accuracy", "quality.parse_failure_rate"):
             metric = metrics.get(metric_name)
-            if not isinstance(metric, Mapping) or metric.get("count") != len(protocol.data_efficiency.seeds):
+            if (
+                not isinstance(metric, Mapping)
+                or metric.get("count") != len(protocol.data_efficiency.seeds)
+            ):
                 raise ValueError(f"fraction {fraction} metric {metric_name} is incomplete")
 
     return expected_count
