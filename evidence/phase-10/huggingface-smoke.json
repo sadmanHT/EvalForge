@@ -1,0 +1,32 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "evidence_version": "phase10-huggingface-smoke-v1",
+  "gpu_environment": {
+    "bitsandbytes": "0.50.2",
+    "cuda_version": "12.8",
+    "gpu_name": "Tesla T4",
+    "gpu_vram_bytes": 15636037632,
+    "huggingface_hub": "0.36.2",
+    "peft": "0.18.0",
+    "python": "3.12.13",
+    "torch": "2.10.0+cu128",
+    "transformers": "4.57.6",
+    "visible_gpu_count": 1
+  },
+  "locked_test_split_used": false,
+  "parse_status": "OK",
+  "phase10_scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "pipeline_type": "FINETUNED",
+  "predicted_root_cause_code": "broken_payment_configuration",
+  "public": true,
+  "readme_sha256": "125387a30f765cffac6487e51fc54d8f7cbe68b72ba6be8974856cda52cef20c",
+  "repo_id": "sadmanht/evalforge-mistral-7b-incident-diagnosis-qlora",
+  "retrieved_chunk_ids": [],
+  "revision": "0a11104c26ed6edc2fce612a341123b9ff4e9001",
+  "smoke_incident_id": "incident-215133387692e86f737df1e9",
+  "smoke_split": "validation",
+  "source_git_commit": "193969c73b0bb278222f8ef902f05639981f1a82",
+  "status": "completed"
+}

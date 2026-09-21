@@ -1,0 +1,17 @@
+{
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "build_id": "phase10-kaggle-hf-clean-smoke-resume-v4-20260921-a",
+  "locked_test_usage": "none",
+  "phase10_scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "post_test_retuning": false,
+  "primary_adapter_selection_use": false,
+  "public": true,
+  "publication_action": "not_repeated_existing_immutable_revision_verified",
+  "release_evidence_sha256": "03a209910f21363797530f279817186f6fb2f94b6ed1704661eeaf192911dca0",
+  "repo_id": "sadmanht/evalforge-mistral-7b-incident-diagnosis-qlora",
+  "revision": "0a11104c26ed6edc2fce612a341123b9ff4e9001",
+  "smoke_evidence_sha256": "3602bcafe4de301c459e6de93605309a5fb4f531b68f989eaba0e42c366f357b",
+  "smoke_split": "validation",
+  "source_commit": "193969c73b0bb278222f8ef902f05639981f1a82",
+  "summary_version": "phase10-kaggle-huggingface-resume-summary-v1"
+}

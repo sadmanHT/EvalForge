@@ -1,0 +1,59 @@
+{
+  "adapter_files": [
+    {
+      "path": "README.md",
+      "sha256": "dfc8a9238aa042b29fe000baab59443a6e94efe8156eb67e3f6e1bb41daf6fc6",
+      "size_bytes": 5222
+    },
+    {
+      "path": "adapter_config.json",
+      "sha256": "2612f9539707c500cd27845c0e8b672c4b56e5528f2e9f21e54a754bef118c9c",
+      "size_bytes": 1065
+    },
+    {
+      "path": "adapter_model.safetensors",
+      "sha256": "323e589dff230b78e279cc9087235c4dc229751e3f730ebaa489d78f50a5aa75",
+      "size_bytes": 167832240
+    },
+    {
+      "path": "chat_template.jinja",
+      "sha256": "6b1fd7807826615a3befd86aa0a9fbfce6a98acb0f4dd66726be76b078011156",
+      "size_bytes": 1053
+    },
+    {
+      "path": "special_tokens_map.json",
+      "sha256": "4452b845ab9ca2afa863f59f1411a959e8a32bb4334e264b0e71d5d17dd4dcb9",
+      "size_bytes": 437
+    },
+    {
+      "path": "tokenizer.json",
+      "sha256": "8bbac1633ab7aa20dc673a572c2a8dfcf59a600bec8e071458995dea29105c7f",
+      "size_bytes": 3672067
+    },
+    {
+      "path": "tokenizer.model",
+      "sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89",
+      "size_bytes": 587404
+    },
+    {
+      "path": "tokenizer_config.json",
+      "sha256": "2e19ea2c09a67a254fdd09370000ea5166ed9ed03af2b9ba27b230ad5b9af731",
+      "size_bytes": 136729
+    }
+  ],
+  "adapter_sha256": "e8ebf0c51d241516bd3c6bb44e476df6d412aaf6926705ecc53ca8cc3fcec065",
+  "base_model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "base_model_revision": "e8737b84b4470b28db3a0be719b362b1bd39a14d",
+  "commit_url": "https://huggingface.co/sadmanht/evalforge-mistral-7b-incident-diagnosis-qlora/commit/0a11104c26ed6edc2fce612a341123b9ff4e9001",
+  "evidence_version": "phase10-huggingface-release-v1",
+  "locked_test_evidence_sha256": "9b253eb2e5a473812f46eccb5f90c0d8539aefb208a49266db521dc6bd137852",
+  "model_card_sha256": "125387a30f765cffac6487e51fc54d8f7cbe68b72ba6be8974856cda52cef20c",
+  "phase10_scientific_config_hash": "6064aaed457812a8102411eea47f02f78d812372097afe068ec53a540f9e1f7d",
+  "post_test_retuning": false,
+  "primary_adapter_selection_use": false,
+  "public": true,
+  "repo_id": "sadmanht/evalforge-mistral-7b-incident-diagnosis-qlora",
+  "revision": "0a11104c26ed6edc2fce612a341123b9ff4e9001",
+  "source_git_commit": "193969c73b0bb278222f8ef902f05639981f1a82",
+  "status": "completed"
+}
