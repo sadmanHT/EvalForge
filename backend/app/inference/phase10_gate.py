@@ -285,9 +285,7 @@ def _validate_compact_efficiency(
         _required_text(item, "run_reference")
         _required_text(item, "artifact_reference")
 
-        condition_filename = (
-            f"evidence/phase-10/data-efficiency/conditions/{condition_id}.json"
-        )
+        condition_filename = f"evidence/phase-10/data-efficiency/conditions/{condition_id}.json"
         if declared.get(condition_filename) != evidence_sha:
             raise ValueError(f"{condition_id} checksum is not sealed by source SHA256SUMS")
 
@@ -315,9 +313,8 @@ def _validate_compact_efficiency(
         raise ValueError("data-efficiency fraction/seed matrix is incomplete")
 
     fraction_rows = aggregate.get("fractions")
-    if (
-        not isinstance(fraction_rows, list)
-        or len(fraction_rows) != len(protocol.data_efficiency.fractions)
+    if not isinstance(fraction_rows, list) or len(fraction_rows) != len(
+        protocol.data_efficiency.fractions
     ):
         raise ValueError("data-efficiency fraction aggregates are incomplete")
     by_fraction = {
@@ -332,9 +329,8 @@ def _validate_compact_efficiency(
         if row.get("seeds") != list(protocol.data_efficiency.seeds):
             raise ValueError(f"fraction {fraction} seed index changed")
         condition_ids = row.get("condition_ids")
-        if (
-            not isinstance(condition_ids, list)
-            or len(condition_ids) != len(protocol.data_efficiency.seeds)
+        if not isinstance(condition_ids, list) or len(condition_ids) != len(
+            protocol.data_efficiency.seeds
         ):
             raise ValueError(f"fraction {fraction} condition index is incomplete")
         metrics = row.get("metrics")
@@ -342,9 +338,8 @@ def _validate_compact_efficiency(
             raise ValueError(f"fraction {fraction} metrics are missing")
         for metric_name in ("primary.exact_accuracy", "quality.parse_failure_rate"):
             metric = metrics.get(metric_name)
-            if (
-                not isinstance(metric, Mapping)
-                or metric.get("count") != len(protocol.data_efficiency.seeds)
+            if not isinstance(metric, Mapping) or metric.get("count") != len(
+                protocol.data_efficiency.seeds
             ):
                 raise ValueError(f"fraction {fraction} metric {metric_name} is incomplete")
 
